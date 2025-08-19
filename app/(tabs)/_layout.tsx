@@ -1,8 +1,8 @@
-import AirFloatingButton from '@/conponents/CustomTabBar/AirFloatingButton';
-import CreateFloatingButton from '@/conponents/CustomTabBar/CreateFloatingButton';
-import CustomTabButton from '@/conponents/CustomTabBar/CustomTabButton';
-import { CustomTabList } from '@/conponents/CustomTabBar/CustomTabList';
-import { TabList, Tabs, TabSlot, TabTrigger } from 'expo-router/ui';
+import AirFloatingButton from "@/conponents/CustomTabBar/AirFloatingButton";
+import CreateFloatingButton from "@/conponents/CustomTabBar/CreateFloatingButton";
+import CustomTabButton from "@/conponents/CustomTabBar/CustomTabButton";
+import { CustomTabList } from "@/conponents/CustomTabBar/CustomTabList";
+import { TabList, Tabs, TabSlot, TabTrigger } from "expo-router/ui";
 
 export default function TabLayout() {
   return (
@@ -11,12 +11,12 @@ export default function TabLayout() {
       <TabList asChild>
         <CustomTabList>
           <TabTrigger name="home" href="/" asChild>
-            <CustomTabButton routeName='home' />
+            <CustomTabButton routeName="home" />
           </TabTrigger>
           <TabTrigger name="explore" href="/explore" asChild>
             <CustomTabButton routeName="explore" />
           </TabTrigger>
-          <TabTrigger name="air" href="/air" asChild>
+          <TabTrigger name="air" href="/air" reset="always" asChild>
             <AirFloatingButton />
           </TabTrigger>
           <TabTrigger name="community" href="/community" asChild>
