@@ -25,16 +25,12 @@ export function CustomTabList({ children }: { children: React.ReactNode }) {
 
   return (
     <View
-<<<<<<< HEAD
-      style={styles.container}
-=======
       style={[
         styles.container,
         (pathname === "/air" || pathname === "/air/report") && {
           display: "none",
         },
       ]}
->>>>>>> feat/14-record_flight
     >
       <Svg
         width={width}
