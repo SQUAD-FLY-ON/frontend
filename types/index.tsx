@@ -20,3 +20,9 @@ export type TNearLocations = {
   image: ImageSourcePropType;
   title: string;
 };
+
+export type TLocationData = {
+  lat: number;
+  lon: number;
+  alt: number;
+};
