@@ -77,7 +77,8 @@ export default function Index() {
     } else {
       setIsFlyOn(false);
       stopRecordLocation();
-      console.log(locationDataRef.current);
+      console.log("seconds:", seconds, seconds.toString());
+      console.log("locationDataRef.current:", locationDataRef.current);
       router.push({
         pathname: "/(tabs)/air/report",
         params: {
@@ -99,6 +100,7 @@ export default function Index() {
       setHasValue(false);
       setIsFlyOn(false);
       setSeconds(0);
+      locationDataRef.current = [];
     }, [])
   );
 

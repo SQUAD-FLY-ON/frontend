@@ -3,14 +3,16 @@ import ReportText from "@/conponents/(tabs)/air/ReportText";
 import SaveModal from "@/conponents/(tabs)/air/SaveModal";
 import { MainGradient } from "@/conponents/LinearGradients/MainGradient";
 import { TLocationData } from "@/types";
-import { useSearchParams } from "expo-router/build/hooks";
+import { useLocalSearchParams, useSearchParams } from "expo-router/build/hooks";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Report() {
-  const params = useSearchParams() as { time?: string; locationData?: string };
+  const params = useLocalSearchParams();
+  // const params = useSearchParams() as { time?: string; locationData?: string };
   const time = params?.time ? Number(params.time) : 0;
-  console.log(time, params?.locationData);
+  const locationData = params?.locationData;
+  // console.log(time, params?.locationData);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const minutes = Math.floor(time / 60);
