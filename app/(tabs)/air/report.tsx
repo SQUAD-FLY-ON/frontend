@@ -2,23 +2,46 @@ import Background from "@/conponents/(tabs)/air/Background";
 import ReportText from "@/conponents/(tabs)/air/ReportText";
 import SaveModal from "@/conponents/(tabs)/air/SaveModal";
 import { MainGradient } from "@/conponents/LinearGradients/MainGradient";
-import { TLocationData } from "@/types";
-import { useLocalSearchParams, useSearchParams } from "expo-router/build/hooks";
+import { useLocalSearchParams } from "expo-router/build/hooks";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import haversine from "haversine-distance";
 
 export default function Report() {
   const params = useLocalSearchParams();
-  // const params = useSearchParams() as { time?: string; locationData?: string };
   const time = params?.time ? Number(params.time) : 0;
-  const locationData = params?.locationData;
-  // console.log(time, params?.locationData);
+  const locationData = params?.locationData
+    ? JSON.parse(params.locationData as string)
+    : [];
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const minutes = Math.floor(time / 60);
   const seconds = time - minutes * 60;
   const minutesStr = minutes < 10 ? "0" + minutes : String(minutes);
   const secondsStr = seconds < 10 ? "0" + seconds : String(seconds);
+
+  // 비행 고도, 비행 거리
+  let maxAltitude = 0;
+  let flightDistance = 0;
+
+  let coordinate = { latitude: 0, longitude: 0 };
+  for (let { lat, lon, alt } of locationData) {
+    if (coordinate.latitude === 0) {
+      coordinate.latitude = Number(lat);
+      coordinate.longitude = Number(lon);
+    } else {
+      flightDistance += haversine(coordinate, {
+        latitude: Number(lat),
+        longitude: Number(lon),
+      });
+      coordinate.latitude = Number(lat);
+      coordinate.longitude = Number(lon);
+    }
+    maxAltitude = Math.max(maxAltitude, Number(alt));
+  }
+
+  // 평균 비행 속도
+  const flightSpeed = flightDistance / seconds;
 
   const onPressSave = () => {
     console.log("Save Modal Open!");
@@ -47,9 +70,21 @@ export default function Report() {
               value: `${minutesStr}분 ${secondsStr}초`,
             }}
           />
-          <ReportText data={{ label: "비행 고도", value: "000m" }} />
-          <ReportText data={{ label: "비행 거리", value: "000m" }} />
-          <ReportText data={{ label: "평균 비행 속도", value: "00m/s" }} />
+          <ReportText
+            data={{ label: "비행 고도", value: `${maxAltitude.toFixed(2)}m` }}
+          />
+          <ReportText
+            data={{
+              label: "비행 거리",
+              value: `${flightDistance.toFixed(2)}m`,
+            }}
+          />
+          <ReportText
+            data={{
+              label: "평균 비행 속도",
+              value: `${flightSpeed.toFixed(2)}m/s`,
+            }}
+          />
         </View>
 
         <Pressable onPress={onPressSave}>
