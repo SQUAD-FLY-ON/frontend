@@ -4,19 +4,27 @@ import SaveModal from "@/conponents/(tabs)/air/SaveModal";
 import { MainGradient } from "@/conponents/LinearGradients/MainGradient";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import haversine from "haversine-distance";
+import { postFlightLogRequest } from "@/types/api";
+import { postFlightLog } from "@/libs/(tabs)/air/flightLogs";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function Report() {
   const params = useLocalSearchParams();
-  const time = params?.time ? Number(params.time) : 0;
+
+  const memberId = useAuthStore((state) => state.memberInfo?.memberId);
+  console.log("memberId:", memberId);
+
+  const airfieldName = params?.airfieldName as string;
+  const flightTime = params?.time ? Number(params.time) : 0;
   const locationData = params?.locationData
     ? JSON.parse(params.locationData as string)
     : [];
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
-  const minutes = Math.floor(time / 60);
-  const seconds = time - minutes * 60;
+  const minutes = Math.floor(flightTime / 60);
+  const seconds = flightTime - minutes * 60;
   const minutesStr = minutes < 10 ? "0" + minutes : String(minutes);
   const secondsStr = seconds < 10 ? "0" + seconds : String(seconds);
 
@@ -27,26 +35,41 @@ export default function Report() {
   let coordinate = { latitude: 0, longitude: 0 };
   for (let { lat, lon, alt } of locationData) {
     if (coordinate.latitude === 0) {
-      coordinate.latitude = Number(lat);
-      coordinate.longitude = Number(lon);
+      coordinate.latitude = lat;
+      coordinate.longitude = lon;
     } else {
       flightDistance += haversine(coordinate, {
-        latitude: Number(lat),
-        longitude: Number(lon),
+        latitude: lat,
+        longitude: lon,
       });
-      coordinate.latitude = Number(lat);
-      coordinate.longitude = Number(lon);
+      coordinate.latitude = lat;
+      coordinate.longitude = lon;
     }
-    maxAltitude = Math.max(maxAltitude, Number(alt));
+    maxAltitude = Math.max(maxAltitude, alt);
   }
 
   // 평균 비행 속도
-  const flightSpeed = flightDistance / seconds;
+  const averageSpeed = flightDistance / seconds;
 
-  const onPressSave = () => {
+  // POST 비행기록
+  async function onPressSave() {
     console.log("Save Modal Open!");
-    setIsModalVisible(true);
-  };
+    const data: postFlightLogRequest = {
+      airfieldName,
+      flightTime,
+      flightDistance,
+      averageSpeed,
+      flightAltitude: maxAltitude,
+      videoUrl: "url", // 삭제 예정?
+      points: locationData,
+    };
+
+    const response = await postFlightLog(memberId as string, data);
+    console.log(response);
+    if (response?.httpStatusCode === 200) {
+      setIsModalVisible(true);
+    }
+  }
 
   return (
     <Background>
@@ -82,7 +105,7 @@ export default function Report() {
           <ReportText
             data={{
               label: "평균 비행 속도",
-              value: `${flightSpeed.toFixed(2)}m/s`,
+              value: `${averageSpeed.toFixed(2)}m/s`,
             }}
           />
         </View>

@@ -25,12 +25,13 @@ export type TLocationData = {
   lat: number;
   lon: number;
   alt: number;
+  time?: string;
 };
 export interface RecommendSpots {
   id: number;
   spotName: string;
   imgUrl: string;
-} 
+}
 
 export interface MemberInfo {
   imgUrl: string | null;

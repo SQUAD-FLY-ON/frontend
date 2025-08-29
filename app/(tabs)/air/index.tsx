@@ -77,11 +77,12 @@ export default function Index() {
     } else {
       setIsFlyOn(false);
       stopRecordLocation();
-      console.log("seconds:", seconds, seconds.toString());
-      console.log("locationDataRef.current:", locationDataRef.current);
+      // console.log("seconds:", seconds, seconds.toString());
+      // console.log("locationDataRef.current:", locationDataRef.current);
       router.push({
         pathname: "/(tabs)/air/report",
         params: {
+          airfieldName: "양평 패러리브 패러글라이딩",
           time: seconds.toString(),
           locationData: JSON.stringify(locationDataRef.current),
         },
