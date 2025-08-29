@@ -1,8 +1,8 @@
 import CustomButton from "@/conponents/CustomButton";
+import Colors from "@/constants/colors";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import UserGroup from "./icons/UserGroup";
-import Colors from "@/constants/colors";
 
 const TravelCard = () => {
   // mock data
@@ -36,7 +36,7 @@ const TravelCard = () => {
           onPress={() => {
             router.push("/schedule");
           }}
-          style={styles.scheduleDetailBtn}
+          containerStyle={styles.scheduleDetailBtn}
           buttonType={"small"}
           text="일정 보기"
           rightArrow

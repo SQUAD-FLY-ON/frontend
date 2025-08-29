@@ -1,8 +1,8 @@
+import Colors from "@/constants/colors";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
 import CustomButton from "../../CustomButton";
 import LikeButton from "../../LikeButton";
-import Colors from "@/constants/colors";
 
 export default function Community() {
   const likeNumber = 132;
@@ -48,7 +48,7 @@ export default function Community() {
           onPress={() => {
             router.push("/community");
           }}
-          style={styles.buttonPosition}
+          containerStyle={styles.buttonPosition}
           text="더보기"
           bottomArrow
           buttonType={"small"}
