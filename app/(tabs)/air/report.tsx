@@ -4,7 +4,7 @@ import SaveModal from "@/conponents/(tabs)/air/SaveModal";
 import { MainGradient } from "@/conponents/LinearGradients/MainGradient";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import { useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import haversine from "haversine-distance";
 import { postFlightLogRequest } from "@/types/api";
 import { postFlightLog } from "@/libs/(tabs)/air/flightLogs";
