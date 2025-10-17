@@ -28,8 +28,9 @@ const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
   );
 
   const onPress = async (name: string, url: string) => {
-    if (name === "비행 기록") {
-      // 비행 기록 상세 페이지로 이동
+    if (name === "프로필 정보 수정하기") {
+      router.navigate("/(tabs)/user/profile");
+    } else if (name === "비행 기록") {
       console.log("비행 기록 클릭");
       router.navigate("/(tabs)/user/my-flight-records");
     } else if (name === "개인정보처리방침") {
@@ -47,7 +48,7 @@ const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
       if (!accessToken) {
         router.replace("/intro");
       }
-    } else if (name === "회원탈퇴") {
+    } else if (name === "회원 탈퇴") {
       useScheduleStore.getState().resetAllStates();
 
       Alert.alert(
@@ -93,7 +94,14 @@ const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
           }
           onPress={() => onPress(v.name, v.link)}
         >
-          <Text style={styles.itemText}>{menuItem[idx].name}</Text>
+          <Text
+            style={[
+              styles.itemText,
+              v.name === "회원 탈퇴" && { color: "#FF5858" },
+            ]}
+          >
+            {menuItem[idx].name}
+          </Text>
         </Pressable>
       ))}
     </View>
