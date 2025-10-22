@@ -1,7 +1,9 @@
 import CustomButton from "@/conponents/CustomButton";
 import FormInput from "@/conponents/FormInput";
 import Header from "@/conponents/Header";
+import { fetchEditProfile } from "@/libs/(tabs)/user/fetchEditProfile";
 import { signUpSchema } from "@/schema/signupSchema";
+import { useAuthStore } from "@/store/useAuthStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
@@ -26,9 +28,20 @@ export default function Profile() {
   });
 
   const router = useRouter();
+
+  const memberId = useAuthStore((state) => state.memberInfo?.memberId);
+  const editProfile = useAuthStore((state) => state.editProfile);
   async function onSubmit(data: z.infer<typeof signUpSchema>) {
+    console.log("[profile] Click onSubmit");
     const { passwordConfirm, ...apiData } = data;
     // 회원 정보 수정 API 연결
+    const response = await fetchEditProfile(memberId as string, apiData);
+    console.log(response);
+    if (response?.httpStatusCode === 200) {
+      editProfile(apiData.nickname);
+      Alert.alert("프로필 수정이 완료되었습니다!");
+      router.back();
+    }
   }
 
   return (
@@ -37,7 +50,7 @@ export default function Profile() {
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 50} // 상단 헤더 높이에 따라 조정
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 50}
       >
         <ScrollView
           style={styles.scrollView}

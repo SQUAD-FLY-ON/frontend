@@ -33,6 +33,7 @@ interface AuthActions {
     credentials: LoginRequest
   ) => Promise<{ success: boolean; error?: any }>;
   logout: () => Promise<void>;
+  editProfile: (nickname: string) => void;
   refreshAccessToken: () => Promise<boolean>; // ✅ 메서드 이름 변경
   clearAuthState: () => void;
   initializeAuth: () => Promise<void>;
@@ -108,7 +109,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         set({ isLoading: true });
         try {
           const refreshToken = get().refreshToken;
-          
+
           if (refreshToken) {
             await apiClient
               .delete("/tokens", { data: { refreshToken } })
@@ -116,7 +117,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                 console.warn("서버 로그아웃 요청 실패:", error);
               });
 
-            queryClient.invalidateQueries({ queryKey: ['mySchedule'] })
+            queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
           }
         } catch (error) {
           console.error("로그아웃 중 오류:", error);
@@ -126,9 +127,19 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         }
       },
 
+      editProfile: (nickname) => {
+        console.log("edit Profile: ", nickname);
+        set((state) => ({
+          memberInfo: state.memberInfo
+            ? { ...state.memberInfo, nickname }
+            : null,
+        }));
+        console.log("프로필 수정 결과:", get().memberInfo);
+      },
+
       refreshAccessToken: async () => {
         // const queryClient = useQueryClient();
-        console.log('aaa');
+        console.log("aaa");
 
         try {
           const refreshToken = get().refreshToken;
@@ -164,9 +175,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         } catch (error: any) {
           console.error("토큰 갱신 실패:", error);
           return false;
-        }
-        finally {
-          queryClient.invalidateQueries({ queryKey: ['mySchedule'] });
+        } finally {
+          queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
           set({ isLoading: false });
         }
       },

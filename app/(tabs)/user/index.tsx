@@ -45,14 +45,11 @@ export default function Index() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  function getValue(key: FlightLevel) {
-    return level[key];
-  }
-
   const getMemberInfo = async () => {
     try {
       const response: ApiResponse<MemberProfileInfo> = await fetchMembers();
       setMemberInfo(response.data);
+      console.log(response.data);
     } catch (err: any) {
       setError(err.message || "에러 발생");
     } finally {
@@ -70,6 +67,10 @@ export default function Index() {
         <Text>로딩중</Text>
       </View>
     );
+  }
+
+  function getValue(key: FlightLevel) {
+    return level[key];
   }
 
   return (
