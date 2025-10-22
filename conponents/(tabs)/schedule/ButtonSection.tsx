@@ -3,12 +3,13 @@ import { Screens } from "@/constants/screens";
 import { fetchAddSchedule } from "@/libs/schedule/fetchAddSchedule";
 import { transformDayDataToSchedules } from "@/libs/schedule/transformDayDataToSchedules";
 import { validateNextStepEnabled } from "@/libs/schedule/validateNextStepEnabled";
+import { useModalStore } from "@/store/useModalStore";
 import { useScheduleStore } from "@/store/useScheduleStore";
 import { AddScheduleRequest } from "@/types/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function ButtonSection() {
   const queryClient = useQueryClient();
@@ -55,62 +56,54 @@ export default function ButtonSection() {
     }
   };
 
-  const addSchedule = () => {
-    Alert.alert(
-      "일정 추가",
-      "수정한 일정을 추가하시겠습니까?",
-      [
-        {
-          text: "아니오",
-          onPress: () => {},
-          style: "cancel",
-        },
-        {
-          text: "예",
-          onPress: async () => {
-            try {
-              // 1. API에 보낼 데이터를 준비합니다.
-              const newSchedule = transformDayDataToSchedules(dayData);
-              const dates = Object.keys(currentMarkedDates);
-              const apiData = {
-                schedules: newSchedule,
-                scheduleStart: dates[0],
-                scheduleEnd: dates[dates.length - 1],
-              };
+  const addSchedule = async () => {
+    const confirmed = await useModalStore.getState().showConfirm({
+      title: "일정 추가",
+      description: "수정한 일정을 추가하시겠습니까?",
+      pressButtonText: "예",
+    });
 
-              // 2. API 요청을 시도합니다.
-              // 이 함수가 성공적으로 완료되면 (에러를 던지지 않으면) 다음 줄로 넘어갑니다.
-              // 만약 서버에서 4xx, 5xx 에러를 반환하면 에러가 발생하여 catch 블록으로 이동합니다.
-              // const response = await fetchAddSchedule(apiData);
-              const response = await mutation.mutateAsync(apiData);
+    if (!confirmed) {
+      return;
+    }
 
-              // 3. 요청이 성공했을 때만 이 코드가 실행됩니다.
-              console.log("일정 추가에 성공했습니다!");
-              if (response.status === 201) {
-                goToNextStep();
-              } else {
-                Alert.alert(
-                  "오류",
-                  "일정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.",
-                  [{ text: "확인" }]
-                );
-              }
-            } catch (error) {
-              // 4. try 블록 안에서 에러가 발생하면 이 코드가 실행됩니다.
-              console.error("일정 추가 중 오류 발생:", error);
+    try {
+      // 1. API에 보낼 데이터를 준비합니다.
+      const newSchedule = transformDayDataToSchedules(dayData);
+      const dates = Object.keys(currentMarkedDates);
+      const apiData = {
+        schedules: newSchedule,
+        scheduleStart: dates[0],
+        scheduleEnd: dates[dates.length - 1],
+      };
 
-              // 사용자에게 에러 상황을 알려줍니다.
-              Alert.alert(
-                "오류",
-                "일정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.",
-                [{ text: "확인" }]
-              );
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+      // 2. API 요청을 시도합니다.
+      const response = await mutation.mutateAsync(apiData);
+
+      // 3. 요청이 성공했을 때만 이 코드가 실행됩니다.
+      console.log("일정 추가에 성공했습니다!");
+      if (response.status === 201) {
+        goToNextStep();
+      } else {
+        await useModalStore.getState().showAlert({
+          title: "오류",
+          description: "일정 저장에 실패했습니다.",
+          description2: "잠시 후 다시 시도해주세요.",
+          isError: true,
+        });
+      }
+    } catch (error) {
+      // 4. try 블록 안에서 에러가 발생하면 이 코드가 실행됩니다.
+      console.error("일정 추가 중 오류 발생:", error);
+
+      // 사용자에게 에러 상황을 알려줍니다.
+      await useModalStore.getState().showAlert({
+        title: "오류",
+        description: "일정 저장에 실패했습니다.",
+        description2: "잠시 후 다시 시도해주세요.",
+        isError: true,
+      });
+    }
   };
   const LeftButton =
     currentStep > 0 ? (

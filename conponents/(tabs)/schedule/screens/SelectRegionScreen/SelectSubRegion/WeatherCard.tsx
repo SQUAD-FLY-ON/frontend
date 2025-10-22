@@ -1,7 +1,10 @@
+import { useScheduleStore } from "@/store/useScheduleStore";
 import { WeatherInfo, WeatherStatus } from "@/types";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useShallow } from "zustand/shallow";
 
 export default function WeatherCard({ weatherData }: { weatherData: WeatherInfo }) {
+  const {settingSigungu, goToNextStep} = useScheduleStore(useShallow(state => ({settingSigungu: state.settingSigungu, goToNextStep: state.goToNextStep})));
   const imageMap: Record<WeatherStatus, any> = {
     '맑음': require('@/assets/images/sunny.png'),
     '구름조금': require('@/assets/images/partlyCloudy.png'),
@@ -12,7 +15,10 @@ export default function WeatherCard({ weatherData }: { weatherData: WeatherInfo 
     '비/눈': require('@/assets/images/sleet.png'),
     '눈': require('@/assets/images/snowy.png'),
   };
-  return (<View style={styles.container}>
+  return (<TouchableOpacity onPress = {() => {
+    settingSigungu(weatherData.sigungu);
+    goToNextStep();
+  }} style={styles.container}>
     <View style={styles.regionContainer}>
       <Text style={styles.regionTitle}>{weatherData.sigungu}</Text>
       {/* <Text style={[styles.regionDescription, { marginTop: 4 }]}>20km</Text>
@@ -44,7 +50,7 @@ export default function WeatherCard({ weatherData }: { weatherData: WeatherInfo 
         );
       }}
     />
-  </View>)
+  </TouchableOpacity>)
 }
 const styles = StyleSheet.create({
   container: {

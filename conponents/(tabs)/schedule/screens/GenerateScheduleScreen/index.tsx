@@ -28,6 +28,7 @@ export default function GenerateScheduleScreen() {
       const apiData = { scheduleStart, scheduleEnd, tourismSpotList: selectedPlaces, paraglidingSpotId: Number(selectedActivities.id)}
       return await fetchGptSchedule(apiData);
     },
+    retry: 30, 
   })
   useEffect(() => {
     if(data && !isLoading) {

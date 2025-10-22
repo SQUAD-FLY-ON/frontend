@@ -4,18 +4,17 @@ import MyStatusSection from "@/conponents/(tabs)/index/MyStatusSection";
 import HomeLinearBackground from "@/conponents/(tabs)/index/MyStatusSection/LinearBackground/HomeLinearBackground";
 import RecommendSection from "@/conponents/(tabs)/index/RecommendSection";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useEffect } from "react";
+import { useModalStore } from "@/store/useModalStore";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const refreshToken = useAuthStore(state => state.refreshToken);
+  const showAlert = useModalStore((state) => state.showAlert);
   const fetch = async () => {
-const response = await apiClient.post('/tokens', { refreshToken });
+    const response = await apiClient.post('/tokens', { refreshToken });
     console.log(response);
   }
-  useEffect(() => {
-    fetch();
-  }, [])
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View>

@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/react/shallow";
 
-export default function ActivityCard({data}: {data:Spot}) {
+export default function ActivityCard({ data }: { data: Spot }) {
   const { selectedActivities, setSelectedActivities } = useScheduleStore(
     useShallow(state => ({
       selectedActivities: state.selectedActivities,
@@ -25,7 +25,7 @@ export default function ActivityCard({data}: {data:Spot}) {
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.container, { backgroundColor: selected ? '#ECF4FE' : '#ffffff' }]}
+      style={[styles.container, selected ? styles.activated : null, { backgroundColor: selected ? '#ECF4FE' : '#ffffff' }]}
     >
       <Image
         style={styles.image}
@@ -43,7 +43,7 @@ export default function ActivityCard({data}: {data:Spot}) {
         buttonType="small"
         text="자세히보기"
         textStyle={{ lineHeight: 14, fontSize: 14 }}
-        onPress={() => { }}
+        onPress={() => { router.push(`/explore/detail/${data.id}`) }}
       />
     </Pressable>
   );
@@ -54,9 +54,12 @@ const styles = StyleSheet.create({
     padding: 8,
     flexDirection: 'row',
     gap: 12,
-    borderColor: '#93BEF9',
-    borderWidth: 1,
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ffffff',
+  },
+  activated: {
+    borderColor: '#93BEF9',
   },
   image: {
     width: 88,
@@ -65,8 +68,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     gap: 4,
-    flex:1,
-    flexShrink:1,
+    flex: 1,
+    flexShrink: 1,
   },
   title: {
     // heading4

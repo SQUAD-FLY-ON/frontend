@@ -1,14 +1,17 @@
+import CustomButton from "@/conponents/CustomButton";
+import { useState } from "react";
 import {
   Alert,
   Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import CalanderModal from "./CalanderModal";
 import LinkIcon from "./icons/LinkIcon";
-import PhoneIcon from "./icons/PhoneIcon";
 import MapPinIcon from "./icons/MapPinIcon";
+import PhoneIcon from "./icons/PhoneIcon";
 
 const SpotCard = ({
   address,
@@ -19,6 +22,7 @@ const SpotCard = ({
   phoneNumber: string;
   webURL: string;
 }) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const openSite = async () => {
     const supported = await Linking.canOpenURL(webURL);
 
@@ -32,6 +36,7 @@ const SpotCard = ({
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>체험장 정보</Text>
+        <CustomButton text={"일정 생성하기"} buttonType="small" onPress={() => { setIsModalVisible(prev => !prev) }} />
       </View>
       <View style={styles.contentsContainer}>
         <View style={styles.contents}>
@@ -51,6 +56,7 @@ const SpotCard = ({
           </TouchableOpacity>
         </View>
       </View>
+      <CalanderModal isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}/>
     </View>
   );
 };
@@ -68,6 +74,9 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     borderBottomColor: "rgba(208, 208, 208, 0.50)",
     borderBottomWidth: 2,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontFamily: "Pretendard-Bold",
@@ -91,4 +100,5 @@ const styles = StyleSheet.create({
     color: "#3A88F4",
     textDecorationLine: "underline",
   },
+  
 });

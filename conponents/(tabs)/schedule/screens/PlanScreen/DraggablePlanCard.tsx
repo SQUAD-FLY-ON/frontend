@@ -13,104 +13,120 @@ const DraggablePlanCard = ({
   onDragMove,
   onDragEnd,
   isDragging,
-  isAutoScrollingRef,
-  autoScrollDirectionRef,
-  scrollViewLayoutRef,
-  autoScrollOffsetYRef,
 }: {
   item: Plan;
   index: number;
   dayId: string;
   isLast: boolean;
-  onDragStart: (item: Plan, dayId: string, index: number, cardLayout: { x: number; y: number; width: number; height: number }) => void;
-  onDragMove: (x: number, y: number, gestureState: PanResponderGestureState, evt: any) => void;
-  onDragEnd: (x: number, y: number) => void;
+  onDragStart: (item: Plan, dayId: string, index: number, cardLayout: { x: number; y: number; width: number; height: number }, initialPosition: { x: number; y: number }) => void;
+  onDragMove: (x: number, y: number, gestureState: PanResponderGestureState, evt: any, initialPosition: { x: number; y: number }) => void;
+  onDragEnd: ( y: number) => void;
   isDragging: boolean;
-  isAutoScrollingRef: React.MutableRefObject<boolean>;
-  autoScrollDirectionRef: React.MutableRefObject<'up' | 'down' | null>;
-  scrollViewLayoutRef: React.MutableRefObject<{ y: number; height: number }>;
-  autoScrollOffsetYRef: React.RefObject<number>;
 }) => {
-  console.log(item.type);
-  const pan = useRef(new Animated.ValueXY()).current;
   const cardOpacity = useRef(new Animated.Value(1)).current;
-  const floatingCardOpacity = useRef(new Animated.Value(0)).current;
   const [componentHeight, setComponentHeight] = useState(0);
   const [isPanEnabled, setIsPanEnabled] = useState(false);
-  const cardRef = useRef<View>(null);  
+  const cardRef = useRef<View>(null);
   // 기존 자동스크롤 관련 refs
   const isDraggingRef = useRef(false);
   const localAutoScrollingRef = useRef(false);
   const cardInitialPosition = useRef({ x: 0, y: 0 });
-  
 
-  
-const panResponder = PanResponder.create({
+
+
+  const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => isPanEnabled,
     onMoveShouldSetPanResponder: () => isPanEnabled,
 
     onPanResponderGrant: (evt, gestureState) => {
       isDraggingRef.current = true;
 
-      // 카드 초기 위치 저장 (화면 절대 좌표)
+      // 1. 터치 시작점 저장
       cardInitialPosition.current = {
         x: evt.nativeEvent.pageX,
         y: evt.nativeEvent.pageY
       };
-      // 카드 위치 측정 - 콜백으로 처리
-      if (cardRef.current) {
-        cardRef.current.measureInWindow((x, y, width, height) => {
-          const cardLayout = { x, y, width, height };
-          onDragStart(item, dayId, index, cardLayout);
-        });
-      } else {
-      
-        // measureInWindow가 실패한 경우 기본값으로 처리
-        const defaultLayout = { x: 0, y: 0, width: 200, height: 100 };
-        onDragStart(item, dayId, index, defaultLayout);
-      }
 
-      // 원본 카드 흐리게 처리
+      // 2. 즉시 시각 피드백 시작 (UX 개선)
       Animated.timing(cardOpacity, {
         toValue: 0.3,
         duration: 150,
-        useNativeDriver: false,
+        useNativeDriver: true, // ✅ 네이티브 드라이버 사용
       }).start();
 
-      pan.setOffset({
-        x: pan.x._value,
-        y: pan.y._value,
-      });
-      pan.setValue({ x: 0, y: 0 });
+      // 3. 카드 측정 (비동기이지만 필수)
+      if (cardRef.current) {
+        cardRef.current.measureInWindow((x, y, width, height) => {
+          // 빠르게 드래그하다가 이미 끝났으면 무시
+          if (!isDraggingRef.current) return;
+
+          const cardLayout = { x, y, width, height };
+          onDragStart(
+            item,
+            dayId,
+            index,
+            cardLayout,
+            cardInitialPosition.current
+          );
+        });
+      } else {
+        // fallback: 측정 실패 시에도 드래그 시작
+        const defaultLayout = {
+          x: evt.nativeEvent.pageX,
+          y: evt.nativeEvent.pageY,
+          width: 200,
+          height: 100
+        };
+        onDragStart(item, dayId, index, defaultLayout, cardInitialPosition.current);
+      }
+
+      // ⚠️ pan.setOffset/setValue 제거
+      // → 이유: 절대 좌표 시스템(pageX/Y)을 사용하므로 불필요
     },
 
     onPanResponderMove: (evt, gestureState) => {
       if (!isDraggingRef.current) return;
-      
-      onDragMove(evt.nativeEvent.pageX, evt.nativeEvent.pageY,gestureState, evt);
+
+      // ✅ 절대 좌표 전달 (일관성 유지)
+      onDragMove(
+        evt.nativeEvent.pageX,
+        evt.nativeEvent.pageY,
+        gestureState,
+        evt,
+        cardInitialPosition.current
+      );
     },
 
-    onPanResponderRelease: (evt, gestureState) => {
+    onPanResponderRelease: (evt) => {
+      // 1. 상태 초기화
       isDraggingRef.current = false;
       localAutoScrollingRef.current = false;
 
-      // 화면 절대 좌표로 드래그 종료 위치 전달
-      onDragEnd(evt.nativeEvent.pageX, evt.nativeEvent.pageY);
+      // 2. 드롭 처리
+      onDragEnd(evt.nativeEvent.pageY);
 
-      // 원본 카드 복원
-      pan.flattenOffset();
+      // 3. 애니메이션 복원
       Animated.parallel([
-        Animated.timing(pan, {
-          toValue: { x: 0, y: 0 },
-          duration: 200,
-          useNativeDriver: false,
-        }),
         Animated.timing(cardOpacity, {
           toValue: 1,
           duration: 200,
-          useNativeDriver: false,
+          useNativeDriver: true, // ✅ 네이티브 드라이버
         }),
+        // ✅ pan 애니메이션 제거 (사용 안 하므로)
       ]).start();
+    },
+
+    // ✅ 추가: 드래그 취소 처리
+    onPanResponderTerminate: (evt, gestureState) => {
+      // 시스템에 의해 드래그가 중단된 경우 (전화 등)
+      isDraggingRef.current = false;
+      localAutoScrollingRef.current = false;
+
+      Animated.timing(cardOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
     },
   });
   const handleLayout = (event: any) => {
@@ -118,7 +134,7 @@ const panResponder = PanResponder.create({
     setComponentHeight(height);
   };
 
-   return (
+  return (
     <Animated.View
       ref={cardRef}
       style={[
@@ -141,14 +157,14 @@ const panResponder = PanResponder.create({
         <View style={styles.rightContainer} onLayout={handleLayout}>
           <Text style={styles.type}>{typeToLabel[item?.type]}</Text>
           <View style={styles.card}>
-            {item?.image? (
-              <Image style = {styles.imagePlaceholder} source={{ uri: item?.image }} />
-            ): (
+            {item?.image ? (
+              <Image style={styles.imagePlaceholder} source={{ uri: item?.image }} />
+            ) : (
               <View style={styles.imagePlaceholder}>
-              <Text style={styles.imageText}>IMG</Text>
-            </View>
+                <Text style={styles.imageText}>IMG</Text>
+              </View>
             )}
-            
+
             <View style={styles.cardTextContainer}>
               <Text style={styles.place} numberOfLines={1}>
                 {item?.place}

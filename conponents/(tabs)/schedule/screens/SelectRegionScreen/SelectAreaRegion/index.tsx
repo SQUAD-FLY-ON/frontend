@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function SelectAreaRegion() {
-  const [selectedLocalRegion, setSelectedLocalRegion] = useState<selectedRegion>({ key: '' ,name: '', coordinates: [] });
+  const [selectedLocalRegion, setSelectedLocalRegion] = useState<selectedRegion>({ key: '' ,name: '', coordinates: [], sigungu: '' });
   const setSelectedRegion = useScheduleStore(state => state.setSelectedRegion);
   useEffect(() => {
     setSelectedRegion(selectedLocalRegion);

@@ -2,7 +2,6 @@ import { apiClient } from "@/api/apiClient";
 import { queryClient } from "@/app/_layout";
 import { AuthResponse, MemberInfo } from "@/types";
 import { ApiResponse, LoginRequest } from "@/types/api";
-import { useQueryClient } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -66,6 +65,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             isLoading: false,
           });
           return;
+        } else {
+          get().clearAuthState();
+          return;
         }
       },
       login: async (credentials) => {
@@ -104,8 +106,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       },
 
       logout: async () => {
-        const queryClient = useQueryClient();
-
         set({ isLoading: true });
         try {
           const refreshToken = get().refreshToken;
@@ -139,7 +139,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
       refreshAccessToken: async () => {
         // const queryClient = useQueryClient();
-        console.log("aaa");
 
         try {
           const refreshToken = get().refreshToken;
@@ -147,13 +146,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             get().clearAuthState();
             return false;
           }
-          console.log(refreshToken);
           const response: ApiResponse<AuthResponse> = await apiClient.post(
             "/tokens",
             {
               refreshToken,
             }
           );
+          console.log(response);
           if (response.httpStatusCode === 201 && response.data) {
             const {
               accessToken,
@@ -167,17 +166,20 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               refreshToken: newRefreshToken || refreshToken,
               memberInfo: memberInfo || get().memberInfo,
             });
-
+            console.log("aaaa");
             return true;
           } else {
+            console.log("bbbb");
             return false;
           }
         } catch (error: any) {
           console.error("토큰 갱신 실패:", error);
+          get().clearAuthState();
           return false;
         } finally {
           queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
-          set({ isLoading: false });
+          set({ isLoading: false, isInitialized: true });
+          console.log("isLoading false and isInitialized");
         }
       },
       clearAuthState: () => {

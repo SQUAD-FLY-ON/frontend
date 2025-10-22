@@ -1,5 +1,4 @@
 // /components/schedule/PlaceList.tsx
-import { calculatePolygonCentroid } from "@/libs/regionSelectMap";
 import { fetchAttractions } from "@/libs/schedule/fetchAttractions";
 import { fetchRestaurants } from "@/libs/schedule/fetchRestaurants";
 import { useScheduleStore } from "@/store/useScheduleStore";
@@ -20,16 +19,15 @@ export default function PlaceList({
   title, 
   description, 
 }: PlaceListProps) {
-   const { selectedRegion, refreshSelectedPlaces } = useScheduleStore(
+   const {  selectedActivities} = useScheduleStore(
     useShallow(state => ({ 
-      selectedRegion: state.selectedRegion, 
+      selectedActivities: state.selectedActivities, 
       refreshSelectedPlaces: state.refreshSelectedPlaces 
     }))
   );
 
   const filters = [{key: 'restaurant', text: '음식점'}, {key: 'attractions', text:'관광지'}];
   const [currentFilter, setCurrentFilter] = useState('restaurant');
-  const center = calculatePolygonCentroid(selectedRegion.coordinates);
   const pageSize = 10;
   const { 
     data, 
@@ -39,32 +37,33 @@ export default function PlaceList({
     isFetchingNextPage,
     error 
   } = useInfiniteQuery({
-    queryKey: [currentFilter, selectedRegion.key],
+    queryKey: [currentFilter, selectedActivities.latitude, selectedActivities.longitude],
     queryFn: async ({ pageParam = 0 }) => {
       // if (pageParam === 0) {
       //   refreshSelectedPlaces();
       // }
-      if(!center?.latitude || !center?.longitude ) {
+      if(!selectedActivities.latitude || !selectedActivities.longitude ) {
         return;
       }
+      console.log(pageParam);
       if (currentFilter === 'restaurant') {
         return await fetchRestaurants({ 
-        lat: center?.latitude, 
-        lon: center?.longitude, 
+        lat: selectedActivities?.latitude, 
+        lon: selectedActivities?.longitude, 
         page: pageParam,
         size: pageSize, 
         })
       } else {
         return await fetchAttractions({ 
-        lat: center?.latitude, 
-        lon: center?.longitude, 
+        lat: selectedActivities?.latitude, 
+        lon: selectedActivities?.longitude, 
         page: pageParam,
         size: pageSize, 
         })
       }
     },
-    enabled: !!center,
-    initialPageParam: 1,
+    enabled: !!selectedActivities,
+    initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       console.log(lastPage);
       // // lastPage가 비어있거나 설정된 페이지 크기보다 작으면 다음 페이지 없음

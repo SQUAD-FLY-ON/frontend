@@ -119,6 +119,7 @@ export type RegionName =
 export type selectedRegion = {
   key: "" | RegionCode;
   name: "" | RegionName;
+  sigungu?:string;
   coordinates: LatLng[];
 };
 export type ScreenKey =

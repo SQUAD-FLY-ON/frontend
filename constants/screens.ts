@@ -15,7 +15,7 @@ export const Screens: ScreenItem[] = [
 export const typeToLabel: Record<string, string> = {
   ATTRACTION_SPOT: '관광지로 이동',
   PARAGLIDING_SPOT: '체험장으로 이동',
-  RESTAURANT: '음식점으로 이동',
-  ACCOMMODATION: '숙소로 이동',
+  RESTAURANT_SPOT: '음식점으로 이동',
+  ACCOMMODATION_SPOT: '숙소로 이동',
   CAFE: '카페로 이동',
 };

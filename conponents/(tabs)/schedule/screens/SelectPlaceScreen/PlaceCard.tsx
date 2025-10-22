@@ -23,7 +23,7 @@ export default function PlaceCard({ data }: { data: TourismItem }) {
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.container, { backgroundColor: selected ? '#ECF4FE' : '#ffffff' }]}
+      style={[styles.container, selected ? styles.activated : null, { backgroundColor: selected ? '#ECF4FE' : '#ffffff' }]}
     >
       <Image
         style={styles.image}
@@ -57,10 +57,14 @@ const styles = StyleSheet.create({
     padding: 8,
     flexDirection: 'row',
     gap: 12,
-    borderColor: '#93BEF9',
+    borderColor: '#ffffff',
     borderWidth: 1,
     borderRadius: 12,
     width: '100%',
+  },
+  activated: {
+    borderColor: '#93BEF9',
+    borderWidth: 1,
   },
   image: {
     width: 88,

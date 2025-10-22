@@ -11,8 +11,8 @@ import WeatherCard from "./WeatherCard";
 export default function SelectSubRegion() {
   const {selectedRegion, currentMarkedDates} = useScheduleStore(useShallow(state => ({ selectedRegion: state.selectedRegion, currentMarkedDates: state.currentMarkedDates })));
   const dates = Object.keys(currentMarkedDates);
-  const tripStart = dates[0].replaceAll('-', '');
-  const tripEnd = dates[dates.length - 1].replaceAll('-', '');
+  const tripStart = dates[0]?.replaceAll('-', '');
+  const tripEnd = dates[dates.length - 1]?.replaceAll('-', '');
   const goToPrevStep = useScheduleStore(state => state.goToPrevStep);
   useEffect(() => {
     if (selectedRegion.key === '' && selectedRegion.name === '') {

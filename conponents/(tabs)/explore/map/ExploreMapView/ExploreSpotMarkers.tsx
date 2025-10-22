@@ -1,4 +1,4 @@
-import { fetchSpotMarkers } from "@/libs/(tabs)/explore/map/fetchSpotMarkers";
+import { fetchSpots } from "@/libs/fetchSpots";
 import { calculatePolygonCentroid } from "@/libs/map";
 import useExploreStore from "@/store/exploreStore";
 import { MarkerSpotApiRequest } from "@/types/api";
@@ -18,7 +18,7 @@ export default function ExploreSpotMarkers() {
     centerLatitude: center.latitude,
     centerLongitude: center.longitude
   }
-  const query = useQuery({ queryKey: ['spotMarkers', selectedRegion.name], queryFn: async () => await fetchSpotMarkers({sido: selectedRegion.name!}), enabled: currentLocation !== null })
+  const query = useQuery({ queryKey: ['spots', selectedRegion.name], queryFn: async () => await fetchSpots({sido: selectedRegion.name!}), enabled: currentLocation !== null })
   return (<>
     {query.data?.map((marker) => (
       <Marker

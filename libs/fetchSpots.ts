@@ -10,7 +10,7 @@ interface MarkerSpotResponse {
  * 패러글라이딩 스팟 목록 조회 API
  * @returns 성공 시 Place[] 반환, 실패 시 빈 배열 반환
  */
-export async function fetchSpotMarkers(request: SpotRequest): Promise<Spot[]> {
+export async function fetchSpots(request: SpotRequest): Promise<Spot[]> {
   try {
     const response: ApiResponse<MarkerSpotResponse> = await apiClient.get("/paragliding-spot", {
       params: request,

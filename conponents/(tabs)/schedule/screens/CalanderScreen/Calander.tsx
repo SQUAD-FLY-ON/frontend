@@ -3,8 +3,12 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useShallow } from 'zustand/react/shallow';
+interface YourComponentProps {
+  dates: Record<string, any>;
+  setDates: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+}
 
-const CustomCalendar = () => {
+const CustomCalendar = ({ dates, setDates }: YourComponentProps) => {
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
   const { currentMarkedDates, setCurrentMarkedDates } = useScheduleStore(
@@ -17,13 +21,13 @@ const CustomCalendar = () => {
   const resetDate = () => {
     setStartDate(null);
     setEndDate(null);
-    setCurrentMarkedDates({});
+    setDates({});
   }
 
   const setOneStartDate = (selectedDate: string) => {
     setStartDate(selectedDate);
     setEndDate(null);
-    setCurrentMarkedDates({
+    setDates({
       [selectedDate]: {
         startingDay: true,
         endingDay: true,
@@ -59,7 +63,7 @@ const CustomCalendar = () => {
     });
 
     setEndDate(selectedDate);
-    setCurrentMarkedDates(newMarked);
+    setDates(newMarked);
   }
 
   const getDatesBetween = (start: string, end: string) => {
@@ -82,11 +86,11 @@ const CustomCalendar = () => {
 
   const handleDayPress = (day: DateData) => {
     const selectedDate = day.dateString;
-        if (startDate && !endDate && selectedDate === startDate) {
+    if (startDate && !endDate && selectedDate === startDate) {
       resetDate();
       return;
     }
-    
+
     if (!startDate || (startDate && endDate)) {
       setOneStartDate(selectedDate);
     }
@@ -97,13 +101,13 @@ const CustomCalendar = () => {
 
   return (
     <Calendar
-      style={{
+      style={[{
         borderWidth: 1,
-        borderColor: 'gray',
-      }}
+        borderColor: 'gray'
+      }]}
       markingType="period"
       current={dayjs().format('YYYY-MM-DD')}
-      markedDates={currentMarkedDates}
+      markedDates={dates}
       onDayPress={handleDayPress}
       theme={{
         selectedDayBackgroundColor: '#3A88F4',

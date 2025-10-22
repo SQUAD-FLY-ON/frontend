@@ -63,10 +63,8 @@ export interface TourismRequest {
 }
 
 export interface SpotRequest {
-  centerLatitude: number;
-  centerLongitude: number;
-  cornerLatitude: number;
-  cornerLongitude: number;
+  sido: "" | RegionName;
+  sigungu?: string;
 }
 
 export interface GptScheduleRequest {

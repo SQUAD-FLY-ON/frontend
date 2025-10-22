@@ -10,7 +10,7 @@ import { ScheduleState } from '@/store/useScheduleStore'; // 스토어의 State 
  * @returns 활성화 여부 (boolean)
  */
 export const validateNextStepEnabled = (state: ScheduleState): boolean => {
-  const { currentStep, currentMarkedDates, selectedRegion, selectedPlaces } = state;
+  const { currentStep, currentMarkedDates, selectedRegion, selectedActivities, selectedPlaces} = state;
   const currentKey = Screens[currentStep].key;
 
   switch (currentKey) {
@@ -22,8 +22,10 @@ export const validateNextStepEnabled = (state: ScheduleState): boolean => {
       return selectedRegion.key !== '';
 
     case 'SelectActivity':
+      return selectedActivities.id !== '';
+
     case 'SelectPlace':
-      return true;
+      return selectedPlaces.length>0;
 
     default:
       return true; // 유효성 검사가 필요 없는 단계는 통과

@@ -1,6 +1,7 @@
 import { Screens } from "@/constants/screens";
 import { useScheduleStore } from "@/store/useScheduleStore";
 import { ScreenKey } from "@/types";
+import { useShallow } from "zustand/shallow";
 import CalanderScreen from "./CalanderScreen";
 import CompleteScreen from "./CompleteScreen";
 import GenerateScheduleScreen from "./GenerateScheduleScreen";
@@ -22,8 +23,9 @@ const ScreenMap: Record<ScreenKey, React.ComponentType<any>> = {
   "Complete": CompleteScreen,
 };
 export default function Screen() {
-  const currentStep = useScheduleStore(state => state.currentStep);
+  const { currentStep }  = useScheduleStore(useShallow(state => ({currentStep: state.currentStep})));
   const currentKey = Screens[currentStep].key as keyof typeof ScreenMap;
+
   const ComponentToRender = ScreenMap[currentKey];
   return (<>
     <ComponentToRender/>

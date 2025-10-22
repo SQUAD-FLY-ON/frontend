@@ -1,4 +1,4 @@
-import { fetchSpotMarkers } from "@/libs/fetchSpots";
+import { fetchSpots } from "@/libs/fetchSpots";
 import { useScheduleStore } from "@/store/useScheduleStore";
 import { useQuery } from "@tanstack/react-query";
 import { useShallow } from "zustand/shallow";
@@ -13,9 +13,9 @@ export default function SelectActivityScreen() {
   useScheduleStore(useShallow(state => ({ selectedRegion: state.selectedRegion, refreshSelectedPlaces: state.refreshSelectedPlaces })));
   console.log(selectedRegion.name);
   const { data } = useQuery({
-    queryKey: ['spotMarkers', selectedRegion.name], queryFn: async () => {
+    queryKey: ['spots', selectedRegion.name, selectedRegion.sigungu], queryFn: async () => {
       refreshSelectedPlaces();
-      return await fetchSpotMarkers({ sido: selectedRegion.name })
+      return await fetchSpots(selectedRegion.sigungu !== '' ? { sido: selectedRegion.name,  sigungu:selectedRegion.sigungu }: {sido: selectedRegion.name})
     },
     // enabled: currentLocation !== null
   })
