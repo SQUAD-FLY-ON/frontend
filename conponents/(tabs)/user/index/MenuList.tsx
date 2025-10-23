@@ -67,6 +67,7 @@ const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
   };
 
   const onPress = async (name: string, url: string) => {
+    console.log(name);
     if (name === "프로필 정보 수정하기") {
       router.navigate("/(tabs)/user/profile");
     } else if (name === "비행 기록") {
@@ -85,7 +86,8 @@ const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
       }
     } else if (name === "로그아웃") {
       await handleLogout();
-    } else if (name === "회원탈퇴") {
+    } else if (name === "회원 탈퇴") {
+      console.log("회원 탈퇴");
       await handleWithdrawal();
     }
   };
