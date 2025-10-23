@@ -31,7 +31,6 @@ const queryClient = new QueryClient({
   });
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isInitialized = useAuthStore((state) => state.isInitialized);
-  const isLoading = useAuthStore((state) => state.isLoading);
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
   // 앱 시작 시 인증 상태 초기화
   useEffect(() => {
@@ -41,13 +40,13 @@ const queryClient = new QueryClient({
   }, [fontsLoaded, isInitialized, initializeAuth]);
   console.log(isAuthenticated);
   // 폰트 로딩 또는 인증 초기화가 완료되지 않은 경우 로딩 화면 표시
-  if (isLoading || !isInitialized) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
+  if (!fontsLoaded || !isInitialized) {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+}
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>

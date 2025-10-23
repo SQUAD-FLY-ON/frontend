@@ -21,6 +21,7 @@ const storage = {
 interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
+  isInitializing: boolean;
   isInitialized: boolean;
   memberInfo: MemberInfo | null;
   accessToken: string | null;
@@ -30,7 +31,7 @@ interface AuthState {
 interface AuthActions {
   login: (
     credentials: LoginRequest
-  ) => Promise<{ success: boolean; error?: any }>;
+  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   editProfile: (nickname: string) => void;
   refreshAccessToken: () => Promise<boolean>; // ✅ 메서드 이름 변경
@@ -42,7 +43,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
   persist(
     (set, get) => ({
       isAuthenticated: false,
-      isLoading: false,
+      isLoading: false, // 일반 로딩 (로그인, 로그아웃 등)
+      isInitializing: false, // 앱 초기화 로딩
       isInitialized: false,
       memberInfo: null,
       accessToken: null,
@@ -54,15 +56,15 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           return;
         }
 
-        set({ isLoading: true });
+        set({ isInitializing: true });
         // 액세스 토큰 유효성 검사 (예: 사용자 정보 요청)
         const userResponse = await apiClient.get("/members");
         if (userResponse.httpStatusCode === 200) {
           set({
             isAuthenticated: true,
-            memberInfo: userResponse.data || get().memberInfo,
+            // memberInfo: userResponse.data || get().memberInfo,
             isInitialized: true,
-            isLoading: false,
+            isInitializing: false,
           });
           return;
         } else {
@@ -77,7 +79,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             "/auth",
             credentials
           );
-          console.log(response.data, response, response.httpStatusCode);
           if (response.httpStatusCode === 200 && response.data) {
             const { accessToken, refreshToken, memberInfo } = response.data;
             set({
@@ -88,17 +89,20 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             });
 
             return { success: true };
-          } else {
-            return {
-              success: false,
-              error: response.httpStatusMessage || "Login failed",
-            };
           }
+          // } else {
+          //   console.log(response?.data.serverErrorMessage);
+          //   return {
+          //     success: false,
+          //     error: response.httpStatusMessage || "Login failed",
+          //   };
+          // }
         } catch (error: any) {
           return {
             success: false,
             error:
-              error.response?.data?.message || error.message || "Network error",
+              error.response?.data?.serverErrorMessage ||
+              "로그인에 실패했습니다.",
           };
         } finally {
           set({ isLoading: false });
@@ -116,7 +120,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               .catch((error) => {
                 console.warn("서버 로그아웃 요청 실패:", error);
               });
-
             queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
           }
         } catch (error) {
@@ -154,11 +157,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           );
           console.log(response);
           if (response.httpStatusCode === 201 && response.data) {
-            const {
-              accessToken,
-              refreshToken: newRefreshToken,
-              memberInfo,
-            } = response.data;
+            const { accessToken } = response.data;
 
             set({
               isAuthenticated: true,
@@ -166,7 +165,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               refreshToken: newRefreshToken || refreshToken,
               memberInfo: memberInfo || get().memberInfo,
             });
-            console.log("aaaa");
             return true;
           } else {
             console.log("bbbb");
@@ -178,7 +176,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           return false;
         } finally {
           queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
-          set({ isLoading: false, isInitialized: true });
+          set({ isInitializing: false, isInitialized: true });
           console.log("isLoading false and isInitialized");
         }
       },

@@ -1,5 +1,5 @@
 import { typeToLabel } from "@/constants/screens";
-import { ScheduleItem } from "@/types";
+import { TourismSpot } from "@/types";
 import { useState } from "react";
 import { Image, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -9,7 +9,7 @@ export default function PlanCard({
   isLast = false 
 }: { 
   index: number; 
-  item: ScheduleItem; 
+  item: TourismSpot; 
   isLast?: boolean;
 }) {
 

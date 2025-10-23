@@ -3,37 +3,36 @@ import Dropdown from "@/conponents/(tabs)/air/Dropdown";
 import FlightRecordButton from "@/conponents/(tabs)/air/FlightRecordButton";
 import Stopwatch from "@/conponents/(tabs)/air/Stopwatch";
 import { useTourSchedule } from "@/hooks/useTourSchedule";
-import extractTourList from "@/libs/(tabs)/air/extractTourList";
-import { Option, TLocationData } from "@/types";
+import { ITrackData, TLocationData } from "@/types";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
 
-  const { isScheduleLoading, isScheduleError, schedule } = useTourSchedule();
+  const { schedule } = useTourSchedule();
 
   const [ok, setOk] = useState<boolean>();
-  const locationDataRef = useRef<TLocationData[]>([]);
+  const locationDataRef = useRef<ITrackData[]>([]);
   const intervalRef = useRef<null | number>(null);
-
-  const [tourList, setTourList] = useState<Option[]>([]);
 
   const [value, setValue] = useState<string | null>(null);
   const [hasValue, setHasValue] = useState(false);
   const [isFlyOn, setIsFlyOn] = useState(false);
   const [seconds, setSeconds] = useState<number>(0);
 
-  useEffect(() => {
-    if (!isScheduleError && !isScheduleLoading && schedule) {
-      const tourList = extractTourList(schedule);
+  const tourList = useMemo(() => {
+    if (!schedule) return [];
 
-      setTourList(tourList);
-    }
-  }, [schedule, isScheduleLoading, isScheduleError]);
+    return schedule.map((v) => ({
+      label: `${v.tourName} 여행 (${v.scheduleStart} ~ ${v.scheduleEnd})`,
+      value: v.tourName,
+    }));
+  }, [schedule]);
+
   const ask = async () => {
     try {
       const { granted } = await Location.requestForegroundPermissionsAsync();
@@ -43,9 +42,17 @@ export default function Index() {
       console.error("현재 위치를 가져오는 중 오류 발생: ", err);
     }
   };
+  useEffect(() => {
+    console.log("[index] ask");
+    ask();
+  }, []);
 
-  const saveLocationData = (lat: number, lon: number, alt: number) => {
-    locationDataRef.current.push({ lat, lon, alt });
+  const saveLocationData = (
+    latitude: number,
+    longitude: number,
+    altitude: number
+  ) => {
+    locationDataRef.current.push({ latitude, longitude, altitude });
     // console.log(locationDataRef.current);
   };
 
@@ -101,28 +108,6 @@ export default function Index() {
       });
     }
   };
-
-  // const getTourList = async () => {
-  //   try {
-  //     const response = await extractTourNames();
-
-  //     // 중복 제거 후 옵션 생성
-  //     const uniqueNames = [...new Set(response)];
-  //     const options: Option[] = uniqueNames.map((name) => ({
-  //       label: name,
-  //       value: name,
-  //     }));
-
-  //     setTourList(options);
-  //     console.log("투어리스트:", options);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  useEffect(() => {
-    ask();
-  }, []);
 
   useFocusEffect(
     useCallback(() => {

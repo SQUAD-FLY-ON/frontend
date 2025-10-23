@@ -3,6 +3,9 @@ import {
   fetchSpotDetail,
   SpotDetailResponse,
 } from "@/libs/(tabs)/explore/detail/fetchSpotDetail";
+import { fetchSpotTrack } from "@/libs/(tabs)/explore/detail/fetchSpotTrack";
+import { useAuthStore } from "@/store/useAuthStore";
+import { ITrackData } from "@/types";
 import Constants from "expo-constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
@@ -20,36 +23,12 @@ import WebView, {
   WebView as WebViewType,
 } from "react-native-webview";
 
-interface IFlightPath {
-  lat: number;
-  lon: number;
-  alt: number;
-}
-
-const flightPath = [
-  { lat: 37.5, lon: 128.2, alt: 1000 },
-  { lat: 37.51, lon: 128.21, alt: 900 },
-  { lat: 37.52, lon: 128.22, alt: 700 },
-  { lat: 37.53, lon: 128.23, alt: 300 },
-];
-
 export default function Detail() {
   const { id } = useLocalSearchParams();
 
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [hasSentFlight, setHasSentFlight] = useState<boolean>(false);
-
   const [spotInfo, setSpotInfo] = useState<SpotDetailResponse | null>(null);
-
-  const spotDetail = async () => {
-    const response = await fetchSpotDetail(id as string);
-    if (response !== null) {
-      setSpotInfo(response);
-    }
-  };
-  useEffect(() => {
-    spotDetail();
-  }, [id]);
+  const [track, setTrack] = useState<ITrackData[] | null>(null);
 
   const webviewRef = useRef<WebViewType>(null);
 
@@ -67,46 +46,104 @@ export default function Detail() {
     true;
   `;
 
-  const sendFlightData = (flightPath: IFlightPath[]) => {
-    const message = {
-      type: "SET_FLIGHT",
-      flightPath,
-    };
-
-    webviewRef.current?.postMessage(JSON.stringify(message));
-
-    setHasSentFlight(true);
-    console.log("[RN] SET_FLIGHT data sent.");
+  const spotDetail = async () => {
+    const response = await fetchSpotDetail(id as string);
+    if (response !== null) {
+      setSpotInfo(response);
+    }
   };
 
+  const memberId = useAuthStore((state) => state.memberInfo?.memberId);
+  const getTrack = async () => {
+    console.log("[RN] Fetching track data for id:", id);
+    const response = await fetchSpotTrack(id as string, memberId as string);
+    console.log("[RN] Track data received:", response?.length, "points");
+    if (response !== null) setTrack(response);
+  };
+  useEffect(() => {
+    console.log("id, memberId:", id, memberId);
+    if (id && memberId) {
+      spotDetail();
+      getTrack();
+    }
+  }, [id, memberId]);
+
+  useEffect(() => {
+    console.log(
+      "[RN] useEffect triggered - isReady:",
+      isReady,
+      "track:",
+      track?.length
+    );
+    if (isReady && track && track.length > 0) {
+      console.log("[RN] 🚀 Sending flight data with", track.length, "points");
+      console.log("[RN] First track point:", track[0]);
+      const message = {
+        type: "SET_FLIGHT",
+        track,
+      };
+      webviewRef.current?.postMessage(JSON.stringify(message));
+      console.log("[RN] ✅ postMessage called");
+    } else {
+      console.log(
+        "[RN] ⏳ Waiting... isReady:",
+        isReady,
+        "track length:",
+        track?.length || 0
+      );
+    }
+  }, [isReady, track]);
+
   const onMessage = (e: WebViewMessageEvent) => {
+    console.log("[RN] 📨 Message received from WebView");
+    console.log("[RN] Raw data:", e.nativeEvent.data);
+
     try {
       const raw = e.nativeEvent.data;
       const data = JSON.parse(raw);
-      if (!data?.type) return;
+      console.log("[RN] Parsed message type:", data.type);
+
+      if (!data?.type) {
+        console.log("[RN] ⚠️ No type in message");
+        return;
+      }
 
       if (data.type === "READY") {
-        console.log("[RN] webview READY received");
+        console.log("[RN] ✅ WebView READY received");
         setIsReady(true);
-        if (!hasSentFlight) sendFlightData(flightPath);
       }
 
       if (data.type === "PLAY_STARTED") {
-        console.log("[RN] play started");
+        console.log("[RN] ▶️ Play started");
       }
+
       if (data.type === "ERROR") {
-        console.warn("[RN] webview error:", data.message);
+        console.warn("[RN] ❌ WebView error:", data.message);
       }
     } catch (err) {
-      console.error("[RN] invalid message from webview", err);
+      console.error("[RN] 💥 Invalid message from webview:", err);
     }
   };
 
   const onLoadEnd = () => {
-    console.log("[RN] onLoadEnd");
+    console.log("[RN] 🔄 WebView onLoadEnd called");
   };
 
-  console.log("로드");
+  const onLoadStart = () => {
+    console.log("[RN] 🔄 WebView onLoadStart called");
+  };
+
+  const onError = (syntheticEvent: any) => {
+    const { nativeEvent } = syntheticEvent;
+    console.error("[RN] 💥 WebView error:", nativeEvent);
+  };
+
+  console.log(
+    "[RN] 🔄 Component rendering - track:",
+    track?.length,
+    "isReady:",
+    isReady
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -122,10 +159,14 @@ export default function Detail() {
             originWhitelist={["*"]}
             onMessage={onMessage}
             onLoadEnd={onLoadEnd}
+            onLoadStart={onLoadStart}
+            onError={onError}
             style={styles.webview}
             // Android WebGL 이슈 방지를 위한 추가 옵션 (필요 시 주석 해제)
             allowsInlineMediaPlayback={true}
             mediaPlaybackRequiresUserAction={false}
+            mixedContentMode="always"
+            domStorageEnabled={true}
           />
           <LinearGradient
             colors={["rgba(245, 245, 245, 0)", "#F5F5F5"]}

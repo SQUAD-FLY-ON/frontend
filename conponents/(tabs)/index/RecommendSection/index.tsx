@@ -54,7 +54,7 @@ export default function RecommendSection() {
           <Text style={styles.link}>체험장 탐색하기</Text>
         </Link>
       </View>
-      {isLoading ?
+      { !data ?
        (
         <Text style = {styles.loadingText}>로딩중..</Text>
       ):

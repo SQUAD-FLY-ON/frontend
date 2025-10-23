@@ -7,10 +7,6 @@ export default function ExploreLayout() {
         headerShown: false,
         gestureEnabled: true,
       }}
-    >
-      <Stack.Screen name = 'index' />
-      <Stack.Screen name="detail/[id]" />
-
-      </Stack>
+    />
   );
 }

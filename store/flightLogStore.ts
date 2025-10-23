@@ -1,4 +1,4 @@
-import { TLocationData } from "@/types";
+import { ITrackData } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const STORAGE_KEY = "FLIGHT_LOG";
@@ -6,12 +6,12 @@ const STORAGE_KEY = "FLIGHT_LOG";
 // 지역 이름으로 위치 데이터 저장
 export const saveFlightLog = async (
   id: string,
-  data: TLocationData[]
+  data: ITrackData[]
 ): Promise<{ success: boolean }> => {
   try {
     // 기존 데이터 불러오기
     const existing = await AsyncStorage.getItem(STORAGE_KEY);
-    let storage: Record<string, TLocationData[]> = existing
+    let storage: Record<string, ITrackData[]> = existing
       ? JSON.parse(existing)
       : {};
 
@@ -30,12 +30,12 @@ export const saveFlightLog = async (
 // 특정 지역의 위치 데이터 가져오기
 export const getFlightLog = async (
   id: string
-): Promise<TLocationData[] | null> => {
+): Promise<ITrackData[] | null> => {
   try {
     const existing = await AsyncStorage.getItem(STORAGE_KEY);
     if (!existing) return null;
 
-    const storage: Record<string, TLocationData[]> = JSON.parse(existing);
+    const storage: Record<string, ITrackData[]> = JSON.parse(existing);
     return storage[id] || null;
   } catch (error) {
     console.error("Failed to load location data:", error);
@@ -45,7 +45,7 @@ export const getFlightLog = async (
 
 // 모든 지역의 위치 데이터 가져오기
 export const getAllFlightLogs = async (): Promise<
-  Record<string, TLocationData[]>
+  Record<string, ITrackData[]>
 > => {
   try {
     const existing = await AsyncStorage.getItem(STORAGE_KEY);
@@ -62,7 +62,7 @@ export const removeFlightLog = async (id: string): Promise<void> => {
     const existing = await AsyncStorage.getItem(STORAGE_KEY);
     if (!existing) return;
 
-    const storage: Record<string, TLocationData[]> = JSON.parse(existing);
+    const storage: Record<string, ITrackData[]> = JSON.parse(existing);
     delete storage[id];
 
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storage));

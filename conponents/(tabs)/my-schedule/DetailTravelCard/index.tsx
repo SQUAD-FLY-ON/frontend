@@ -11,13 +11,13 @@ const DetailTravelCard = ({
 }: { 
   containerStyle?: ViewStyle, 
   onPress?: () => void,
-  schedule: TourismSchedule | null,
+  schedule: TourismSchedule | undefined,
   loading?: boolean
 }) => {
 
   return (
     <Pressable onPress = {onPress} style={[styles.travelCard, containerStyle]}>
-      <CardContents loading={loading} schedule={schedule} />
+      {schedule && <CardContents loading={loading} schedule={schedule} />}
     </Pressable>
   );
 };

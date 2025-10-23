@@ -6,7 +6,7 @@ interface FilterProps {
   filters: {
     key: string;
     text: string;
-  }[];
+  }[] | undefined;
   gap?: number;
   currentFilter: string;
   setCurrentFilter: React.Dispatch<SetStateAction<string>>;
@@ -25,7 +25,7 @@ export default function Filter({
       contentContainerStyle={[styles.scrollContainer, { gap }]}
       style={styles.scrollView}
     >
-      {filters.map((item) => (
+      {filters?.map((item) => (
         <CustomButton
           backgroundColor={currentFilter === item.key ? 'main' : '#EFEFEF'}
           key={item.key}

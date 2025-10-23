@@ -45,6 +45,7 @@ apiClient.interceptors.response.use(
     else {
       return Promise.reject(error);
     }
+    console.log(error.response);
 
     // Alert.alert 대신 Zustand 스토어 사용
     const errorMessage = error.response?.data?.serverErrorMessage

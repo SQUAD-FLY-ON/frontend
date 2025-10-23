@@ -2,6 +2,7 @@ import CustomButton from "@/conponents/CustomButton";
 import FormInput from "@/conponents/FormInput";
 import { loginSchema } from "@/schema/loginSchema";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useModalStore } from "@/store/useModalStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useForm } from 'react-hook-form';
@@ -21,15 +22,16 @@ export default function Index() {
   const router = useRouter();
   const { login, isLoading } = useAuthStore(useShallow(state => ({
     login: state.login,
-    isLoading: state.isLoading,
-  })));
+    isLoading: state.isLoading  })));
+  // TO-DO: develop 머지후
+  const showAlert = useModalStore(state => state.showAlert);
   async function onSubmit(data: z.infer<typeof loginSchema>) {
     const response = await login(data);
     if (response.success) {
-      // await setAuth(
-      //   response?.data.data
-      // );
       router.push("/");
+    } else {
+      // TO-DO: develop 머지후
+      showAlert({title: '오류', description: response.error})
     }
   }
   return (

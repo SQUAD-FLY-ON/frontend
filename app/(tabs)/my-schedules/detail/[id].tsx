@@ -1,3 +1,4 @@
+
 import DetailTravelCard from "@/conponents/(tabs)/my-schedule/DetailTravelCard";
 import Filter from "@/conponents/(tabs)/schedule/Filter";
 import PlanCard from "@/conponents/(tabs)/schedule/screens/PlanScreen/PlanCard";
@@ -9,7 +10,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function Detail() {
   const { id } = useLocalSearchParams();
-  const { isScheduleLoading, isScheduleError, schedule } = useTourSchedule();
+  const { isScheduleLoading, schedule } = useTourSchedule();
   const currentSchedule = schedule?.find((item) => item.id === id);
   const [currentDay, setCurrentDay] = useState('0');
   const days = currentSchedule?.dailyTourismSpots.map((_, index) => ({
@@ -24,7 +25,7 @@ export default function Detail() {
     <>
       <Header title="여행 상세" />
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}>
+        >
         <DetailTravelCard schedule={currentSchedule} loading={isScheduleLoading} />
         <Text style={styles.title}>상세 일정</Text>
         <Filter setCurrentFilter={setCurrentDay} currentFilter={currentDay} filters={days} />

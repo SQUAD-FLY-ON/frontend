@@ -20,10 +20,14 @@ export default function SignupForm() {
   const router = useRouter();
   async function onSubmit(data: z.infer<typeof signUpSchema>) {
     const { passwordConfirm, ...apiData } = data;
+    try {
     const response = await fetchSignup(apiData);
-    if (response?.status === 201) {
+    
       Alert.alert('회원가입이 완료되었습니다!');
       router.push("/login");
+    } catch (error) {
+      Alert.alert(error?.response?.serverErrorMessage);
+      // Alert.alert(`${error.}`);
     }
   }
   return (
@@ -45,7 +49,7 @@ export default function SignupForm() {
         <FormInput containerStyle={styles.input} isPassword name="passwordConfirm" errorMessage={errors.passwordConfirm?.message} control={control} placeholder='비밀번호를 입력하세요' label='비밀번호 확인' />
         <FormInput containerStyle={styles.input} name="nickname" errorMessage={errors.nickname?.message} control={control} placeholder='닉네임을 입력하세요' label='닉네임' />
       </View>
-      <CustomButton containerStyle={styles.button} onPress={handleSubmit(onSubmit)} text={"회원가입"} />
+      <CustomButton disabled={!isValid} containerStyle={styles.button} onPress={handleSubmit(onSubmit)} text={"회원가입"} />
     </View>
     </ScrollView>
     </KeyboardAvoidingView>

@@ -15,6 +15,7 @@ export async function postFlightLog(
   request: postFlightLogRequest
 ): Promise<ApiResponse<myFlightLogsContents> | null> {
   try {
+    console.log("[flightLogs] memberId:", memberId, Number(memberId));
     const response: ApiResponse<myFlightLogsContents> = await apiClient.post(
       "/flight-logs",
       request,

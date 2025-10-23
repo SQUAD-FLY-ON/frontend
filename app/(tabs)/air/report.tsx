@@ -3,18 +3,25 @@ import ReportText from "@/conponents/(tabs)/air/ReportText";
 import ConfirmModal from "@/conponents/ConfirmModal";
 import { MainGradient } from "@/conponents/LinearGradients/MainGradient";
 import { postFlightLog } from "@/libs/(tabs)/air/flightLogs";
-import { getAllFlightLogs, saveFlightLog } from "@/store/flightLogStore";
+import { saveFlightLog } from "@/store/flightLogStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { ApiResponse, myFlightLogsContents, postFlightLogRequest } from "@/types/api";
+import {
+  ApiResponse,
+  myFlightLogsContents,
+  postFlightLogRequest,
+} from "@/types/api";
 import { useRouter } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import haversine from "haversine-distance";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function Report() {
   const params = useLocalSearchParams();
 
+  const [recordId, setRecordId] = useState<string>("");
+  const [recordDate, setRecordDate] = useState<string>("");
   const memberId = useAuthStore((state) => state.memberInfo?.memberId);
   const airfieldName = params?.airfieldName as string;
   const flightTime = params?.time ? Number(params.time) : 0;
@@ -34,28 +41,26 @@ export default function Report() {
   let flightDistance = 0;
 
   let coordinate = { latitude: 0, longitude: 0 };
-  for (let { lat, lon, alt } of locationData) {
+  for (let { latitude, longitude, altitude } of locationData) {
     if (coordinate.latitude === 0) {
-      coordinate.latitude = lat;
-      coordinate.longitude = lon;
+      coordinate.latitude = latitude;
+      coordinate.longitude = longitude;
     } else {
       flightDistance += haversine(coordinate, {
-        latitude: lat,
-        longitude: lon,
+        latitude: latitude,
+        longitude: longitude,
       });
-      coordinate.latitude = lat;
-      coordinate.longitude = lon;
+      coordinate.latitude = latitude;
+      coordinate.longitude = longitude;
     }
-    maxAltitude = Math.max(maxAltitude, alt);
+    maxAltitude = Math.max(maxAltitude, altitude);
   }
 
   // 평균 비행 속도
   const averageSpeed = flightDistance / seconds;
 
-  // POST 비행기록
-  async function onPressSave() {
-    // 위치 정보 제외한 비행 경로 관련 데이터 서버에 POST
-
+  // POST + AsyncStorage 저장 함수
+  const mutationFunction = async () => {
     const data: postFlightLogRequest = {
       airfieldName,
       flightTime,
@@ -63,28 +68,39 @@ export default function Report() {
       averageSpeed,
       flightAltitude: maxAltitude,
     };
-
     const response: ApiResponse<myFlightLogsContents> | null =
       await postFlightLog(memberId as string, data);
-    console.log(response);
 
+    console.log("[report] 비행 기록 저장:", response);
     if (!response) {
       console.log("비행 기록을 저장하는 과정에 오류가 발생했습니다");
       return;
     }
 
-    // API response로 받은 id값과 비행 경로 저장
     const id = response.data.id;
+    setRecordId(id);
+    setRecordDate(response.data.createdAt);
     const flightLog = await saveFlightLog(id, locationData);
-    console.log(`ID ${id}: `, flightLog.success);
+    console.log(`[report] ID ${id}: `, flightLog.success);
 
-    const allFlightLogs = await getAllFlightLogs();
-    console.log("전체 비행 기록:", allFlightLogs);
+    return response;
+  };
 
-    if (response.httpStatusCode === 200 && flightLog.success) {
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: mutationFunction,
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["my-flight-logs"] });
       setIsModalVisible(true);
-    }
-  }
+    },
+    onError: (error) => {
+      console.error("저장 실패:", error);
+    },
+  });
+
+  const onPressSave = () => {
+    mutate();
+  };
 
   return (
     <Background>
@@ -133,11 +149,26 @@ export default function Report() {
       <ConfirmModal
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}
-        title = '비행기록 저장 완료!'
+        title="비행기록 저장 완료!"
         description="비행 데이터가 성공적으로 저장되었습니다."
         description2="3D 비행 영상을 확인할까요?"
-        onPressConfirm={() => setIsModalVisible(false)}
-        pressButtonText = '영상 확인하기'
+        onPressConfirm={() =>
+          router.navigate({
+            pathname: "/(tabs)/user/flight-detail/[id]",
+            params: {
+              id: recordId,
+              data: JSON.stringify({
+                airfieldName,
+                flightTime,
+                flightDistance,
+                averageSpeed,
+                flightAltitude: maxAltitude,
+                createdAt: recordDate,
+              }),
+            },
+          })
+        }
+        pressButtonText="영상 확인하기"
       />
     </Background>
   );

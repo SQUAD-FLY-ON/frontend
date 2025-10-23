@@ -22,23 +22,19 @@ const Dropdown = ({
   setHasValue: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState(itemProps);
 
-  console.log("드롭다운 아이템 props: ", items);
-
-  useEffect(() => {
-    setItems(itemProps);
-  }, [itemProps]);
+  console.log("[Dropdown] 드롭다운 아이템 props: ", itemProps);
 
   useEffect(() => {
     if (value !== null) setHasValue(true);
-  }, [value]);
+    else setHasValue(false);
+  }, [value, setHasValue]);
 
   useFocusEffect(
     useCallback(() => {
       setOpen(false);
       setValue(null);
-    }, [])
+    }, [setValue])
   );
 
   return (
@@ -46,10 +42,9 @@ const Dropdown = ({
       <DropDownPicker
         open={open}
         value={value}
-        items={items}
+        items={itemProps}
         setOpen={setOpen}
         setValue={setValue}
-        setItems={setItems}
         placeholder="비행 일정을 선택하세요"
         listMode="SCROLLVIEW"
         style={styles.dropdown}
