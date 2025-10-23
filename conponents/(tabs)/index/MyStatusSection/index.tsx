@@ -2,32 +2,34 @@ import Logo from "@/conponents/icons/Logo";
 import LevelBadge from "@/conponents/LevelBadge";
 import Colors from "@/constants/colors";
 import { fetchMembers } from "@/libs/fetchMember";
-import { MemberProfileInfo } from "@/types";
-import { ApiResponse } from "@/types/api";
-import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import HomeImage from "./AnimatedImages/HomeImage";
 import TravelCard from "./TravelCard/TravelCard";
+import { useQuery } from "@tanstack/react-query";
 
 export default function MyStatusSection() {
-  const [memberInfo, setMemberInfo] = useState<MemberProfileInfo | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["memberInformation"],
+    queryFn: fetchMembers,
+  });
 
-  const getMemberInfo = async () => {
-    try {
-      const response: ApiResponse<MemberProfileInfo> = await fetchMembers();
-      setMemberInfo(response.data);
-    } catch (err: any) {
-      setError(err.message || "에러 발생");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (isLoading || !data?.data) {
+    return (
+      <View>
+        <Text>로딩 중...</Text>
+      </View>
+    );
+  }
 
-  useEffect(() => {
-    getMemberInfo();
-  }, []);
+  if (isError) {
+    return (
+      <View>
+        <Text>에러 발생</Text>
+      </View>
+    );
+  }
+
+  const memberInfo = data.data;
 
   return (
     <View style={styles.myStatus}>

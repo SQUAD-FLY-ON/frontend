@@ -22,13 +22,14 @@ export function CustomTabList({ children }: { children: React.ReactNode }) {
   const rightTriggers = triggers.filter(
     (c: any) => c.props.name === "my-schedules" || c.props.name === "user"
   );
-  console.log(width/10-1)
+  console.log(width / 10 - 1);
   return (
     <View
       style={[
         styles.container,
         (pathname === "/air" ||
           pathname === "/air/report" ||
+          pathname === "/user/profile" ||
           pathname.startsWith("/user/flight-detail") ||
           pathname === "/schedule") && { display: "none" },
       ]}
@@ -108,20 +109,20 @@ const styles = StyleSheet.create({
   },
   leftContainer: {
     flexDirection: "row",
-    position:'absolute',
+    position: "absolute",
     left: width / 10 - 1,
-    right: width*0.67,
-    width: width - (width / 10 - 1) - (width * 0.67),
+    right: width * 0.67,
+    width: width - (width / 10 - 1) - width * 0.67,
     marginTop: 16,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   rightContainer: {
     flexDirection: "row",
-    position:'absolute',
+    position: "absolute",
     right: width / 10 - 1,
-    left: width*0.67,
-    width: width - (width / 10 - 1) - (width * 0.67),
+    left: width * 0.67,
+    width: width - (width / 10 - 1) - width * 0.67,
     marginTop: 16,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
 });

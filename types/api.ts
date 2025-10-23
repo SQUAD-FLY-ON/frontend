@@ -36,6 +36,12 @@ export interface SignupRequest {
   oauthProviderType?: "KAKAO" | "GOOGLE" | "NAVER"; // 소셜 로그인 타입은 선택 사항이고, 특정 값만 허용하도록 지정
 }
 
+export interface EditProfileRequest {
+  nickname: string;
+  loginId: string;
+  password: string;
+}
+
 export interface WeatherRequest {
   sido: RegionName;
   tripStart: string;

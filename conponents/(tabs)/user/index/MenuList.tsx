@@ -4,13 +4,7 @@ import { useModalStore } from "@/store/useModalStore";
 import { useScheduleStore } from "@/store/useScheduleStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import {
-  Linking,
-  Pressable,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/shallow";
 
 type TMenuItem = {
@@ -27,15 +21,14 @@ const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
     }))
   );
 
-
   const showConfirm = useModalStore((state) => state.showConfirm);
   const showAlert = useModalStore((state) => state.showAlert);
 
   const handleLogout = async () => {
     const confirmed = await showConfirm({
-      title: '로그아웃',
-      description: '정말로 로그아웃 하시겠습니까?',
-      pressButtonText: '로그아웃',
+      title: "로그아웃",
+      description: "정말로 로그아웃 하시겠습니까?",
+      pressButtonText: "로그아웃",
     });
 
     if (confirmed) {
@@ -50,32 +43,34 @@ const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
 
   const handleWithdrawal = async () => {
     const confirmed = await showConfirm({
-      title: '회원탈퇴',
-      description: '정말로 회원을 탈퇴하시겠습니까?',
-      description2: '탈퇴 시 모든 데이터가 삭제됩니다.',
-      pressButtonText: '회원탈퇴',
+      title: "회원탈퇴",
+      description: "정말로 회원을 탈퇴하시겠습니까?",
+      description2: "탈퇴 시 모든 데이터가 삭제됩니다.",
+      pressButtonText: "회원탈퇴",
     });
 
     if (confirmed) {
       useScheduleStore.getState().resetAllStates();
       const response = await fetchSignout();
-      
+
       if (response?.httpStatusCode === 200) {
         console.log("회원탈퇴 성공");
         clearAuthState();
         router.replace("/intro");
       } else {
         await showAlert({
-          title: '오류',
-          description: '회원탈퇴 처리 중 오류가 발생했습니다.',
+          title: "오류",
+          description: "회원탈퇴 처리 중 오류가 발생했습니다.",
         });
       }
     }
   };
 
   const onPress = async (name: string, url: string) => {
-    if (name === "비행 기록") {
-      // 비행 기록 상세 페이지로 이동
+    console.log(name);
+    if (name === "프로필 정보 수정하기") {
+      router.navigate("/(tabs)/user/profile");
+    } else if (name === "비행 기록") {
       console.log("비행 기록 클릭");
       router.navigate("/(tabs)/user/my-flight-records");
     } else if (name === "개인정보처리방침") {
@@ -85,13 +80,14 @@ const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
         await Linking.openURL(url);
       } else {
         await showAlert({
-          title: '오류',
+          title: "오류",
           description: `이 URL을 열 수 없습니다: ${url}`,
         });
       }
     } else if (name === "로그아웃") {
       await handleLogout();
-    } else if (name === "회원탈퇴") {
+    } else if (name === "회원 탈퇴") {
+      console.log("회원 탈퇴");
       await handleWithdrawal();
     }
   };
@@ -106,7 +102,14 @@ const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
           }
           onPress={() => onPress(v.name, v.link)}
         >
-          <Text style={styles.itemText}>{v.name}</Text>
+          <Text
+            style={[
+              styles.itemText,
+              v.name === "회원 탈퇴" && { color: "#FF5858" },
+            ]}
+          >
+            {menuItem[idx].name}
+          </Text>
         </Pressable>
       ))}
     </View>

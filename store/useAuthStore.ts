@@ -33,6 +33,7 @@ interface AuthActions {
     credentials: LoginRequest
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
+  editProfile: (nickname: string) => void;
   refreshAccessToken: () => Promise<boolean>; // ✅ 메서드 이름 변경
   clearAuthState: () => void;
   initializeAuth: () => Promise<void>;
@@ -100,7 +101,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           return {
             success: false,
             error:
-              error.response?.data?.serverErrorMessage || "로그인에 실패했습니다.",
+              error.response?.data?.serverErrorMessage ||
+              "로그인에 실패했습니다.",
           };
         } finally {
           set({ isLoading: false });
@@ -128,6 +130,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         }
       },
 
+      editProfile: (nickname) => {
+        console.log("edit Profile: ", nickname);
+        set((state) => ({
+          memberInfo: state.memberInfo
+            ? { ...state.memberInfo, nickname }
+            : null,
+        }));
+        console.log("프로필 수정 결과:", get().memberInfo);
+      },
+
       refreshAccessToken: async () => {
         // const queryClient = useQueryClient();
 
@@ -152,7 +164,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               accessToken,
               refreshToken: newRefreshToken || refreshToken,
               memberInfo: memberInfo || get().memberInfo,
-            })
+            });
             return true;
           } else {
             console.log("bbbb");
@@ -162,11 +174,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           console.error("토큰 갱신 실패:", error);
           get().clearAuthState();
           return false;
-        }
-        finally {
+        } finally {
           queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
           set({ isInitializing: false, isInitialized: true });
-          console.log('isLoading false and isInitialized');
+          console.log("isLoading false and isInitialized");
         }
       },
       clearAuthState: () => {
