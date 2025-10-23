@@ -5,6 +5,7 @@ import { fetchEditProfile } from "@/libs/(tabs)/user/fetchEditProfile";
 import { signUpSchema } from "@/schema/signupSchema";
 import { useAuthStore } from "@/store/useAuthStore";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
 import {
@@ -31,17 +32,25 @@ export default function Profile() {
 
   const memberId = useAuthStore((state) => state.memberInfo?.memberId);
   const editProfile = useAuthStore((state) => state.editProfile);
+  const queryClient = useQueryClient();
+
+  const editProfileMutation = useMutation({
+    mutationFn: (data: Omit<z.infer<typeof signUpSchema>, "passwordConfirm">) =>
+      fetchEditProfile(memberId as string, data),
+    onSuccess: (response, variables) => {
+      if (response?.httpStatusCode === 200) {
+        editProfile(variables.nickname);
+        queryClient.invalidateQueries({ queryKey: ["memberInformation"] });
+        Alert.alert("프로필 수정이 완료되었습니다!");
+        router.back();
+      }
+    },
+  });
+
   async function onSubmit(data: z.infer<typeof signUpSchema>) {
     console.log("[profile] Click onSubmit");
     const { passwordConfirm, ...apiData } = data;
-    // 회원 정보 수정 API 연결
-    const response = await fetchEditProfile(memberId as string, apiData);
-    console.log(response);
-    if (response?.httpStatusCode === 200) {
-      editProfile(apiData.nickname);
-      Alert.alert("프로필 수정이 완료되었습니다!");
-      router.back();
-    }
+    editProfileMutation.mutate(apiData);
   }
 
   return (

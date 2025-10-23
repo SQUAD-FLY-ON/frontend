@@ -3,9 +3,7 @@ import MenuList from "@/conponents/(tabs)/user/index/MenuList";
 import Profile from "@/conponents/(tabs)/user/index/Profile";
 import Header from "@/conponents/Header";
 import { fetchMembers } from "@/libs/fetchMember";
-import { MemberProfileInfo } from "@/types";
-import { ApiResponse } from "@/types/api";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const innerPages = [
@@ -41,33 +39,29 @@ const level = {
 export type FlightLevel = keyof typeof level;
 
 export default function Index() {
-  const [memberInfo, setMemberInfo] = useState<MemberProfileInfo | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["memberInformation"],
+    queryFn: fetchMembers,
+  });
+  // console.log("Query: ", data);
 
-  const getMemberInfo = async () => {
-    try {
-      const response: ApiResponse<MemberProfileInfo> = await fetchMembers();
-      setMemberInfo(response.data);
-      console.log(response.data);
-    } catch (err: any) {
-      setError(err.message || "에러 발생");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getMemberInfo();
-  }, []);
-
-  if (loading || memberInfo === null) {
+  if (isLoading || !data?.data) {
     return (
       <View>
-        <Text>로딩중</Text>
+        <Text>로딩 중...</Text>
       </View>
     );
   }
+
+  if (isError) {
+    return (
+      <View>
+        <Text>에러 발생</Text>
+      </View>
+    );
+  }
+
+  const memberInfo = data.data;
 
   function getValue(key: FlightLevel) {
     return level[key];
