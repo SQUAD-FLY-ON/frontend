@@ -31,8 +31,6 @@ interface UseDragDropOptions {
   remeasureDayLayouts: () => Promise<void>;
   getDropTarget: (pageY: number) => { dayId: string; insertIndex: number } | null;
   stopAutoScroll: () => void;
-  typeToLabel: { [key: string]: string };
-  styles: any;
   FloatingPortalContext: React.Context<any>;
 }
 
@@ -45,14 +43,10 @@ export const useDragDrop = ({
   FloatingPortalContext
 }: UseDragDropOptions) => {
   const [draggingItem, setDraggingItem] = useState<DraggingItem | null>(null);
-  const [floatingCardData, setFloatingCardData] = useState<FloatingCardData | null>(null);
-
-  const initialScrollOffsetRef = useRef(0);
+  const floatingCardDataRef = useRef<FloatingCardData | null>(null);
 
   const floatingPortal = useContext(FloatingPortalContext);
 
-  // Floating 카드 생성
-  
   // 드래그 시작
   const handleDragStart = useCallback(async (
     item: Plan,
@@ -62,79 +56,42 @@ export const useDragDrop = ({
     initialPosition: { x: number; y: number }
   ) => {
     setDraggingItem({ item, sourceDay: dayId, sourceIndex: index });
-    initialScrollOffsetRef.current = scrollOffsetRef.current;
 
     measureScrollViewPosition();
     await remeasureDayLayouts();
 
-    if (!cardLayout.width || !cardLayout.height) {
-      console.warn('Invalid card layout:', cardLayout);
-      return;
-    }
-    if (!floatingPortal) return;
-    setFloatingCardData({
+    if (!cardLayout.width || !cardLayout.height || !floatingPortal) return;
+
+    floatingCardDataRef.current = {
       item,
       dayId,
       index,
       layout: cardLayout,
       initialPosition,
       gestureState: { dx: 0, dy: 0 }
-    });
+    };
 
-    try {
-      console.log(item, dayId, index, cardLayout, initialPosition, { dx: 0, dy: 0 });
-      floatingPortal.createFloatingCard(item, dayId, index, cardLayout, initialPosition, { dx: 0, dy: 0 });
-    } catch (error) {
-      console.error('Failed to create floating card:', error);
-    }
+    floatingPortal.createFloatingCard(item, dayId, index, cardLayout, initialPosition, { dx: 0, dy: 0 });
     Animated.timing(floatingPortal.floatingOpacity, {
       toValue: 0.9,
       duration: 150,
-      useNativeDriver: false,
+      useNativeDriver: true,  // ✅ Native 스레드에서 애니메이션 실행
     }).start();
-  }, [
-    scrollOffsetRef,
-    measureScrollViewPosition,
-    remeasureDayLayouts,
-    floatingPortal,
-    floatingPortal.floatingOpacity,
-    floatingPortal.createFloatingCard
-  ]);
+  }, [scrollOffsetRef, measureScrollViewPosition, remeasureDayLayouts, floatingPortal]);
   // 드래그 이동
   const handleDragMove = useCallback((
-    x: number,
-    y: number,
+    _x: number,
+    _y: number,
     gestureState: any,
-    evt: any,
-    initialPosition: { x: number; y: number }
+    _evt: any,
+    _initialPosition: { x: number; y: number }
   ) => {
-    if (!gestureState) {
-    console.warn('gestureState is undefined in handleDragMove');
-    return;
-  }
+    if (!gestureState || !floatingCardDataRef.current || !floatingPortal) return;
 
-  // ✅ setValue만 호출 (createFloatingCard 호출 안 함)
-  if (floatingCardData && gestureState.dx !== undefined && gestureState.dy !== undefined) {
-        console.log(gestureState.dx, gestureState.dy);
-
-    floatingPortal.floatingPan.setValue({ x: gestureState.dx, y: gestureState.dy });
-  }
-  if (gestureState.isAutoScrolling !== floatingCardData?.gestureState?.isAutoScrolling) {
-        setFloatingCardData(prev => prev ? {
-          ...prev,
-          gestureState
-        } : null);
-
-        floatingPortal.createFloatingCard(
-          floatingCardData?.item,
-          floatingCardData?.dayId,
-          floatingCardData?.index,
-          floatingCardData?.layout,
-          initialPosition,
-          gestureState
-        );
-      }
-  }, [floatingCardData, floatingPortal, floatingPortal.floatingPan, floatingPortal.createFloatingCard]);
+    if (gestureState.dx !== undefined && gestureState.dy !== undefined) {
+      floatingPortal.floatingPan.setValue({ x: gestureState.dx, y: gestureState.dy });
+    }
+  }, [floatingPortal]);
 
   // 드래그 종료
   const handleDragEnd = useCallback((
@@ -190,27 +147,19 @@ export const useDragDrop = ({
       Animated.timing(floatingPortal.floatingOpacity, {
         toValue: 0,
         duration: 200,
-        useNativeDriver: false,
+        useNativeDriver: true,  // ✅ Native 스레드에서 애니메이션 실행
       }).start(() => {
         floatingPortal.removeFloatingElement();
-        setFloatingCardData(null)
+        floatingCardDataRef.current = null;
       });
+      floatingPortal.floatingPan.setValue({ x: 0, y: 0 });
     }
 
-    floatingPortal.floatingPan.setValue({ x: 0, y: 0 });
     setDraggingItem(null);
-  }, [
-    draggingItem,
-    getDropTarget,
-    stopAutoScroll,
-    floatingPortal,
-    floatingPortal.floatingOpacity,
-    floatingPortal.floatingPan
-  ]);
+  }, [draggingItem, getDropTarget, stopAutoScroll, floatingPortal]);
 
   return {
     draggingItem,
-    floatingCardData,
     handleDragStart,
     handleDragMove,
     handleDragEnd,

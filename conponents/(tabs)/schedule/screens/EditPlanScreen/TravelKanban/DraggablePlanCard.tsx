@@ -2,8 +2,15 @@ import { typeToLabel } from "@/constants/screens";
 import { getSecureImageUrl } from "@/libs/getSecureUrl";
 import { Plan } from "@/types";
 import Entypo from "@expo/vector-icons/Entypo";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Animated, Image, PanResponder, PanResponderGestureState, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+// 🔍 성능 측정용 - 개선 후 제거
+const useRenderCount = (componentName: string) => {
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  console.log(`🔄 [${componentName}] 렌더링 횟수: ${renderCount.current}`);
+};
 
 const DraggablePlanCard = ({
   item,
@@ -24,21 +31,31 @@ const DraggablePlanCard = ({
   onDragEnd: (y: number) => void;
   isDragging: boolean;
 }) => {
+  // 🔍 성능 측정용
+  useRenderCount(`Card-${dayId}-${index}`);
+
   const cardOpacity = useRef(new Animated.Value(1)).current;
   const [componentHeight, setComponentHeight] = useState(0);
   const [isPanEnabled, setIsPanEnabled] = useState(false);
   const cardRef = useRef<View>(null);
-  // 기존 자동스크롤 관련 refs
   const isDraggingRef = useRef(false);
-  const localAutoScrollingRef = useRef(false);
   const cardInitialPosition = useRef({ x: 0, y: 0 });
-  const secureUrl = getSecureImageUrl(item?.image)
+  const secureUrl = getSecureImageUrl(item?.image);
 
+  // ✅ 콜백과 값들을 ref로 관리하여 PanResponder 재생성 방지
+  const callbacksRef = useRef({ onDragStart, onDragMove, onDragEnd });
+  const propsRef = useRef({ item, dayId, index });
+  const isPanEnabledRef = useRef(isPanEnabled);
 
+  // 최신 값으로 업데이트
+  callbacksRef.current = { onDragStart, onDragMove, onDragEnd };
+  propsRef.current = { item, dayId, index };
+  isPanEnabledRef.current = isPanEnabled;
 
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => isPanEnabled,
-    onMoveShouldSetPanResponder: () => isPanEnabled,
+  // ✅ useMemo로 PanResponder 한 번만 생성
+  const panResponder = useMemo(() => PanResponder.create({
+    onStartShouldSetPanResponder: () => isPanEnabledRef.current,
+    onMoveShouldSetPanResponder: () => isPanEnabledRef.current,
 
     onPanResponderGrant: (evt, gestureState) => {
       isDraggingRef.current = true;
@@ -53,7 +70,7 @@ const DraggablePlanCard = ({
       Animated.timing(cardOpacity, {
         toValue: 0.3,
         duration: 150,
-        useNativeDriver: true, // ✅ 네이티브 드라이버 사용
+        useNativeDriver: true,
       }).start();
 
       // 3. 카드 측정 (비동기이지만 필수)
@@ -63,7 +80,8 @@ const DraggablePlanCard = ({
           if (!isDraggingRef.current) return;
 
           const cardLayout = { x, y, width, height };
-          onDragStart(
+          const { item, dayId, index } = propsRef.current;
+          callbacksRef.current.onDragStart(
             item,
             dayId,
             index,
@@ -79,18 +97,15 @@ const DraggablePlanCard = ({
           width: 200,
           height: 100
         };
-        onDragStart(item, dayId, index, defaultLayout, cardInitialPosition.current);
+        const { item, dayId, index } = propsRef.current;
+        callbacksRef.current.onDragStart(item, dayId, index, defaultLayout, cardInitialPosition.current);
       }
-
-      // ⚠️ pan.setOffset/setValue 제거
-      // → 이유: 절대 좌표 시스템(pageX/Y)을 사용하므로 불필요
     },
 
     onPanResponderMove: (evt, gestureState) => {
       if (!isDraggingRef.current) return;
 
-      // ✅ 절대 좌표 전달 (일관성 유지)
-      onDragMove(
+      callbacksRef.current.onDragMove(
         evt.nativeEvent.pageX,
         evt.nativeEvent.pageY,
         gestureState,
@@ -100,28 +115,8 @@ const DraggablePlanCard = ({
     },
 
     onPanResponderRelease: (evt) => {
-      // 1. 상태 초기화
       isDraggingRef.current = false;
-      localAutoScrollingRef.current = false;
-
-      // 2. 드롭 처리
-      onDragEnd(evt.nativeEvent.pageY);
-
-      // 3. 애니메이션 복원
-      Animated.parallel([
-        Animated.timing(cardOpacity, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true, // ✅ 네이티브 드라이버
-        }),
-        // ✅ pan 애니메이션 제거 (사용 안 하므로)
-      ]).start();
-    },
-    // ✅ 추가: 드래그 취소 처리
-    onPanResponderTerminate: (evt, gestureState) => {
-      // 시스템에 의해 드래그가 중단된 경우 (전화 등)
-      isDraggingRef.current = false;
-      localAutoScrollingRef.current = false;
+      callbacksRef.current.onDragEnd(evt.nativeEvent.pageY);
 
       Animated.timing(cardOpacity, {
         toValue: 1,
@@ -129,7 +124,16 @@ const DraggablePlanCard = ({
         useNativeDriver: true,
       }).start();
     },
-  });
+    onPanResponderTerminate: () => {
+      isDraggingRef.current = false;
+
+      Animated.timing(cardOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    },
+  }), [cardOpacity]);  // cardOpacity는 useRef.current이므로 변경되지 않음
 
   const handleLayout = (event: any) => {
     const { height } = event.nativeEvent.layout;
@@ -268,6 +272,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#747474',
   },
-  menu: {
-  }
 });
