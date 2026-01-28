@@ -1,33 +1,19 @@
-import React from 'react';
+import { Plan } from '@/types';
+import React, { memo } from 'react';
 import { View } from 'react-native';
 import DayContent from './DayContent';
 import DayHeader from './DayHeader';
-
-interface Plan {
-  key: string;
-  place: string;
-  address: string;
-  image?: string;
-  type: string;
-  day: string;
-}
 
 interface DayData {
   title: string;
   plans: Plan[];
 }
 
-interface DraggingItem {
-  item: Plan;
-  sourceDay: string;
-  sourceIndex: number;
-}
-
 interface DayColumnProps {
   dayId: string;
   dayData: DayData;
   index: number;
-  draggingItem: DraggingItem | null;
+  // ✅ draggingItem props 제거 - 더 이상 props drilling 안 함
   onLayoutDay: (dayId: string, event: any) => void;
   onLayoutCard: (dayId: string, index: number, event: any) => void;
   onDayRefSet: (dayId: string, ref: View | null) => void;
@@ -35,14 +21,13 @@ interface DayColumnProps {
   onDragMove: (x: number, y: number, gestureState: any, evt: any, initialPosition: any) => void;
   onDragEnd: (y: number) => void;
   styles: any;
-  DraggablePlanCard: React.ComponentType<any>;
 }
 
-export const DayColumn = ({
+// ✅ React.memo로 불필요한 리렌더링 차단
+export const DayColumn = memo(({
   dayId,
   dayData,
   index,
-  draggingItem,
   onLayoutDay,
   onLayoutCard,
   onDayRefSet,
@@ -50,7 +35,6 @@ export const DayColumn = ({
   onDragMove,
   onDragEnd,
   styles,
-  DraggablePlanCard,
 }: DayColumnProps) => {
   if (!dayData) return null;
 
@@ -67,15 +51,13 @@ export const DayColumn = ({
       <DayContent
         dayId={dayId}
         plans={dayData.plans}
-        draggingItem={draggingItem}
         onLayoutCard={onLayoutCard}
         onDragStart={onDragStart}
         onDragMove={onDragMove}
         onDragEnd={onDragEnd}
         styles={styles}
-        DraggablePlanCard={DraggablePlanCard}
       />
     </View>
   );
-};
+});
 

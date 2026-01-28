@@ -1,4 +1,5 @@
-import { DraggingItem, Plan } from "@/types";
+import { Plan } from "@/types";
+import React, { memo } from "react";
 import { View } from "react-native";
 import EmptyDayDropZone from "./EmptyDayDropZone";
 import PlanList from "./PlanList";
@@ -7,48 +8,41 @@ import PlanList from "./PlanList";
 interface DayContentProps {
   dayId: string;
   plans: Plan[];
-  draggingItem: DraggingItem | null;
   onLayoutCard: (dayId: string, index: number, event: any) => void;
   onDragStart: (item: Plan, dayId: string, index: number, layout: any, position: any) => void;
   onDragMove: (x: number, y: number, gestureState: any, evt: any, initialPosition: any) => void;
   onDragEnd: (y: number) => void;
   styles: any;
-  DraggablePlanCard: React.ComponentType<any>;
 }
 
-const DayContent: React.FC<DayContentProps> = ({
+// ✅ React.memo로 불필요한 리렌더링 차단
+// ✅ isDragging 구독 제거 - EmptyDayDropZone에서 직접 구독
+const DayContent: React.FC<DayContentProps> = memo(({
   dayId,
   plans,
-  draggingItem,
   onLayoutCard,
   onDragStart,
   onDragMove,
   onDragEnd,
   styles,
-  DraggablePlanCard,
 }) => {
   return (
     <View style={styles.dayContent}>
       {plans.length === 0 ? (
-        <EmptyDayDropZone 
-          isDragging={!!draggingItem} 
-          styles={styles} 
-        />
+        <EmptyDayDropZone styles={styles} />
       ) : (
         <PlanList
           dayId={dayId}
           plans={plans}
-          draggingItem={draggingItem}
           onLayoutCard={onLayoutCard}
           onDragStart={onDragStart}
           onDragMove={onDragMove}
           onDragEnd={onDragEnd}
           styles={styles}
-          DraggablePlanCard={DraggablePlanCard}
         />
       )}
     </View>
   );
-};
+});
 
 export default DayContent;

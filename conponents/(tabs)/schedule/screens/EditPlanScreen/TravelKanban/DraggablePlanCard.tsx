@@ -1,27 +1,12 @@
 import { typeToLabel } from "@/constants/screens";
 import { getSecureImageUrl } from "@/libs/getSecureUrl";
+import { useDragStore } from "@/store/useDragStore";
 import { Plan } from "@/types";
 import Entypo from "@expo/vector-icons/Entypo";
-import { useMemo, useRef, useState } from "react";
+import React, { memo, useMemo, useRef, useState } from "react";
 import { Animated, Image, PanResponder, PanResponderGestureState, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-// 🔍 성능 측정용 - 개선 후 제거
-const useRenderCount = (componentName: string) => {
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-  console.log(`🔄 [${componentName}] 렌더링 횟수: ${renderCount.current}`);
-};
-
-const DraggablePlanCard = ({
-  item,
-  index,
-  dayId,
-  isLast,
-  onDragStart,
-  onDragMove,
-  onDragEnd,
-  isDragging,
-}: {
+interface DraggablePlanCardProps {
   item: Plan;
   index: number;
   dayId: string;
@@ -29,10 +14,23 @@ const DraggablePlanCard = ({
   onDragStart: (item: Plan, dayId: string, index: number, cardLayout: { x: number; y: number; width: number; height: number }, initialPosition: { x: number; y: number }) => void;
   onDragMove: (x: number, y: number, gestureState: PanResponderGestureState, evt: any, initialPosition: { x: number; y: number }) => void;
   onDragEnd: (y: number) => void;
-  isDragging: boolean;
-}) => {
-  // 🔍 성능 측정용
-  useRenderCount(`Card-${dayId}-${index}`);
+  // ✅ isDragging props 제거 - store에서 직접 구독
+}
+
+// ✅ React.memo로 불필요한 리렌더링 차단
+const DraggablePlanCard = memo(({
+  item,
+  index,
+  dayId,
+  isLast,
+  onDragStart,
+  onDragMove,
+  onDragEnd,
+}: DraggablePlanCardProps) => {
+  // ✅ Zustand selector로 세밀한 구독 - 이 카드가 드래그 중인지만 구독
+  const isDragging = useDragStore(
+    state => state.draggingItem?.item.key === item.key
+  );
 
   const cardOpacity = useRef(new Animated.Value(1)).current;
   const [componentHeight, setComponentHeight] = useState(0);
@@ -190,7 +188,7 @@ const DraggablePlanCard = ({
       </View>
     </Animated.View>
   );
-};
+});
 
 export default DraggablePlanCard;
 
