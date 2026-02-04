@@ -149,11 +149,6 @@ const styles = StyleSheet.create({
   leftContainer: {
     alignItems: 'center',
   },
-  line: {
-    width: 1,
-    backgroundColor: '#DDE1E6',
-    paddingBottom: 19,
-  },
   indexCircle: {
     width: 24,
     height: 24,
@@ -222,35 +217,4 @@ const styles = StyleSheet.create({
     color: '#747474',
     flexShrink: 1,
   },
-  portal: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1000,
-  },
-  emptyDayDropZone: {
-    minHeight: 100,
-    borderWidth: 2,
-    borderColor: '#E5E7EB',
-    borderStyle: 'dashed',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 8,
-    backgroundColor: '#F9FAFB',
-  },
-
-  emptyDayText: {
-    color: '#9CA3AF',
-    fontSize: 14,
-    fontStyle: 'italic',
-  },
-
-  // 드래그 중일 때 비어있는 영역 하이라이트
-  emptyDayDropZoneHighlight: {
-    borderColor: '#3B82F6',
-    backgroundColor: '#EFF6FF',
-  },
-})
+});

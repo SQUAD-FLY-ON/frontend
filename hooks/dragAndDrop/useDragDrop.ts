@@ -1,20 +1,7 @@
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useDragStore } from '@/store/useDragStore';
+import { Plan } from '@/types';
+import { useCallback, useContext, useRef } from 'react';
 import { Animated } from 'react-native';
-
-interface Plan {
-  place: string;
-  address: string;
-  image?: string;
-  type: string;
-  day: string;
-  key: string;
-}
-
-interface DraggingItem {
-  item: Plan;
-  sourceDay: string;
-  sourceIndex: number;
-}
 
 interface FloatingCardData {
   item: Plan;
@@ -31,8 +18,6 @@ interface UseDragDropOptions {
   remeasureDayLayouts: () => Promise<void>;
   getDropTarget: (pageY: number) => { dayId: string; insertIndex: number } | null;
   stopAutoScroll: () => void;
-  typeToLabel: { [key: string]: string };
-  styles: any;
   FloatingPortalContext: React.Context<any>;
 }
 
@@ -44,15 +29,21 @@ export const useDragDrop = ({
   stopAutoScroll,
   FloatingPortalContext
 }: UseDragDropOptions) => {
-  const [draggingItem, setDraggingItem] = useState<DraggingItem | null>(null);
-  const [floatingCardData, setFloatingCardData] = useState<FloatingCardData | null>(null);
+  // ✅ Zustand store에서 드래그 상태 관리
+  const draggingItem = useDragStore(state => state.draggingItem);
+  const setDraggingItem = useDragStore(state => state.setDraggingItem);
 
-  const initialScrollOffsetRef = useRef(0);
+  // ✅ draggingItem을 ref로 관리하여 handleDragEnd 콜백 안정화
+  const draggingItemRef = useRef(draggingItem);
+  draggingItemRef.current = draggingItem;
 
+  const floatingCardDataRef = useRef<FloatingCardData | null>(null);
   const floatingPortal = useContext(FloatingPortalContext);
 
-  // Floating 카드 생성
-  
+  // ✅ floatingPortal을 ref로 관리하여 콜백 안정화
+  const floatingPortalRef = useRef(floatingPortal);
+  floatingPortalRef.current = floatingPortal;
+
   // 드래그 시작
   const handleDragStart = useCallback(async (
     item: Plan,
@@ -61,80 +52,62 @@ export const useDragDrop = ({
     cardLayout: { x: number; y: number; width: number; height: number },
     initialPosition: { x: number; y: number }
   ) => {
+    console.log('🟢 [handleDragStart] 시작 ========================');
+    console.log('🟢 [handleDragStart] item:', item.key, item.place);
+    console.log('🟢 [handleDragStart] dayId:', dayId);
+    console.log('🟢 [handleDragStart] index:', index);
+    console.log('🟢 [handleDragStart] cardLayout:', cardLayout);
+    console.log('🟢 [handleDragStart] initialPosition:', initialPosition);
+
     setDraggingItem({ item, sourceDay: dayId, sourceIndex: index });
-    initialScrollOffsetRef.current = scrollOffsetRef.current;
+    console.log('🟢 [handleDragStart] setDraggingItem 호출됨');
 
     measureScrollViewPosition();
-    await remeasureDayLayouts();
+    console.log('🟢 [handleDragStart] measureScrollViewPosition 호출됨');
 
-    if (!cardLayout.width || !cardLayout.height) {
-      console.warn('Invalid card layout:', cardLayout);
+    await remeasureDayLayouts();
+    console.log('🟢 [handleDragStart] remeasureDayLayouts 완료');
+
+    const portal = floatingPortalRef.current;
+    console.log('🟢 [handleDragStart] portal:', !!portal);
+
+    if (!cardLayout.width || !cardLayout.height || !portal) {
+      console.log('⚠️ [handleDragStart] 조기 종료 - cardLayout 또는 portal 없음');
       return;
     }
-    if (!floatingPortal) return;
-    setFloatingCardData({
+
+    floatingCardDataRef.current = {
       item,
       dayId,
       index,
       layout: cardLayout,
       initialPosition,
       gestureState: { dx: 0, dy: 0 }
-    });
+    };
 
-    try {
-      console.log(item, dayId, index, cardLayout, initialPosition, { dx: 0, dy: 0 });
-      floatingPortal.createFloatingCard(item, dayId, index, cardLayout, initialPosition, { dx: 0, dy: 0 });
-    } catch (error) {
-      console.error('Failed to create floating card:', error);
-    }
-    Animated.timing(floatingPortal.floatingOpacity, {
+    portal.createFloatingCard(item, dayId, index, cardLayout, initialPosition, { dx: 0, dy: 0 });
+    Animated.timing(portal.floatingOpacity, {
       toValue: 0.9,
       duration: 150,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
-  }, [
-    scrollOffsetRef,
-    measureScrollViewPosition,
-    remeasureDayLayouts,
-    floatingPortal,
-    floatingPortal.floatingOpacity,
-    floatingPortal.createFloatingCard
-  ]);
+    console.log('🟢 [handleDragStart] 종료 ========================');
+  }, [setDraggingItem, measureScrollViewPosition, remeasureDayLayouts]);
   // 드래그 이동
   const handleDragMove = useCallback((
-    x: number,
-    y: number,
+    _x: number,
+    _y: number,
     gestureState: any,
-    evt: any,
-    initialPosition: { x: number; y: number }
+    _evt: any,
+    _initialPosition: { x: number; y: number }
   ) => {
-    if (!gestureState) {
-    console.warn('gestureState is undefined in handleDragMove');
-    return;
-  }
+    const portal = floatingPortalRef.current;
+    if (!gestureState || !floatingCardDataRef.current || !portal) return;
 
-  // ✅ setValue만 호출 (createFloatingCard 호출 안 함)
-  if (floatingCardData && gestureState.dx !== undefined && gestureState.dy !== undefined) {
-        console.log(gestureState.dx, gestureState.dy);
-
-    floatingPortal.floatingPan.setValue({ x: gestureState.dx, y: gestureState.dy });
-  }
-  if (gestureState.isAutoScrolling !== floatingCardData?.gestureState?.isAutoScrolling) {
-        setFloatingCardData(prev => prev ? {
-          ...prev,
-          gestureState
-        } : null);
-
-        floatingPortal.createFloatingCard(
-          floatingCardData?.item,
-          floatingCardData?.dayId,
-          floatingCardData?.index,
-          floatingCardData?.layout,
-          initialPosition,
-          gestureState
-        );
-      }
-  }, [floatingCardData, floatingPortal, floatingPortal.floatingPan, floatingPortal.createFloatingCard]);
+    if (gestureState.dx !== undefined && gestureState.dy !== undefined) {
+      portal.floatingPan.setValue({ x: gestureState.dx, y: gestureState.dy });
+    }
+  }, []);
 
   // 드래그 종료
   const handleDragEnd = useCallback((
@@ -142,75 +115,137 @@ export const useDragDrop = ({
     dayData: any,
     setDayData: (updater: (prev: any) => any) => void
   ) => {
+    console.log('🔴 [handleDragEnd] 시작 ========================');
+    console.log('🔴 [handleDragEnd] y (pageY):', y);
+    console.log('🔴 [handleDragEnd] dayData keys:', Object.keys(dayData || {}));
+
     stopAutoScroll();
 
-    if (!draggingItem) return;
+    // ✅ ref를 통해 최신 draggingItem 참조 (의존성 배열에서 제거)
+    const currentDraggingItem = draggingItemRef.current;
+    console.log('🔴 [handleDragEnd] currentDraggingItem:', currentDraggingItem);
+
+    if (!currentDraggingItem) {
+      console.log('❌ [handleDragEnd] draggingItem이 null - 조기 종료');
+      return;
+    }
 
     const dropTarget = getDropTarget(y);
+    console.log('🔴 [handleDragEnd] dropTarget:', dropTarget);
 
     if (dropTarget) {
       const { dayId: targetDay, insertIndex } = dropTarget;
-      const { item, sourceDay, sourceIndex } = draggingItem;
+      const { item, sourceDay, sourceIndex } = currentDraggingItem;
+
+      console.log('🔴 [handleDragEnd] 이동 정보:', {
+        sourceDay,
+        sourceIndex,
+        targetDay,
+        insertIndex,
+        itemKey: item.key
+      });
 
       if (targetDay === sourceDay) {
         // 같은 Day 내에서 순서 변경
+        console.log('🔴 [handleDragEnd] 같은 Day 내 이동');
+        console.log('🔴 [handleDragEnd] 조건 체크:', {
+          'insertIndex !== sourceIndex': insertIndex !== sourceIndex,
+          'insertIndex !== sourceIndex + 1': insertIndex !== sourceIndex + 1,
+          '조건 통과': insertIndex !== sourceIndex && insertIndex !== sourceIndex + 1
+        });
+
         if (insertIndex !== sourceIndex && insertIndex !== sourceIndex + 1) {
+          console.log('✅ [handleDragEnd] 같은 Day - setDayData 호출');
           setDayData((prevData: any) => {
-            const newDayData = { ...prevData };
-            const plans = [...newDayData[sourceDay].plans];
-
-            const [movedItem] = plans.splice(sourceIndex, 1);
+            console.log('✅ [handleDragEnd] setDayData 콜백 실행');
+            const sourcePlans = prevData[sourceDay].plans;
+            const movedItem = sourcePlans[sourceIndex];
             const finalInsertIndex = insertIndex > sourceIndex ? insertIndex - 1 : insertIndex;
-            plans.splice(finalInsertIndex, 0, movedItem);
 
-            newDayData[sourceDay].plans = plans;
-            return newDayData;
+            // ✅ 불변성 유지: filter와 slice로 새 배열 생성
+            const newPlans = [
+              ...sourcePlans.slice(0, sourceIndex),
+              ...sourcePlans.slice(sourceIndex + 1)
+            ];
+            newPlans.splice(finalInsertIndex, 0, movedItem);
+
+            console.log('✅ [handleDragEnd] 새 plans 순서:', newPlans.map((p: any) => p.key));
+            return {
+              ...prevData,
+              [sourceDay]: {
+                ...prevData[sourceDay],
+                plans: newPlans
+              }
+            };
           });
+        } else {
+          console.log('⚠️ [handleDragEnd] 같은 위치로 드롭 - 스킵');
         }
       } else {
         // 다른 Day로 이동
+        console.log('✅ [handleDragEnd] 다른 Day로 이동 - setDayData 호출');
         setDayData((prevData: any) => {
-          const newDayData = { ...prevData };
+          console.log('✅ [handleDragEnd] setDayData 콜백 실행 (다른 Day)');
+          const sourcePlans = prevData[sourceDay].plans;
+          const targetPlans = prevData[targetDay].plans;
+          const movedItem = sourcePlans[sourceIndex];
 
-          const [movedItem] = newDayData[sourceDay].plans.splice(sourceIndex, 1);
           const newItem = {
             ...movedItem,
             day: targetDay,
             key: `${targetDay}-${Date.now()}`
           };
-          newDayData[targetDay].plans.splice(insertIndex, 0, newItem);
 
-          return newDayData;
+          // ✅ 불변성 유지: 새 배열 생성
+          const newSourcePlans = [
+            ...sourcePlans.slice(0, sourceIndex),
+            ...sourcePlans.slice(sourceIndex + 1)
+          ];
+          const newTargetPlans = [
+            ...targetPlans.slice(0, insertIndex),
+            newItem,
+            ...targetPlans.slice(insertIndex)
+          ];
+
+          console.log('✅ [handleDragEnd] sourceDay plans:', newSourcePlans.length);
+          console.log('✅ [handleDragEnd] targetDay plans:', newTargetPlans.length);
+          return {
+            ...prevData,
+            [sourceDay]: {
+              ...prevData[sourceDay],
+              plans: newSourcePlans
+            },
+            [targetDay]: {
+              ...prevData[targetDay],
+              plans: newTargetPlans
+            }
+          };
         });
       }
+    } else {
+      console.log('❌ [handleDragEnd] dropTarget이 null - 드롭 실패');
     }
 
     // Floating 카드 제거
-    if (floatingPortal) {
-      Animated.timing(floatingPortal.floatingOpacity, {
+    const portal = floatingPortalRef.current;
+    if (portal) {
+      Animated.timing(portal.floatingOpacity, {
         toValue: 0,
         duration: 200,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }).start(() => {
-        floatingPortal.removeFloatingElement();
-        setFloatingCardData(null)
+        portal.removeFloatingElement();
+        floatingCardDataRef.current = null;
       });
+      portal.floatingPan.setValue({ x: 0, y: 0 });
     }
 
-    floatingPortal.floatingPan.setValue({ x: 0, y: 0 });
     setDraggingItem(null);
-  }, [
-    draggingItem,
-    getDropTarget,
-    stopAutoScroll,
-    floatingPortal,
-    floatingPortal.floatingOpacity,
-    floatingPortal.floatingPan
-  ]);
+    console.log('🔴 [handleDragEnd] 종료 ========================');
+  }, [getDropTarget, stopAutoScroll, setDraggingItem]);
 
   return {
-    draggingItem,
-    floatingCardData,
+    // ✅ draggingItem은 이제 각 컴포넌트에서 직접 store 구독
     handleDragStart,
     handleDragMove,
     handleDragEnd,
