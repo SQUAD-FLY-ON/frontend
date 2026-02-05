@@ -1,7 +1,7 @@
-import NextStepHint from "@/conponents/(tabs)/explore/index/hints/NextStepHint";
-import RegionSelect from "@/conponents/(tabs)/explore/index/RegionSelect";
-import { BackButton } from "@/conponents/BackButton";
-import { MainGradient } from "@/conponents/LinearGradients/MainGradient";
+import NextStepHint from "@/components/(tabs)/explore/index/hints/NextStepHint";
+import RegionSelect from "@/components/(tabs)/explore/index/RegionSelect";
+import { BackButton } from "@/components/BackButton";
+import { MainGradient } from "@/components/LinearGradients/MainGradient";
 import useExploreStore from "@/store/exploreStore";
 import { useRouter } from "expo-router";
 import React from "react";

@@ -1,7 +1,7 @@
-import FooterSection from "@/conponents/(tabs)/index/FooterSection";
-import MyStatusSection from "@/conponents/(tabs)/index/MyStatusSection";
-import HomeLinearBackground from "@/conponents/(tabs)/index/MyStatusSection/LinearBackground/HomeLinearBackground";
-import RecommendSection from "@/conponents/(tabs)/index/RecommendSection";
+import FooterSection from "@/components/(tabs)/index/FooterSection";
+import MyStatusSection from "@/components/(tabs)/index/MyStatusSection";
+import HomeLinearBackground from "@/components/(tabs)/index/MyStatusSection/LinearBackground/HomeLinearBackground";
+import RecommendSection from "@/components/(tabs)/index/RecommendSection";
 import { useTourSchedule } from "@/hooks/useTourSchedule";
 import { useState } from "react";
 import { Dimensions, RefreshControl, ScrollView, StyleSheet, View } from "react-native";

@@ -1,5 +1,5 @@
-import PlaceCard from "@/conponents/(tabs)/explore/PlaceCard";
-import Header from "@/conponents/Header";
+import PlaceCard from "@/components/(tabs)/explore/PlaceCard";
+import Header from "@/components/Header";
 import { fetchSpots } from "@/libs/fetchSpots";
 import useExploreStore from "@/store/exploreStore";
 import { useQuery } from "@tanstack/react-query";

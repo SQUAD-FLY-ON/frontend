@@ -1,5 +1,5 @@
-import CustomButton from "@/conponents/CustomButton";
-import FormInput from "@/conponents/FormInput";
+import CustomButton from "@/components/CustomButton";
+import FormInput from "@/components/FormInput";
 import { loginSchema } from "@/schema/loginSchema";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useModalStore } from "@/store/useModalStore";

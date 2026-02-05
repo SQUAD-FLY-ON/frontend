@@ -1,7 +1,7 @@
-import Level from "@/conponents/(tabs)/user/index/Level";
-import MenuList from "@/conponents/(tabs)/user/index/MenuList";
-import Profile from "@/conponents/(tabs)/user/index/Profile";
-import Header from "@/conponents/Header";
+import Level from "@/components/(tabs)/user/index/Level";
+import MenuList from "@/components/(tabs)/user/index/MenuList";
+import Profile from "@/components/(tabs)/user/index/Profile";
+import Header from "@/components/Header";
 import { fetchMembers } from "@/libs/fetchMember";
 import { MemberProfileInfo } from "@/types";
 import { ApiResponse } from "@/types/api";

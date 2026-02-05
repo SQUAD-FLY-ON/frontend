@@ -1,8 +1,8 @@
-import ButtonSection from '@/conponents/(tabs)/schedule/ButtonSection';
-import ScheduleTopBar from '@/conponents/(tabs)/schedule/ScheduleTopBar';
-import Screen from '@/conponents/(tabs)/schedule/screens';
-import { FloatingPortalProvider } from '@/conponents/(tabs)/schedule/screens/EditPlanScreen/TravelKanban/FloatingPortal';
-import Stepper from '@/conponents/(tabs)/schedule/Stepper';
+import ButtonSection from '@/components/(tabs)/schedule/ButtonSection';
+import ScheduleTopBar from '@/components/(tabs)/schedule/ScheduleTopBar';
+import Screen from '@/components/(tabs)/schedule/screens';
+import { FloatingPortalProvider } from '@/components/(tabs)/schedule/screens/EditPlanScreen/TravelKanban/FloatingPortal';
+import Stepper from '@/components/(tabs)/schedule/Stepper';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
