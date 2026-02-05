@@ -26,7 +26,6 @@ export async function fetchSpotDetail(
     );
     return response.data;
   } catch (error) {
-    console.log("❌ 패러글라이딩 스팟 조회 실패:", error);
     return null;
   }
 }

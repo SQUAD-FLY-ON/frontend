@@ -15,7 +15,6 @@ export async function postFlightLog(
   request: postFlightLogRequest
 ): Promise<ApiResponse<myFlightLogsContents> | null> {
   try {
-    console.log("[flightLogs] memberId:", memberId, Number(memberId));
     const response: ApiResponse<myFlightLogsContents> = await apiClient.post(
       "/flight-logs",
       request,
@@ -23,7 +22,6 @@ export async function postFlightLog(
     );
     return response;
   } catch (error) {
-    console.log("❌ 비행 기록 실패: ", error);
     Alert.alert("비행 기록에 실패하였습니다.");
     return null;
   }

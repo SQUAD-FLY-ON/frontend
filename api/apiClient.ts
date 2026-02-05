@@ -22,7 +22,6 @@ apiClient.interceptors.response.use(
     if (!response.data || !response.data.httpStatusCode) {
       return response;
     }
-    console.log(response);
     return response.data;
   },
   async (error) => {

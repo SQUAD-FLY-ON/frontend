@@ -10,7 +10,6 @@ export async function fetchSpotTrack(
   spotId: string,
   memberId: string
 ): Promise<ITrackData[] | null> {
-  console.log("spotId:", spotId);
   try {
     const response: ApiResponse<ITrackPoints> = await apiClient.get(
       `/flight-logs/${spotId}/track`,
@@ -20,7 +19,6 @@ export async function fetchSpotTrack(
     );
     return response.data.points;
   } catch (error) {
-    console.log("❌ 체험장 비행 경로 제공 실패:", error);
     return null;
   }
 }

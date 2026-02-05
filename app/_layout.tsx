@@ -1,5 +1,5 @@
-import { GlobalModals } from "@/conponents/GlobalModals";
-import Header from "@/conponents/Header";
+import { GlobalModals } from "@/components/GlobalModals";
+import Header from "@/components/Header";
 import { useAuthStore } from "@/store/useAuthStore";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -38,7 +38,6 @@ const queryClient = new QueryClient({
       initializeAuth();
     }
   }, [fontsLoaded, isInitialized, initializeAuth]);
-  console.log(isAuthenticated);
   // 폰트 로딩 또는 인증 초기화가 완료되지 않은 경우 로딩 화면 표시
   if (!fontsLoaded || !isInitialized) {
   return (

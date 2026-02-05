@@ -1,5 +1,5 @@
-import TravelCard from "@/conponents/(tabs)/my-schedule/TravelCard/TravelCard";
-import Header from "@/conponents/Header";
+import TravelCard from "@/components/(tabs)/my-schedule/TravelCard/TravelCard";
+import Header from "@/components/Header";
 import { useTourSchedule } from "@/hooks/useTourSchedule";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
@@ -21,7 +21,6 @@ export default function Index() {
     refetchSchedule();
   }, [refetchSchedule])
 );
-  console.log(schedule);
   return (
     <View style={styles.container}>
       <Header title="나의 여행" backButton={false} />

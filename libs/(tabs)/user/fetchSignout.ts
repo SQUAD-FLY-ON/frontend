@@ -11,7 +11,6 @@ export async function fetchSignout(): Promise<any> {
     });
     return response;
   } catch (error) {
-    console.log("❌ 회원탈퇴 실패:", error);
     Alert.alert("회원탈퇴에 실패하였습니다. 다시시도해주세요.");
     return [];
   }

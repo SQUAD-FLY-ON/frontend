@@ -25,7 +25,6 @@ export async function fetchTourSchedule(): Promise<TourismSchedule[]> {
     );
     return filteredSchedules;
   } catch (error) {
-    console.log("❌ 여행 일정 조회실패:", error);
     Alert.alert("여행 일정 조회에 실패하였습니다. 다시 시도해주세요.");
     return [];
   }

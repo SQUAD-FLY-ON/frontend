@@ -7,7 +7,6 @@ import { ApiResponse, SignupRequest } from "@/types/api";
  */
 export async function fetchSignup(request: SignupRequest): Promise<any> {
   try {
-    console.log(process.env.EXPO_PUBLIC_API_URL);
     const response: ApiResponse<any> = await apiClient.post(
       "/members",
       request,
@@ -15,7 +14,6 @@ export async function fetchSignup(request: SignupRequest): Promise<any> {
     );
     return response;
   } catch (error) {
-    console.log("❌ 회원가입 실패:", error.response);
     return []; // 실패 시 기본값 반환
   }
 }

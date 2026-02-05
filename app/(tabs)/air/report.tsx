@@ -1,7 +1,7 @@
-import Background from "@/conponents/(tabs)/air/Background";
-import ReportText from "@/conponents/(tabs)/air/ReportText";
-import ConfirmModal from "@/conponents/ConfirmModal";
-import { MainGradient } from "@/conponents/LinearGradients/MainGradient";
+import Background from "@/components/(tabs)/air/Background";
+import ReportText from "@/components/(tabs)/air/ReportText";
+import ConfirmModal from "@/components/ConfirmModal";
+import { MainGradient } from "@/components/LinearGradients/MainGradient";
 import { postFlightLog } from "@/libs/(tabs)/air/flightLogs";
 import { saveFlightLog } from "@/store/flightLogStore";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -70,9 +70,7 @@ export default function Report() {
     const response: ApiResponse<myFlightLogsContents> | null =
       await postFlightLog(memberId as string, data);
 
-    console.log("[report] 비행 기록 저장:", response);
     if (!response) {
-      console.log("비행 기록을 저장하는 과정에 오류가 발생했습니다");
       return;
     }
 
@@ -80,8 +78,6 @@ export default function Report() {
     setRecordId(id);
     setRecordDate(response.data.createdAt);
     const flightLog = await saveFlightLog(id, locationData);
-    console.log(`[report] ID ${id}: `, flightLog.success);
-
     return response;
   };
 
@@ -93,7 +89,6 @@ export default function Report() {
       setIsModalVisible(true);
     },
     onError: (error) => {
-      console.error("저장 실패:", error);
     },
   });
 

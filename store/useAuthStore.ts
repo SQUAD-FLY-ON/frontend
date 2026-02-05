@@ -115,13 +115,11 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           if (refreshToken) {
             await apiClient
               .delete("/tokens", { data: { refreshToken } })
-              .catch((error) => {
-                console.warn("서버 로그아웃 요청 실패:", error);
+              .catch(() => {
               });
             queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
           }
         } catch (error) {
-          console.error("로그아웃 중 오류:", error);
         } finally {
           get().clearAuthState();
           set({ isLoading: false });
@@ -143,7 +141,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               refreshToken,
             }
           );
-          console.log(response);
           if (response.httpStatusCode === 201 && response.data) {
             const { accessToken } = response.data;
 
@@ -155,19 +152,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             })
             return true;
           } else {
-            console.log("bbbb");
             get().clearAuthState(); // ✅ 에러 시 상태 초기화
             return false;
           }
         } catch (error: any) {
-          console.error("토큰 갱신 실패:", error);
           get().clearAuthState();
           return false;
         }
         finally {
           queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
           set({ isInitializing: false, isInitialized: true });
-          console.log('isLoading false and isInitialized');
         }
       },
       clearAuthState: () => {
