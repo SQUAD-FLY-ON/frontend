@@ -1,7 +1,7 @@
-import Background from "@/conponents/(tabs)/air/Background";
-import Dropdown from "@/conponents/(tabs)/air/Dropdown";
-import FlightRecordButton from "@/conponents/(tabs)/air/FlightRecordButton";
-import Stopwatch from "@/conponents/(tabs)/air/Stopwatch";
+import Background from "@/components/(tabs)/air/Background";
+import Dropdown from "@/components/(tabs)/air/Dropdown";
+import FlightRecordButton from "@/components/(tabs)/air/FlightRecordButton";
+import Stopwatch from "@/components/(tabs)/air/Stopwatch";
 import { useTourSchedule } from "@/hooks/useTourSchedule";
 import { ITrackData, TLocationData } from "@/types";
 import { useFocusEffect } from "@react-navigation/native";
@@ -39,11 +39,9 @@ export default function Index() {
       if (granted === true) setOk(true);
       else setOk(false);
     } catch (err) {
-      console.error("현재 위치를 가져오는 중 오류 발생: ", err);
     }
   };
   useEffect(() => {
-    console.log("[index] ask");
     ask();
   }, []);
 
@@ -63,7 +61,6 @@ export default function Index() {
       } = await Location.getCurrentPositionAsync();
       saveLocationData(latitude, longitude, altitude || 0);
     } catch (error) {
-      console.error(error);
     }
   };
 

@@ -52,27 +52,15 @@ export const useDragDrop = ({
     cardLayout: { x: number; y: number; width: number; height: number },
     initialPosition: { x: number; y: number }
   ) => {
-    console.log('🟢 [handleDragStart] 시작 ========================');
-    console.log('🟢 [handleDragStart] item:', item.key, item.place);
-    console.log('🟢 [handleDragStart] dayId:', dayId);
-    console.log('🟢 [handleDragStart] index:', index);
-    console.log('🟢 [handleDragStart] cardLayout:', cardLayout);
-    console.log('🟢 [handleDragStart] initialPosition:', initialPosition);
-
     setDraggingItem({ item, sourceDay: dayId, sourceIndex: index });
-    console.log('🟢 [handleDragStart] setDraggingItem 호출됨');
 
     measureScrollViewPosition();
-    console.log('🟢 [handleDragStart] measureScrollViewPosition 호출됨');
 
     await remeasureDayLayouts();
-    console.log('🟢 [handleDragStart] remeasureDayLayouts 완료');
 
     const portal = floatingPortalRef.current;
-    console.log('🟢 [handleDragStart] portal:', !!portal);
 
     if (!cardLayout.width || !cardLayout.height || !portal) {
-      console.log('⚠️ [handleDragStart] 조기 종료 - cardLayout 또는 portal 없음');
       return;
     }
 
@@ -91,7 +79,6 @@ export const useDragDrop = ({
       duration: 150,
       useNativeDriver: true,
     }).start();
-    console.log('🟢 [handleDragStart] 종료 ========================');
   }, [setDraggingItem, measureScrollViewPosition, remeasureDayLayouts]);
   // 드래그 이동
   const handleDragMove = useCallback((
@@ -115,49 +102,25 @@ export const useDragDrop = ({
     dayData: any,
     setDayData: (updater: (prev: any) => any) => void
   ) => {
-    console.log('🔴 [handleDragEnd] 시작 ========================');
-    console.log('🔴 [handleDragEnd] y (pageY):', y);
-    console.log('🔴 [handleDragEnd] dayData keys:', Object.keys(dayData || {}));
-
     stopAutoScroll();
 
     // ✅ ref를 통해 최신 draggingItem 참조 (의존성 배열에서 제거)
     const currentDraggingItem = draggingItemRef.current;
-    console.log('🔴 [handleDragEnd] currentDraggingItem:', currentDraggingItem);
 
     if (!currentDraggingItem) {
-      console.log('❌ [handleDragEnd] draggingItem이 null - 조기 종료');
       return;
     }
 
     const dropTarget = getDropTarget(y);
-    console.log('🔴 [handleDragEnd] dropTarget:', dropTarget);
 
     if (dropTarget) {
       const { dayId: targetDay, insertIndex } = dropTarget;
       const { item, sourceDay, sourceIndex } = currentDraggingItem;
 
-      console.log('🔴 [handleDragEnd] 이동 정보:', {
-        sourceDay,
-        sourceIndex,
-        targetDay,
-        insertIndex,
-        itemKey: item.key
-      });
-
       if (targetDay === sourceDay) {
         // 같은 Day 내에서 순서 변경
-        console.log('🔴 [handleDragEnd] 같은 Day 내 이동');
-        console.log('🔴 [handleDragEnd] 조건 체크:', {
-          'insertIndex !== sourceIndex': insertIndex !== sourceIndex,
-          'insertIndex !== sourceIndex + 1': insertIndex !== sourceIndex + 1,
-          '조건 통과': insertIndex !== sourceIndex && insertIndex !== sourceIndex + 1
-        });
-
         if (insertIndex !== sourceIndex && insertIndex !== sourceIndex + 1) {
-          console.log('✅ [handleDragEnd] 같은 Day - setDayData 호출');
           setDayData((prevData: any) => {
-            console.log('✅ [handleDragEnd] setDayData 콜백 실행');
             const sourcePlans = prevData[sourceDay].plans;
             const movedItem = sourcePlans[sourceIndex];
             const finalInsertIndex = insertIndex > sourceIndex ? insertIndex - 1 : insertIndex;
@@ -169,7 +132,6 @@ export const useDragDrop = ({
             ];
             newPlans.splice(finalInsertIndex, 0, movedItem);
 
-            console.log('✅ [handleDragEnd] 새 plans 순서:', newPlans.map((p: any) => p.key));
             return {
               ...prevData,
               [sourceDay]: {
@@ -178,14 +140,10 @@ export const useDragDrop = ({
               }
             };
           });
-        } else {
-          console.log('⚠️ [handleDragEnd] 같은 위치로 드롭 - 스킵');
         }
       } else {
         // 다른 Day로 이동
-        console.log('✅ [handleDragEnd] 다른 Day로 이동 - setDayData 호출');
         setDayData((prevData: any) => {
-          console.log('✅ [handleDragEnd] setDayData 콜백 실행 (다른 Day)');
           const sourcePlans = prevData[sourceDay].plans;
           const targetPlans = prevData[targetDay].plans;
           const movedItem = sourcePlans[sourceIndex];
@@ -207,8 +165,6 @@ export const useDragDrop = ({
             ...targetPlans.slice(insertIndex)
           ];
 
-          console.log('✅ [handleDragEnd] sourceDay plans:', newSourcePlans.length);
-          console.log('✅ [handleDragEnd] targetDay plans:', newTargetPlans.length);
           return {
             ...prevData,
             [sourceDay]: {
@@ -222,8 +178,6 @@ export const useDragDrop = ({
           };
         });
       }
-    } else {
-      console.log('❌ [handleDragEnd] dropTarget이 null - 드롭 실패');
     }
 
     // Floating 카드 제거
@@ -241,7 +195,6 @@ export const useDragDrop = ({
     }
 
     setDraggingItem(null);
-    console.log('🔴 [handleDragEnd] 종료 ========================');
   }, [getDropTarget, stopAutoScroll, setDraggingItem]);
 
   return {

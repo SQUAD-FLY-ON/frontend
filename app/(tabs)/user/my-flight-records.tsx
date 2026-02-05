@@ -1,5 +1,5 @@
-import FlightCard from "@/conponents/(tabs)/user/my-flight-records/FlightCard";
-import Header from "@/conponents/Header";
+import FlightCard from "@/components/(tabs)/user/my-flight-records/FlightCard";
+import Header from "@/components/Header";
 import { fetchFlightLogs } from "@/libs/(tabs)/user/fetchFlightLogs";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -14,7 +14,6 @@ export default function MyFlightRecords() {
       queryKey: ["my-flight-logs", memberId],
       queryFn: ({ pageParam = 0 }) => {
         if (!memberId) {
-          console.log("[my-flight-logs] memberId is empty!!!");
           return [];
         }
         return fetchFlightLogs({ memberId, page: pageParam, size: pageSize });

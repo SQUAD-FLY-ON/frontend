@@ -1,7 +1,7 @@
-import ExploreMap from "@/conponents/(tabs)/explore/map/ExploreMapView";
-import ExploreModal from "@/conponents/(tabs)/explore/map/ExploreModal";
-import MapFloatingButton from "@/conponents/(tabs)/explore/map/FloatingButton";
-import { BackButton } from "@/conponents/BackButton";
+import ExploreMap from "@/components/(tabs)/explore/map/ExploreMapView";
+import ExploreModal from "@/components/(tabs)/explore/map/ExploreModal";
+import MapFloatingButton from "@/components/(tabs)/explore/map/FloatingButton";
+import { BackButton } from "@/components/BackButton";
 import useExploreStore from "@/store/exploreStore";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";

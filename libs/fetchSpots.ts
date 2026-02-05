@@ -17,7 +17,6 @@ export async function fetchSpots(request: SpotRequest): Promise<Spot[]> {
     });
     return response.data.searchedSpots;
   } catch (error) {
-    console.log("❌ 패러글라이딩 스팟 조회 실패:", error);
     return []; // 실패 시 기본값 반환
   }
 }

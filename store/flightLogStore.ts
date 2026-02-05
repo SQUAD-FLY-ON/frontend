@@ -22,7 +22,6 @@ export const saveFlightLog = async (
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storage));
     return { success: true };
   } catch (error) {
-    console.error("Failed to save location data:", error);
     return { success: false };
   }
 };
@@ -38,7 +37,6 @@ export const getFlightLog = async (
     const storage: Record<string, ITrackData[]> = JSON.parse(existing);
     return storage[id] || null;
   } catch (error) {
-    console.error("Failed to load location data:", error);
     return null;
   }
 };
@@ -51,7 +49,6 @@ export const getAllFlightLogs = async (): Promise<
     const existing = await AsyncStorage.getItem(STORAGE_KEY);
     return existing ? JSON.parse(existing) : {};
   } catch (error) {
-    console.error("Failed to load all location data:", error);
     return {};
   }
 };
@@ -67,7 +64,6 @@ export const removeFlightLog = async (id: string): Promise<void> => {
 
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storage));
   } catch (error) {
-    console.error("Failed to remove location data:", error);
   }
 };
 
@@ -76,6 +72,5 @@ export const clearAllFlightLogs = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(STORAGE_KEY);
   } catch (error) {
-    console.error("Failed to clear location data:", error);
   }
 };

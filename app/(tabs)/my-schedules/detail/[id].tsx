@@ -1,8 +1,8 @@
 
-import DetailTravelCard from "@/conponents/(tabs)/my-schedule/DetailTravelCard";
-import Filter from "@/conponents/(tabs)/schedule/Filter";
-import PlanCard from "@/conponents/(tabs)/schedule/screens/PlanScreen/PlanCard";
-import Header from "@/conponents/Header";
+import DetailTravelCard from "@/components/(tabs)/my-schedule/DetailTravelCard";
+import Filter from "@/components/(tabs)/schedule/Filter";
+import PlanCard from "@/components/(tabs)/schedule/screens/PlanScreen/PlanCard";
+import Header from "@/components/Header";
 import { useTourSchedule } from "@/hooks/useTourSchedule";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";

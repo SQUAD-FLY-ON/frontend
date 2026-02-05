@@ -1,5 +1,5 @@
-import PrivacyPolicy from "@/conponents/signup/PrivacyPolicy";
-import SignupForm from "@/conponents/signup/SignupForm";
+import PrivacyPolicy from "@/components/signup/PrivacyPolicy";
+import SignupForm from "@/components/signup/SignupForm";
 import { useState } from "react";
 
 

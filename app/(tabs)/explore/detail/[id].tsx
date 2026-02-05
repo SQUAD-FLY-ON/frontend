@@ -1,4 +1,4 @@
-import SpotCard from "@/conponents/(tabs)/explore/SpotCard";
+import SpotCard from "@/components/(tabs)/explore/SpotCard";
 import {
   fetchSpotDetail,
   SpotDetailResponse,
@@ -54,13 +54,10 @@ export default function Detail() {
 
   const memberId = useAuthStore((state) => state.memberInfo?.memberId);
   const getTrack = async () => {
-    console.log("[RN] Fetching track data for id:", id);
     const response = await fetchSpotTrack(id as string, memberId as string);
-    console.log("[RN] Track data received:", response?.length, "points");
     if (response !== null) setTrack(response);
   };
   useEffect(() => {
-    console.log("id, memberId:", id, memberId);
     if (id && memberId) {
       spotDetail();
       getTrack();
@@ -68,81 +65,40 @@ export default function Detail() {
   }, [id, memberId]);
 
   useEffect(() => {
-    console.log(
-      "[RN] useEffect triggered - isReady:",
-      isReady,
-      "track:",
-      track?.length
-    );
     if (isReady && track && track.length > 0) {
-      console.log("[RN] 🚀 Sending flight data with", track.length, "points");
-      console.log("[RN] First track point:", track[0]);
       const message = {
         type: "SET_FLIGHT",
         track,
       };
       webviewRef.current?.postMessage(JSON.stringify(message));
-      console.log("[RN] ✅ postMessage called");
-    } else {
-      console.log(
-        "[RN] ⏳ Waiting... isReady:",
-        isReady,
-        "track length:",
-        track?.length || 0
-      );
     }
   }, [isReady, track]);
 
   const onMessage = (e: WebViewMessageEvent) => {
-    console.log("[RN] 📨 Message received from WebView");
-    console.log("[RN] Raw data:", e.nativeEvent.data);
-
     try {
       const raw = e.nativeEvent.data;
       const data = JSON.parse(raw);
-      console.log("[RN] Parsed message type:", data.type);
 
       if (!data?.type) {
-        console.log("[RN] ⚠️ No type in message");
         return;
       }
 
       if (data.type === "READY") {
-        console.log("[RN] ✅ WebView READY received");
         setIsReady(true);
       }
-
-      if (data.type === "PLAY_STARTED") {
-        console.log("[RN] ▶️ Play started");
-      }
-
-      if (data.type === "ERROR") {
-        console.warn("[RN] ❌ WebView error:", data.message);
-      }
     } catch (err) {
-      console.error("[RN] 💥 Invalid message from webview:", err);
     }
   };
 
   const onLoadEnd = () => {
-    console.log("[RN] 🔄 WebView onLoadEnd called");
   };
 
   const onLoadStart = () => {
-    console.log("[RN] 🔄 WebView onLoadStart called");
   };
 
   const onError = (syntheticEvent: any) => {
     const { nativeEvent } = syntheticEvent;
-    console.error("[RN] 💥 WebView error:", nativeEvent);
   };
-
-  console.log(
-    "[RN] 🔄 Component rendering - track:",
-    track?.length,
-    "isReady:",
-    isReady
-  );
 
   return (
     <SafeAreaView style={styles.container}>

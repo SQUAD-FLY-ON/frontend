@@ -1,7 +1,7 @@
-import AirFloatingButton from "@/conponents/CustomTabBar/AirFloatingButton";
-import CreateFloatingButton from "@/conponents/CustomTabBar/CreateFloatingButton";
-import CustomTabButton from "@/conponents/CustomTabBar/CustomTabButton";
-import { CustomTabList } from "@/conponents/CustomTabBar/CustomTabList";
+import AirFloatingButton from "@/components/CustomTabBar/AirFloatingButton";
+import CreateFloatingButton from "@/components/CustomTabBar/CreateFloatingButton";
+import CustomTabButton from "@/components/CustomTabBar/CustomTabButton";
+import { CustomTabList } from "@/components/CustomTabBar/CustomTabList";
 import { TabList, Tabs, TabSlot, TabTrigger } from "expo-router/ui";
 
 export default function TabLayout() {

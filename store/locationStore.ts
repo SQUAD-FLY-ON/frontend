@@ -34,7 +34,6 @@ export const useLocationStore = create<LocationStore>((set, get) => ({
       set({ locationPermission: granted });
       return granted;
     } catch (err) {
-      console.error("위치 권한 요청 중 오류 발생: ", err);
       set({ error: "위치 권한을 요청할 수 없습니다." });
       return false;
     }
@@ -58,7 +57,6 @@ export const useLocationStore = create<LocationStore>((set, get) => ({
       set({ location: locationData, error: null });
       return locationData;
     } catch (err) {
-      console.error("현재 위치를 가져오는 중 오류 발생: ", err);
       set({ error: "현재 위치를 가져올 수 없습니다." });
       return null;
     }
