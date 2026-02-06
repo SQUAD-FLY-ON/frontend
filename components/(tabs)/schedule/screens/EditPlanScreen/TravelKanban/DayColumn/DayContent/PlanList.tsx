@@ -1,6 +1,6 @@
-import { Plan } from "@/types";
+import { CardLayout, GestureState, LayoutEvent, Plan, Position, TravelKanbanStyles } from "@/types";
 import React, { Fragment, memo } from "react";
-import { View } from "react-native";
+import { GestureResponderEvent, View } from "react-native";
 import DraggablePlanCard from "../../DraggablePlanCard";
 
 // 계획 리스트 컴포넌트
@@ -8,11 +8,11 @@ interface PlanListProps {
   dayId: string;
   plans: Plan[];
   // ✅ draggingItem props 제거 - DraggablePlanCard에서 직접 store 구독
-  onLayoutCard: (dayId: string, index: number, event: any) => void;
-  onDragStart: (item: Plan, dayId: string, index: number, layout: any, position: any) => void;
-  onDragMove: (x: number, y: number, gestureState: any, evt: any, initialPosition: any) => void;
+  onLayoutCard: (dayId: string, index: number, event: LayoutEvent) => void;
+  onDragStart: (item: Plan, dayId: string, index: number, layout: CardLayout, position: Position) => void;
+  onDragMove: (x: number, y: number, gestureState: GestureState, evt: GestureResponderEvent, initialPosition: Position) => void;
   onDragEnd: (y: number) => void;
-  styles: any;
+  styles: TravelKanbanStyles;
 }
 
 // ✅ React.memo로 불필요한 리렌더링 차단

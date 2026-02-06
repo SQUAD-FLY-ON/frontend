@@ -22,15 +22,9 @@ type Position = {
   y: number;
 };
 
-type GestureState = {
+type SimpleGestureState = {
   dx: number;
   dy: number;
-  vx: number;
-  vy: number;
-  moveX: number;
-  moveY: number;
-  numberActiveTouches: number;
-  stateID: number;
 };
 
 type CreateFloatingCard = (
@@ -39,7 +33,7 @@ type CreateFloatingCard = (
   index: number,
   layout: Layout,
   initialPosition: Position,
-  gestureState: GestureState
+  gestureState: SimpleGestureState
 ) => void;
 
 

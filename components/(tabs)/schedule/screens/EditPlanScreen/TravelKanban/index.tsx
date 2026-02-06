@@ -3,9 +3,9 @@ import { useDragDrop } from '@/hooks/dragAndDrop/useDragDrop';
 import { useLayoutMeasurement } from '@/hooks/dragAndDrop/useLayoutMeasurement';
 import { transformSchedulesToDayData } from '@/libs/schedule/transformSchedulesToDayData';
 import { useScheduleStore } from '@/store/useScheduleStore';
-import { Plan } from '@/types';
+import { GestureState, Plan } from '@/types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { GestureResponderEvent, ScrollView, StyleSheet, View } from 'react-native';
 import { DayColumn } from './DayColumn';
 import { FloatingPortalContext } from './FloatingPortal';
 
@@ -82,8 +82,8 @@ export const TravelPlanKanban = () => {
   const handleEnhancedDragMove = useCallback((
     x: number,
     y: number,
-    gestureState: any,
-    evt: any,
+    gestureState: GestureState,
+    evt: GestureResponderEvent,
     initialPosition: { x: number; y: number }
   ) => {
     // 자동 스크롤 처리
