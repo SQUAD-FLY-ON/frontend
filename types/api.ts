@@ -1,4 +1,5 @@
 import {
+  ITrackPoints,
   RecommendSpotCreteria,
   RecommendSpots,
   RegionName,
@@ -47,7 +48,7 @@ export interface WeatherResponse {
 }
 
 export interface TourismResponse {
-  schedules: any[];
+  schedules: TourismItem[];
 }
 export interface TourismRequest {
   lat: number;
@@ -73,9 +74,7 @@ export interface AddScheduleRequest {
   scheduleStart: string;
   scheduleEnd: string;
 }
-export interface RecommendSpotsResponse {
-  recommendSpotList: TourismItem[];
-}
+// RecommendSpotsResponse는 위에 정의됨 (recommendSpotList: RecommendSpots[])
 
 export interface ScheduleResponse {
   schedules: Schedules;
@@ -117,7 +116,7 @@ export interface myFlightLogsContents {
   averageSpeed: number;
   flightAltitude: number;
   createdAt: string;
-  track: any; // 삭제 예정
+  track: ITrackPoints | null;
 }
 export interface myFlightLogs {
   pageable: IPageable;

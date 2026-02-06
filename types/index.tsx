@@ -247,7 +247,7 @@ export interface DayData {
   [dayId: string]: {
     title: string;
     plans: Plan[];
-    color: string;
+    color?: string;
   };
 }
 export interface TourismSchedule {
@@ -302,4 +302,113 @@ export interface DraggingItem {
   item: Plan;
   sourceDay: string;
   sourceIndex: number;
+}
+
+// ===== 드래그 앤 드롭 관련 타입 =====
+export interface CardLayout {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface Position {
+  x: number;
+  y: number;
+}
+
+export interface GestureState {
+  dx: number;
+  dy: number;
+  moveX: number;
+  moveY: number;
+  x0: number;
+  y0: number;
+  numberActiveTouches: number;
+  stateID: number;
+  vx: number;
+  vy: number;
+}
+
+// React Native의 LayoutChangeEvent 타입
+export interface LayoutEvent {
+  nativeEvent: {
+    layout: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+  };
+}
+
+// React Native의 NativeScrollEvent 타입
+export interface ScrollEvent {
+  nativeEvent: {
+    contentOffset: {
+      x: number;
+      y: number;
+    };
+    contentSize: {
+      width: number;
+      height: number;
+    };
+    layoutMeasurement: {
+      width: number;
+      height: number;
+    };
+  };
+}
+
+// TravelKanban 스타일 타입
+export interface TravelKanbanStyles {
+  container: object;
+  scrollContent: object;
+  dayColumn: object;
+  dayColumnSpacing: object;
+  dayHeader: object;
+  dayTitle: object;
+  dayContent: object;
+  emptyDayDropZone: object;
+  emptyDayText: object;
+  emptyDayDropZoneHighlight: object;
+}
+
+// 비행 기록 데이터 타입
+export interface FlightLogData {
+  id: string;
+  airfieldName: string;
+  airfieldImageUrl: string;
+  flightTime: number;
+  flightDistance: number;
+  averageSpeed: number;
+  flightAltitude: number;
+  createdAt: string;
+  track: ITrackPoints | null;
+}
+
+// API 응답 타입
+export interface MemberResponse {
+  memberId: string;
+  nickname: string;
+  imgUrl: string | null;
+  gliderBadge: string;
+  badgeAltitude: number;
+  totalJumpAltitude: number;
+}
+
+export interface SignupResponse {
+  httpStatusCode: number;
+  httpStatusMessage: string;
+  data: {
+    memberId: string;
+  } | null;
+}
+
+// Tab Trigger 타입
+export interface TabTriggerElement {
+  props: {
+    name: string;
+    href?: string;
+  };
 }
