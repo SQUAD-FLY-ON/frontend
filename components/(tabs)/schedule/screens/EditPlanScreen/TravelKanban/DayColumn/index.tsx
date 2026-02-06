@@ -1,6 +1,6 @@
-import { Plan } from '@/types';
+import { CardLayout, GestureState, LayoutEvent, Plan, Position, TravelKanbanStyles } from '@/types';
 import React, { memo } from 'react';
-import { View } from 'react-native';
+import { GestureResponderEvent, View } from 'react-native';
 import DayContent from './DayContent';
 import DayHeader from './DayHeader';
 
@@ -14,13 +14,13 @@ interface DayColumnProps {
   dayData: DayData;
   index: number;
   // ✅ draggingItem props 제거 - 더 이상 props drilling 안 함
-  onLayoutDay: (dayId: string, event: any) => void;
-  onLayoutCard: (dayId: string, index: number, event: any) => void;
+  onLayoutDay: (dayId: string, event: LayoutEvent) => void;
+  onLayoutCard: (dayId: string, index: number, event: LayoutEvent) => void;
   onDayRefSet: (dayId: string, ref: View | null) => void;
-  onDragStart: (item: Plan, dayId: string, index: number, layout: any, position: any) => void;
-  onDragMove: (x: number, y: number, gestureState: any, evt: any, initialPosition: any) => void;
+  onDragStart: (item: Plan, dayId: string, index: number, layout: CardLayout, position: Position) => void;
+  onDragMove: (x: number, y: number, gestureState: GestureState, evt: GestureResponderEvent, initialPosition: Position) => void;
   onDragEnd: (y: number) => void;
-  styles: any;
+  styles: TravelKanbanStyles;
 }
 
 // ✅ React.memo로 불필요한 리렌더링 차단

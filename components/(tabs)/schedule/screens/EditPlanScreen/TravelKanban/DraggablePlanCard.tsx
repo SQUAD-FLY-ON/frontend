@@ -1,10 +1,10 @@
 import { typeToLabel } from "@/constants/screens";
 import { getSecureImageUrl } from "@/libs/getSecureUrl";
 import { useDragStore } from "@/store/useDragStore";
-import { Plan } from "@/types";
+import { LayoutEvent, Plan } from "@/types";
 import Entypo from "@expo/vector-icons/Entypo";
 import React, { memo, useMemo, useRef, useState } from "react";
-import { Animated, Image, PanResponder, PanResponderGestureState, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Animated, GestureResponderEvent, Image, PanResponder, PanResponderGestureState, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface DraggablePlanCardProps {
   item: Plan;
@@ -12,7 +12,7 @@ interface DraggablePlanCardProps {
   dayId: string;
   isLast: boolean;
   onDragStart: (item: Plan, dayId: string, index: number, cardLayout: { x: number; y: number; width: number; height: number }, initialPosition: { x: number; y: number }) => void;
-  onDragMove: (x: number, y: number, gestureState: PanResponderGestureState, evt: any, initialPosition: { x: number; y: number }) => void;
+  onDragMove: (x: number, y: number, gestureState: PanResponderGestureState, evt: GestureResponderEvent, initialPosition: { x: number; y: number }) => void;
   onDragEnd: (y: number) => void;
   // ✅ isDragging props 제거 - store에서 직접 구독
 }
@@ -133,7 +133,7 @@ const DraggablePlanCard = memo(({
     },
   }), [cardOpacity]);  // cardOpacity는 useRef.current이므로 변경되지 않음
 
-  const handleLayout = (event: any) => {
+  const handleLayout = (event: LayoutEvent) => {
     const { height } = event.nativeEvent.layout;
     setComponentHeight(height);
   };

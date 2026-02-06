@@ -1,9 +1,10 @@
+import { TravelKanbanStyles } from "@/types";
 import { Text, View } from "react-native";
 
 // Day 헤더 컴포넌트
 interface DayHeaderProps {
   title: string;
-  styles: any;
+  styles: TravelKanbanStyles;
 }
 const DayHeader = ({ title, styles }: DayHeaderProps) => (
   <View style={styles.dayHeader}>

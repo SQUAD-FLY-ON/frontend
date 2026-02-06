@@ -1,12 +1,13 @@
 import { apiClient } from "@/api/apiClient";
 import { useAuthStore } from "@/store/useAuthStore";
+import { MemberResponse } from "@/types";
 import { ApiResponse } from "@/types/api";
 import { Alert } from "react-native";
 
-export async function fetchMembers(): Promise<any> {
+export async function fetchMembers(): Promise<ApiResponse<MemberResponse> | []> {
   const memberId = useAuthStore.getState().memberInfo?.memberId;
   try {
-    const response: ApiResponse<any> = await apiClient.get(
+    const response: ApiResponse<MemberResponse> = await apiClient.get(
       `/members?memberId=${memberId}`
     );
     return response;

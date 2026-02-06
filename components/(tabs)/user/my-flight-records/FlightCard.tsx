@@ -1,4 +1,5 @@
 import CustomButton from "@/components/CustomButton";
+import { FlightLogData } from "@/types";
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
 
@@ -11,7 +12,7 @@ const FlightCard = ({
   id: string;
   name: string;
   date: string;
-  data: any;
+  data: FlightLogData;
 }) => {
   const router = useRouter();
 

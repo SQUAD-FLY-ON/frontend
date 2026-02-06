@@ -1,9 +1,10 @@
 import { useDragStore } from "@/store/useDragStore";
+import { TravelKanbanStyles } from "@/types";
 import { Text, View } from "react-native";
 
 // 빈 Day 드롭존 컴포넌트
 interface EmptyDayDropZoneProps {
-  styles: any;
+  styles: TravelKanbanStyles;
 }
 
 // ✅ 이 컴포넌트에서만 isDragging 구독 - 드래그 시 이것만 리렌더링
