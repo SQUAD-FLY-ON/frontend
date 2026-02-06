@@ -96,11 +96,12 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           //     error: response.httpStatusMessage || "Login failed",
           //   };
           // }
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const axiosError = error as { response?: { data?: { serverErrorMessage?: string } } };
           return {
             success: false,
             error:
-              error.response?.data?.serverErrorMessage || "로그인에 실패했습니다.",
+              axiosError.response?.data?.serverErrorMessage || "로그인에 실패했습니다.",
           };
         } finally {
           set({ isLoading: false });
@@ -155,7 +156,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             get().clearAuthState(); // ✅ 에러 시 상태 초기화
             return false;
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           get().clearAuthState();
           return false;
         }
