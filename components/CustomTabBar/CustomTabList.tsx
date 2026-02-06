@@ -1,6 +1,7 @@
 // components/CustomTabList.tsx
+import { TabTriggerElement } from "@/types";
 import { usePathname, useRouter } from "expo-router";
-import { Children, cloneElement, isValidElement } from "react";
+import { Children, cloneElement, isValidElement, ReactElement } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import Svg, { G, Path } from "react-native-svg";
 
@@ -11,16 +12,16 @@ export function CustomTabList({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const triggers = Children.toArray(children).filter(isValidElement);
-  const centerFloatTrigger = triggers.find((c: any) => c.props.name === "air");
+  const triggers = Children.toArray(children).filter(isValidElement) as ReactElement<TabTriggerElement['props']>[];
+  const centerFloatTrigger = triggers.find((c) => c.props.name === "air");
   const rightFloatTrigger = triggers.find(
-    (c: any) => c.props.name === "schedule"
+    (c) => c.props.name === "schedule"
   );
   const leftTriggers = triggers.filter(
-    (c: any) => c.props.name === "home" || c.props.name === "explore"
+    (c) => c.props.name === "home" || c.props.name === "explore"
   );
   const rightTriggers = triggers.filter(
-    (c: any) => c.props.name === "my-schedules" || c.props.name === "user"
+    (c) => c.props.name === "my-schedules" || c.props.name === "user"
   );
   return (
     <View
@@ -49,34 +50,34 @@ export function CustomTabList({ children }: { children: React.ReactNode }) {
       </Svg>
       <View style={styles.tabContainer}>
         <View style={styles.leftContainer}>
-          {leftTriggers.map((child: any) => {
+          {leftTriggers.map((child) => {
             const isActive = pathname === child.props.href;
             return cloneElement(child, {
               key: child.props.name,
               isActive,
               router,
-            });
+            } as Record<string, unknown>);
           })}
         </View>
         {centerFloatTrigger &&
-          cloneElement(centerFloatTrigger as any, {
+          cloneElement(centerFloatTrigger, {
             router,
             isCenter: true,
-          })}
+          } as Record<string, unknown>)}
         {pathname === "/" &&
           rightFloatTrigger &&
-          cloneElement(rightFloatTrigger as any, {
+          cloneElement(rightFloatTrigger, {
             router,
             // isCenter: true,
-          })}
+          } as Record<string, unknown>)}
         <View style={styles.rightContainer}>
-          {rightTriggers.map((child: any, idx: number) => {
+          {rightTriggers.map((child) => {
             const isActive = pathname === child.props.href;
             return cloneElement(child, {
               key: child.props.name,
               isActive,
               router,
-            });
+            } as Record<string, unknown>);
           })}
         </View>
       </View>
