@@ -1,3 +1,4 @@
+import { ScrollEvent } from '@/types';
 import { useCallback, useRef } from 'react';
 import { ScrollView } from 'react-native';
 
@@ -89,7 +90,7 @@ export const useAutoScroll = (options: UseAutoScrollOptions = {}) => {
     }
   }, [threshold, startAutoScroll, stopAutoScroll]);
 
-  const handleScroll = useCallback((event: any) => {
+  const handleScroll = useCallback((event: ScrollEvent) => {
     scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
   }, []);
 

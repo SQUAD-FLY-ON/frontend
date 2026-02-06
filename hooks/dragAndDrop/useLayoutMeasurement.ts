@@ -1,3 +1,4 @@
+import { LayoutEvent } from '@/types';
 import { MutableRefObject, useCallback, useRef, useState } from 'react';
 import { View } from 'react-native';
 
@@ -65,7 +66,7 @@ export const useLayoutMeasurement = (
   }, []);
 
   // Day 컬럼 레이아웃 측정
-  const measureDay = useCallback((dayId: string, event: any) => {
+  const measureDay = useCallback((dayId: string, event: LayoutEvent) => {
     const { x, y, width, height } = event.nativeEvent.layout;
     setDayLayouts(prev => ({
       ...prev,
@@ -74,7 +75,7 @@ export const useLayoutMeasurement = (
   }, []);
 
   // 카드 레이아웃 측정
-  const measureCard = useCallback((dayId: string, index: number, event: any) => {
+  const measureCard = useCallback((dayId: string, index: number, event: LayoutEvent) => {
     const { x, y, width, height } = event.nativeEvent.layout;
     setCardLayouts(prev => {
       const dayCards = [...(prev[dayId] || [])];

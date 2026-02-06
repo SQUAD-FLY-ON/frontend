@@ -1,14 +1,14 @@
 import { useDragStore } from '@/store/useDragStore';
-import { Plan } from '@/types';
+import { DayData, GestureState, Plan } from '@/types';
 import { useCallback, useContext, useRef } from 'react';
-import { Animated } from 'react-native';
+import { Animated, GestureResponderEvent } from 'react-native';
 
 interface FloatingCardData {
   item: Plan;
   dayId: string;
   index: number;
   layout: { x: number; y: number; width: number; height: number };
-  gestureState: any;
+  gestureState: { dx: number; dy: number };
   initialPosition: { x: number; y: number };
 }
 
@@ -18,6 +18,7 @@ interface UseDragDropOptions {
   remeasureDayLayouts: () => Promise<void>;
   getDropTarget: (pageY: number) => { dayId: string; insertIndex: number } | null;
   stopAutoScroll: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   FloatingPortalContext: React.Context<any>;
 }
 
@@ -84,8 +85,8 @@ export const useDragDrop = ({
   const handleDragMove = useCallback((
     _x: number,
     _y: number,
-    gestureState: any,
-    _evt: any,
+    gestureState: GestureState,
+    _evt: GestureResponderEvent,
     _initialPosition: { x: number; y: number }
   ) => {
     const portal = floatingPortalRef.current;
@@ -99,8 +100,8 @@ export const useDragDrop = ({
   // 드래그 종료
   const handleDragEnd = useCallback((
     y: number,
-    dayData: any,
-    setDayData: (updater: (prev: any) => any) => void
+    dayData: DayData,
+    setDayData: (updater: (prev: DayData) => DayData) => void
   ) => {
     stopAutoScroll();
 
@@ -120,7 +121,7 @@ export const useDragDrop = ({
       if (targetDay === sourceDay) {
         // 같은 Day 내에서 순서 변경
         if (insertIndex !== sourceIndex && insertIndex !== sourceIndex + 1) {
-          setDayData((prevData: any) => {
+          setDayData((prevData: DayData) => {
             const sourcePlans = prevData[sourceDay].plans;
             const movedItem = sourcePlans[sourceIndex];
             const finalInsertIndex = insertIndex > sourceIndex ? insertIndex - 1 : insertIndex;
@@ -143,7 +144,7 @@ export const useDragDrop = ({
         }
       } else {
         // 다른 Day로 이동
-        setDayData((prevData: any) => {
+        setDayData((prevData: DayData) => {
           const sourcePlans = prevData[sourceDay].plans;
           const targetPlans = prevData[targetDay].plans;
           const movedItem = sourcePlans[sourceIndex];
