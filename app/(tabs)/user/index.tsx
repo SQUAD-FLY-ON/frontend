@@ -49,8 +49,9 @@ export default function Index() {
     try {
       const response: ApiResponse<MemberProfileInfo> = await fetchMembers();
       setMemberInfo(response.data);
-    } catch (err: any) {
-      setError(err.message || "에러 발생");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "에러 발생";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

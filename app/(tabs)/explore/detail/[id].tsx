@@ -96,8 +96,8 @@ export default function Detail() {
   const onLoadStart = () => {
   };
 
-  const onError = (syntheticEvent: any) => {
-    const { nativeEvent } = syntheticEvent;
+  const onError = () => {
+    // WebView error handling
   };
 
   return (
