@@ -2,11 +2,10 @@ import ActivityAreaCard from "@/components/ActivityAreaCard";
 import Carousel from "@/components/Carousel";
 import ArrowDownIcon from "@/components/icons/DownArrow";
 import Colors from "@/constants/colors";
-import { fetchRecommendSpots } from "@/libs/(tabs)/index/fetchRecommendSpots";
+import { useRecommendSpots } from "@/hooks/explore/useRecommendSpots";
 import { useLocationStore } from "@/store/locationStore";
 import { RecommendSpotCreteria } from "@/types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -21,15 +20,7 @@ export default function RecommendSection() {
   const filterModalRef = useRef<BottomSheetModal>(null);
   const [currentKey, setCurrentKey] = useState<RecommendSpotCreteria>("DISTANCE");
   const { location: currentLocation, initializeLocation } = useLocationStore(useShallow((state) => ({ location: state.location, initializeLocation: state.initializeLocation })));
-  const { data, isLoading } = useQuery({
-    queryKey: ['recommendSpots', currentKey], queryFn: () =>
-      fetchRecommendSpots({
-        criteria: currentKey,
-        latitude: currentLocation?.latitude,
-        longitude: currentLocation?.longitude
-      }),
-    enabled: !!currentLocation?.latitude && !!currentLocation?.longitude
-  })
+  const { data } = useRecommendSpots(currentKey, currentLocation?.latitude, currentLocation?.longitude);
   useEffect(() => {
     // 앱 시작 시 위치 정보 초기화
     initializeLocation();

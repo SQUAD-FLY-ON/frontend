@@ -1,11 +1,7 @@
 import SpotCard from "@/components/(tabs)/explore/SpotCard";
-import {
-  fetchSpotDetail,
-  SpotDetailResponse,
-} from "@/libs/(tabs)/explore/detail/fetchSpotDetail";
-import { fetchSpotTrack } from "@/libs/(tabs)/explore/detail/fetchSpotTrack";
+import { useSpotDetail } from "@/hooks/explore/useSpotDetail";
+import { useSpotTrack } from "@/hooks/explore/useSpotTrack";
 import { useAuthStore } from "@/store/useAuthStore";
-import { ITrackData } from "@/types";
 import Constants from "expo-constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
@@ -26,8 +22,6 @@ export default function Detail() {
   const { id } = useLocalSearchParams();
 
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [spotInfo, setSpotInfo] = useState<SpotDetailResponse | null>(null);
-  const [track, setTrack] = useState<ITrackData[] | null>(null);
 
   const webviewRef = useRef<WebViewType>(null);
 
@@ -45,24 +39,9 @@ export default function Detail() {
     true;
   `;
 
-  const spotDetail = async () => {
-    const response = await fetchSpotDetail(id as string);
-    if (response !== null) {
-      setSpotInfo(response);
-    }
-  };
-
   const memberId = useAuthStore((state) => state.memberInfo?.memberId);
-  const getTrack = async () => {
-    const response = await fetchSpotTrack(id as string, memberId as string);
-    if (response !== null) setTrack(response);
-  };
-  useEffect(() => {
-    if (id && memberId) {
-      spotDetail();
-      getTrack();
-    }
-  }, [id, memberId]);
+  const { data: spotInfo } = useSpotDetail(id as string);
+  const { data: track } = useSpotTrack(id as string, memberId as string);
 
   useEffect(() => {
     if (isReady && track && track.length > 0) {
