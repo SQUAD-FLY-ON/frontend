@@ -48,7 +48,7 @@ export interface WeatherResponse {
 }
 
 export interface TourismResponse {
-  schedules: TourismItem[];
+  content: TourismItem[];
 }
 export interface TourismRequest {
   lat: number;
