@@ -16,7 +16,7 @@ export const transformSchedulesToDayData = (schedules: Schedules): DayData => {
         address: item.fullAddress,
         type: item.tourismType,
         image: item.imgUrl,
-        key: `${dayId}-${planIndex}`,
+        key: item.clientKey ?? `${dayId}-${planIndex}`,
         day: dayId,
       })),
     };

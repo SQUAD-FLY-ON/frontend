@@ -56,7 +56,8 @@ export default function ButtonSection() {
 
     try {
       // 1. API에 보낼 데이터를 준비합니다.
-      const newSchedule = transformDayDataToSchedules(dayData);
+      const newSchedule = transformDayDataToSchedules(dayData)
+        .filter(day => day.length > 0);
       const dates = Object.keys(currentMarkedDates);
       const apiData = {
         schedules: newSchedule,

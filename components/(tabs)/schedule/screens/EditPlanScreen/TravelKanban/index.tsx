@@ -4,22 +4,15 @@ import { useLayoutMeasurement } from '@/hooks/dragAndDrop/useLayoutMeasurement';
 import { transformSchedulesToDayData } from '@/libs/schedule/transformSchedulesToDayData';
 import { useScheduleStore } from '@/store/useScheduleStore';
 import { GestureState, Plan } from '@/types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { GestureResponderEvent, ScrollView, StyleSheet, View } from 'react-native';
 import { DayColumn } from './DayColumn';
 import { FloatingPortalContext } from './FloatingPortal';
 
-interface DayData {
-  title: string;
-  plans: Plan[];
-}
-
-interface DaysData {
-  [dayId: string]: DayData;
-}
 export const TravelPlanKanban = () => {
   // ===== 1. 상태 관리 =====
-  const [dayData, setDayData] = useState<DaysData>({});
+  const dayData = useScheduleStore(state => state.dayData);
+  const setDayData = useScheduleStore(state => state.setDayData);
   const schedule = useScheduleStore(state => state.schedule);
   // ===== 2. 자동 스크롤 훅 =====
   const {
