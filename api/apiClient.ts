@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Alert } from 'react-native';
 import { useAuthStore } from '../store/useAuthStore';
 
 export const apiClient = axios.create({
@@ -42,6 +43,11 @@ apiClient.interceptors.response.use(
       }
     }
     else {
+      if (error.response?.data?.serverErrorMessage) {
+        Alert.alert(error.response.data.serverErrorMessage);
+      } else {
+        Alert.alert('데이터 요청에 실패했습니다.');
+      }
       return Promise.reject(error);
     }
   }
