@@ -1,7 +1,5 @@
-import { fetchWeather } from "@/libs/schedule/fetchWeather";
+import { useWeather } from "@/hooks/schedule/useWeather";
 import { useScheduleStore } from "@/store/useScheduleStore";
-import { RegionName } from "@/types";
-import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/shallow";
@@ -19,16 +17,7 @@ export default function SelectSubRegion() {
       goToPrevStep();
     }
   }, [selectedRegion]);
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ['weather', selectedRegion.name,tripStart,tripEnd],
-    queryFn: () => fetchWeather({
-      // selectedRegion.name을 RegionName 타입으로 간주하라고 알려줌
-      sido: selectedRegion.name as RegionName,
-      tripStart,
-      tripEnd,
-    }),
-    enabled: selectedRegion.name !== ''
-  });
+  const { data, isError, isLoading } = useWeather(selectedRegion.name, tripStart, tripEnd);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>여행 지역 선택하기(2/2)</Text>

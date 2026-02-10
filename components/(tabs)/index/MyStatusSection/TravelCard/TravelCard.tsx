@@ -1,6 +1,6 @@
 import CustomButton from "@/components/CustomButton";
 import Colors from "@/constants/colors";
-import { useTourSchedule } from "@/hooks/useTourSchedule";
+import { useTourSchedule } from "@/hooks/schedule/useTourSchedule";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback } from "react";
 import { StyleSheet, View } from "react-native";

@@ -1,28 +1,16 @@
 import CustomButton from "@/components/CustomButton";
 import { Screens } from "@/constants/screens";
-import { fetchAddSchedule } from "@/libs/schedule/fetchAddSchedule";
+import { useAddSchedule } from "@/hooks/schedule/useAddSchedule";
 import { transformDayDataToSchedules } from "@/libs/schedule/transformDayDataToSchedules";
 import { validateNextStepEnabled } from "@/libs/schedule/validateNextStepEnabled";
 import { useModalStore } from "@/store/useModalStore";
 import { useScheduleStore } from "@/store/useScheduleStore";
-import { AddScheduleRequest } from "@/types/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
 export default function ButtonSection() {
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: async (apiData: AddScheduleRequest) => {
-      return fetchAddSchedule(apiData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
-    },
-    onError: (error) => {
-    },
-  });
+  const { queryClient, ...mutation } = useAddSchedule();
 
   const currentStep = useScheduleStore((state) => state.currentStep);
   const nextEnabled = useScheduleStore(validateNextStepEnabled);

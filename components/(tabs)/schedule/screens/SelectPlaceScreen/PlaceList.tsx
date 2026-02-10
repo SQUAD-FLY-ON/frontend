@@ -1,9 +1,7 @@
 // /components/schedule/PlaceList.tsx
-import { fetchAttractions } from "@/libs/schedule/fetchAttractions";
-import { fetchRestaurants } from "@/libs/schedule/fetchRestaurants";
+import { usePlaceList } from "@/hooks/schedule/usePlaceList";
 import { useScheduleStore } from "@/store/useScheduleStore";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/shallow";
 import Filter from "../../Filter";
@@ -24,60 +22,24 @@ export default function PlaceList({
   const { selectedActivities } = useScheduleStore(
     useShallow(state => ({
       selectedActivities: state.selectedActivities,
-      refreshSelectedPlaces: state.refreshSelectedPlaces
     }))
   );
 
   const filters = [{ key: 'restaurant', text: '음식점' }, { key: 'attractions', text: '관광지' }];
   const [currentFilter, setCurrentFilter] = useState('restaurant');
-  const pageSize = 10;
 
   // currentFilter가 변경될 때마다 스크롤을 최상단으로
   useEffect(() => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
   }, [currentFilter]);
   const {
-    data,
+    flatData,
     isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     error
-  } = useInfiniteQuery({
-    queryKey: [currentFilter, selectedActivities.latitude, selectedActivities.longitude],
-    queryFn: async ({ pageParam = 0 }) => {
-      if (!selectedActivities.latitude || !selectedActivities.longitude) {
-        return;
-      }
-      if (currentFilter === 'restaurant') {
-        return await fetchRestaurants({
-          lat: selectedActivities?.latitude,
-          lon: selectedActivities?.longitude,
-          page: pageParam,
-          size: pageSize,
-        })
-      } else {
-        return await fetchAttractions({
-          lat: selectedActivities?.latitude,
-          lon: selectedActivities?.longitude,
-          page: pageParam,
-          size: pageSize,
-        })
-      }
-    },
-    enabled: !!selectedActivities,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage || lastPage.length === 0) return undefined;
-
-      if (lastPage.length < pageSize) return undefined;
-
-      return allPages.length + 1;
-    },
-  });
-  const flatData = useMemo(() => {
-    return data?.pages.flatMap(page => page) || [];
-  }, [data]);
+  } = usePlaceList(currentFilter, selectedActivities.latitude, selectedActivities.longitude);
 
   if (error) {
     return (

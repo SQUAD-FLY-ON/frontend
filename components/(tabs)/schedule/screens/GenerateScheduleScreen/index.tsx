@@ -1,9 +1,8 @@
 import CustomButton from "@/components/CustomButton";
 import LoadingComponent from "@/components/LoadingComponent";
-import { fetchGptSchedule } from "@/libs/schedule/fetchGptSchedule";
+import { useGptSchedule } from "@/hooks/schedule/useGptSchedule";
 import { useModalStore } from "@/store/useModalStore";
 import { useScheduleStore } from "@/store/useScheduleStore";
-import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/shallow";
@@ -41,23 +40,12 @@ export default function GenerateScheduleScreen() {
   const dates = Object.keys(currentMarkedDates);
   const scheduleStart = dates[0];
   const scheduleEnd = dates[dates.length - 1];
-  const { data, isLoading, isError, failureCount } = useQuery({
-    queryKey: ['gptschedule', scheduleStart, scheduleEnd, selectedPlaces, selectedActivities.id],
-    queryFn: async () => {
-      const apiData = { 
-        scheduleStart, 
-        scheduleEnd, 
-        tourismSpotList: selectedPlaces, 
-        paraglidingSpotId: Number(selectedActivities.id) 
-      }
-      return await fetchGptSchedule(apiData);
-    },
-    retry: 30,
-    retryDelay: 2000,
-    staleTime: 0,
-    gcTime: 0,
-
-  });
+  const { data, isLoading, isError } = useGptSchedule(
+    scheduleStart,
+    scheduleEnd,
+    selectedPlaces,
+    Number(selectedActivities.id),
+  );
   // 타임아웃 설정
   useEffect(() => {
     const TIMEOUT_DURATION = 1000 * 60; // 60초 (1분)

@@ -1,6 +1,6 @@
 import TravelCard from "@/components/(tabs)/my-schedule/TravelCard/TravelCard";
 import Header from "@/components/Header";
-import { useTourSchedule } from "@/hooks/useTourSchedule";
+import { useTourSchedule } from "@/hooks/schedule/useTourSchedule";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";

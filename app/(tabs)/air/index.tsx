@@ -2,7 +2,7 @@ import Background from "@/components/(tabs)/air/Background";
 import Dropdown from "@/components/(tabs)/air/Dropdown";
 import FlightRecordButton from "@/components/(tabs)/air/FlightRecordButton";
 import Stopwatch from "@/components/(tabs)/air/Stopwatch";
-import { useTourSchedule } from "@/hooks/useTourSchedule";
+import { useTourSchedule } from "@/hooks/schedule/useTourSchedule";
 import { ITrackData, TLocationData } from "@/types";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Location from "expo-location";
