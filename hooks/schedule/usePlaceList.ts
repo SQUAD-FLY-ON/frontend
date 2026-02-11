@@ -32,10 +32,8 @@ export const usePlaceList = (
         return allPages.length + 1;
       },
     });
-
   const flatData = useMemo(() => {
     return data?.pages.flatMap((page) => page) || [];
   }, [data]);
-
   return { flatData, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, error };
 };

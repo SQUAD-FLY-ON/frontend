@@ -3,7 +3,7 @@ import { useDragDrop } from '@/hooks/dragAndDrop/useDragDrop';
 import { useLayoutMeasurement } from '@/hooks/dragAndDrop/useLayoutMeasurement';
 import { transformSchedulesToDayData } from '@/libs/schedule/transformSchedulesToDayData';
 import { useScheduleStore } from '@/store/useScheduleStore';
-import { GestureState, Plan } from '@/types';
+import { GestureState } from '@/types';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { GestureResponderEvent, ScrollView, StyleSheet, View } from 'react-native';
 import { DayColumn } from './DayColumn';
