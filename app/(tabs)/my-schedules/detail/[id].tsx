@@ -3,7 +3,7 @@ import DetailTravelCard from "@/components/(tabs)/my-schedule/DetailTravelCard";
 import Filter from "@/components/(tabs)/schedule/Filter";
 import PlanCard from "@/components/(tabs)/schedule/screens/PlanScreen/PlanCard";
 import Header from "@/components/Header";
-import { useTourSchedule } from "@/hooks/useTourSchedule";
+import { useTourSchedule } from "@/hooks/schedule/useTourSchedule";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";

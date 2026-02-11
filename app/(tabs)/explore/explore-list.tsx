@@ -1,15 +1,13 @@
 import PlaceCard from "@/components/(tabs)/explore/PlaceCard";
 import Header from "@/components/Header";
-import { fetchSpots } from "@/libs/fetchSpots";
+import { useSpots } from "@/hooks/explore/useSpots";
 import useExploreStore from "@/store/exploreStore";
-import { useQuery } from "@tanstack/react-query";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/shallow";
 
 export default function ExploreList() {
   const { selectedRegion, selectedMarkerSpot } = useExploreStore(useShallow(state => ({ selectedRegion: state.selectedRegion, selectedMarkerSpot: state.selectedMarkerSpot })));
-  const query = useQuery({ queryKey: ['spots', selectedRegion.name], queryFn: async () => await fetchSpots({ sido: selectedRegion.name! }) })
-  const spotMarkers = query.data;
+  const { data: spotMarkers } = useSpots({ sido: selectedRegion.name! });
   return (
     <View>
       <Header title="체험장 목록" />
@@ -17,7 +15,7 @@ export default function ExploreList() {
         <View style={styles.TopView}>
           <Text style={styles.TopTitle}>
             &nbsp;&nbsp;•&nbsp;&nbsp;{selectedRegion.name} 체험장 (
-            {query.data?.length})
+            {spotMarkers?.length})
           </Text>
         </View>
         <View style={styles.exploreContainer}>

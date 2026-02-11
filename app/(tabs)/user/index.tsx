@@ -2,10 +2,7 @@ import Level from "@/components/(tabs)/user/index/Level";
 import MenuList from "@/components/(tabs)/user/index/MenuList";
 import Profile from "@/components/(tabs)/user/index/Profile";
 import Header from "@/components/Header";
-import { fetchMembers } from "@/libs/fetchMember";
-import { MemberProfileInfo } from "@/types";
-import { ApiResponse } from "@/types/api";
-import { useEffect, useState } from "react";
+import { useMemberInfo } from "@/hooks/user/useMemberInfo";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const innerPages = [
@@ -37,31 +34,13 @@ const level = {
 export type FlightLevel = keyof typeof level;
 
 export default function Index() {
-  const [memberInfo, setMemberInfo] = useState<MemberProfileInfo | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { memberInfo, isLoading } = useMemberInfo();
 
   function getValue(key: FlightLevel) {
     return level[key];
   }
 
-  const getMemberInfo = async () => {
-    try {
-      const response: ApiResponse<MemberProfileInfo> = await fetchMembers();
-      setMemberInfo(response.data);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "에러 발생";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getMemberInfo();
-  }, []);
-
-  if (loading || memberInfo === null) {
+  if (isLoading || memberInfo === null) {
     return (
       <View>
         <Text>로딩중</Text>

@@ -2,15 +2,9 @@ import Background from "@/components/(tabs)/air/Background";
 import ReportText from "@/components/(tabs)/air/ReportText";
 import ConfirmModal from "@/components/ConfirmModal";
 import { MainGradient } from "@/components/LinearGradients/MainGradient";
-import { postFlightLog } from "@/libs/(tabs)/air/flightLogs";
+import { usePostFlightLog } from "@/hooks/air/usePostFlightLog";
 import { saveFlightLog } from "@/store/flightLogStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import {
-  ApiResponse,
-  myFlightLogsContents,
-  postFlightLogRequest,
-} from "@/types/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import haversine from "haversine-distance";
@@ -58,42 +52,26 @@ export default function Report() {
   // 평균 비행 속도
   const averageSpeed = flightDistance / seconds;
 
-  // POST + AsyncStorage 저장 함수
-  const mutationFunction = async () => {
-    const data: postFlightLogRequest = {
+  const { mutate } = usePostFlightLog({
+    memberId: memberId as string,
+    onSuccess: async (response) => {
+      if (!response) return;
+      const id = response.data.id;
+      setRecordId(id);
+      setRecordDate(response.data.createdAt);
+      await saveFlightLog(id, locationData);
+      setIsModalVisible(true);
+    },
+  });
+
+  const onPressSave = () => {
+    mutate({
       airfieldName,
       flightTime,
       flightDistance,
       averageSpeed,
       flightAltitude: maxAltitude,
-    };
-    const response: ApiResponse<myFlightLogsContents> | null =
-      await postFlightLog(memberId as string, data);
-
-    if (!response) {
-      return;
-    }
-
-    const id = response.data.id;
-    setRecordId(id);
-    setRecordDate(response.data.createdAt);
-    const flightLog = await saveFlightLog(id, locationData);
-    return response;
-  };
-
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: mutationFunction,
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ["my-flight-logs"] });
-      setIsModalVisible(true);
-    },
-    onError: (error) => {
-    },
-  });
-
-  const onPressSave = () => {
-    mutate();
+    });
   };
 
   return (

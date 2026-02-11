@@ -1,6 +1,6 @@
-import { fetchSpots } from "@/libs/fetchSpots";
+import { useSpots } from "@/hooks/explore/useSpots";
 import { useScheduleStore } from "@/store/useScheduleStore";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import ActivityList from "./ActivityList";
 
@@ -9,15 +9,16 @@ export default function SelectActivityScreen() {
     { key: 'popular', text: '인기순' },
     { key: 'score', text: '별점순' },
   ]
-  const { selectedRegion, refreshSelectedPlaces } = 
+  const { selectedRegion, refreshSelectedPlaces } =
   useScheduleStore(useShallow(state => ({ selectedRegion: state.selectedRegion, refreshSelectedPlaces: state.refreshSelectedPlaces })));
-  const { data } = useQuery({
-    queryKey: ['spots', selectedRegion.name, selectedRegion.sigungu], queryFn: async () => {
+  const request = selectedRegion.sigungu !== '' ? { sido: selectedRegion.name, sigungu: selectedRegion.sigungu } : { sido: selectedRegion.name };
+  const { data } = useSpots(request);
+
+  useEffect(() => {
+    if (data) {
       refreshSelectedPlaces();
-      return await fetchSpots(selectedRegion.sigungu !== '' ? { sido: selectedRegion.name,  sigungu:selectedRegion.sigungu }: {sido: selectedRegion.name})
-    },
-    // enabled: currentLocation !== null
-  })
+    }
+  }, [data]);
   return (
     <>
       <ActivityList

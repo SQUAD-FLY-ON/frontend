@@ -1,34 +1,13 @@
 import Logo from "@/components/icons/Logo";
 import LevelBadge from "@/components/LevelBadge";
 import Colors from "@/constants/colors";
-import { fetchMembers } from "@/libs/fetchMember";
-import { MemberProfileInfo } from "@/types";
-import { ApiResponse } from "@/types/api";
-import { useEffect, useState } from "react";
+import { useMemberInfo } from "@/hooks/user/useMemberInfo";
 import { StyleSheet, Text, View } from "react-native";
 import HomeImage from "./AnimatedImages/HomeImage";
 import TravelCard from "./TravelCard/TravelCard";
 
 export default function MyStatusSection() {
-  const [memberInfo, setMemberInfo] = useState<MemberProfileInfo | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const getMemberInfo = async () => {
-    try {
-      const response: ApiResponse<MemberProfileInfo> = await fetchMembers();
-      setMemberInfo(response.data);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "에러 발생";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getMemberInfo();
-  }, []);
+  const { memberInfo } = useMemberInfo();
 
   return (
     <View style={styles.myStatus}>

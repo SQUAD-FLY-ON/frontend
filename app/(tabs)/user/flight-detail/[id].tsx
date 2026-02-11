@@ -6,8 +6,7 @@ import Constants from "expo-constants";
 import Close from "@/components/icons/Close";
 import MyReportText from "@/components/(tabs)/user/my-flight-records/MyReportText";
 import { useLocalSearchParams } from "expo-router";
-import { getFlightLog } from "@/store/flightLogStore";
-import { ITrackData } from "@/types";
+import { useFlightLog } from "@/hooks/air/useFlightLog";
 
 const { height, width } = Dimensions.get("window");
 
@@ -15,19 +14,7 @@ export default function MyFlightDetails() {
   const { id, data } = useLocalSearchParams();
   const reprotData = JSON.parse(data as string);
 
-  // 비행 경로 불러오기
-  const [flightLog, setFlightLog] = useState<ITrackData[] | null>(null);
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await getFlightLog(`${id}`);
-        setFlightLog(data);
-      } catch (error) {
-      }
-    };
-
-    loadData();
-  }, [id]);
+  const { data: flightLog } = useFlightLog(`${id}`);
 
   // 데이터 불러오기
 

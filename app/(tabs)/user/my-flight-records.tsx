@@ -1,36 +1,11 @@
 import FlightCard from "@/components/(tabs)/user/my-flight-records/FlightCard";
 import Header from "@/components/Header";
-import { fetchFlightLogs } from "@/libs/(tabs)/user/fetchFlightLogs";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useFlightLogs } from "@/hooks/air/useFlightLogs";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
 export default function MyFlightRecords() {
-  const memberId = useAuthStore((state) => state.memberInfo?.memberId);
-  const pageSize = 10;
-  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useInfiniteQuery({
-      queryKey: ["my-flight-logs", memberId],
-      queryFn: ({ pageParam = 0 }) => {
-        if (!memberId) {
-          return [];
-        }
-        return fetchFlightLogs({ memberId, page: pageParam, size: pageSize });
-      },
-      getNextPageParam: (lastPage, allPages) => {
-        if (!lastPage || lastPage.length === 0) return undefined;
-
-        if (lastPage.length < pageSize) return undefined;
-
-        return allPages.length + 1;
-      },
-      initialPageParam: 0,
-      enabled: !!memberId,
-    });
-  const flatData = useMemo(() => {
-    return data?.pages.flatMap((page) => page) || [];
-  }, [data]);
+  const { flatData, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useFlightLogs();
 
   const renderFooter = () => {
     if (!isFetchingNextPage) return null;

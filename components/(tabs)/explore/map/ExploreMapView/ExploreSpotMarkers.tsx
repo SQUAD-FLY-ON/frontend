@@ -1,26 +1,13 @@
-import { fetchSpots } from "@/libs/fetchSpots";
-import { calculatePolygonCentroid } from "@/libs/map";
+import { useSpots } from "@/hooks/explore/useSpots";
 import useExploreStore from "@/store/exploreStore";
-import { MarkerSpotApiRequest } from "@/types/api";
-import { useQuery } from "@tanstack/react-query";
 import { StyleSheet, Text, View } from "react-native";
 import { Callout, Marker } from "react-native-maps";
 import { useShallow } from 'zustand/shallow';
 export default function ExploreSpotMarkers() {
   const { selectedRegion, selectedMarkerSpot, setSelectedMarkerSpot, resetSelectedMarkerSpot } = useExploreStore(useShallow((state) => ({ selectedRegion: state.selectedRegion, selectedMarkerSpot: state.selectedMarkerSpot, setSelectedMarkerSpot: state.setSelectedMarkerSpot, resetSelectedMarkerSpot: state.resetSelectedMarkerSpot })));
-  const latitudes = selectedRegion.coordinates.map(coord => coord.latitude);
-  const longitudes = selectedRegion.coordinates.map(coord => coord.longitude);
-  const northEast = { latitude: Math.max(...latitudes), longitude: Math.max(...longitudes) };
-  const center = calculatePolygonCentroid(selectedRegion.coordinates);
-  const currentLocation: MarkerSpotApiRequest = {
-    cornerLatitude: northEast.latitude,
-    cornerLongitude: northEast.longitude,
-    centerLatitude: center.latitude,
-    centerLongitude: center.longitude
-  }
-  const query = useQuery({ queryKey: ['spots', selectedRegion.name], queryFn: async () => await fetchSpots({sido: selectedRegion.name!}), enabled: currentLocation !== null })
+  const { data: spots } = useSpots({ sido: selectedRegion.name! });
   return (<>
-    {query.data?.map((marker) => (
+    {spots?.map((marker) => (
       <Marker
         key={marker.id}
         zIndex={100}

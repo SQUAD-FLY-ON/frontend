@@ -9,20 +9,19 @@ import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-export const queryClient = new QueryClient();
 
-export default function RootLayout() {
-  // setupInterceptors();
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1, // 모든 쿼리에 대해 1번만 재시도
+      retry: 1,
     },
     mutations: {
-      retry: 1, // mutation도 재시도 설정 가능
+      retry: 1,
     },
   },
 });
+
+export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     "Pretendard-Bold": require("@/assets/fonts/Pretendard-Bold.ttf"),
     "Pretendard-Regular": require("@/assets/fonts/Pretendard-Regular.ttf"),
