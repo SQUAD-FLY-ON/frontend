@@ -11,7 +11,7 @@ import GreenWaveSvg from "./GreenWaveSvg";
 
 export default function GenerateScheduleScreen() {
   const prevButtonBackgroundColor = "#D2D2D2";
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasShownAlertRef = useRef(false);
 
   const {

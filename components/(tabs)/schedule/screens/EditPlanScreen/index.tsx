@@ -3,7 +3,7 @@ import { useScheduleStore } from "@/store/useScheduleStore";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import TitleHeader from "../TitleHeader";
-import TravelPlanKanban from "./TravelKanban";
+import { TravelPlanKanban } from "./TravelKanban";
 
 export default function EditPlanScreen() {
   const currentStep = useScheduleStore(state => state.currentStep);

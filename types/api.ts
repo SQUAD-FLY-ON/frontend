@@ -135,3 +135,8 @@ export interface myFlightLogsRequest {
   page: number;
   size: number;
 }
+
+export interface MarkerSpotApiRequest {
+  sido: string;
+  sigungu?: string;
+}

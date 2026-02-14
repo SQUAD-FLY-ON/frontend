@@ -15,7 +15,8 @@ const ChungcheongnamProvince = (props: SvgProps) => (
         <Stop offset={0} stopColor="#64aefa" />
         <Stop offset={1} stopColor="#acd4ff" />
       </LinearGradient>
-      <LinearGradient id="b" x1={14.83} y1={51.41} x2={25.51} y2={69.91} xlinkHref="#a" />
+      {/* @ts-ignore - href is valid SVG but not typed in react-native-svg */}
+      <LinearGradient id="b" x1={14.83} y1={51.41} x2={25.51} y2={69.91} href="#a" />
     </Defs>
     <G id="_레이어_3" data-name="레이어 3">
       <G id="_충청남도" data-name="충청남도">

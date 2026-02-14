@@ -7,14 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useForm } from 'react-hook-form';
 import { StyleSheet, Text, View } from "react-native";
-import z from "zod";
+import { z } from "zod";
 import { useShallow } from 'zustand/shallow';
 
 export default function Index() {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     mode: "onChange",

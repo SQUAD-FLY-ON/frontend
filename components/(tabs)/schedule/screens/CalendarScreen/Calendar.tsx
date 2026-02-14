@@ -1,8 +1,6 @@
-import { useScheduleStore } from '@/store/useScheduleStore';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Calendar, DateData } from 'react-native-calendars';
-import { useShallow } from 'zustand/react/shallow';
 interface YourComponentProps {
   dates: Record<string, any>;
   setDates: React.Dispatch<React.SetStateAction<Record<string, any>>>;
@@ -11,13 +9,6 @@ interface YourComponentProps {
 const CustomCalendar = ({ dates, setDates }: YourComponentProps) => {
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
-  const { currentMarkedDates, setCurrentMarkedDates } = useScheduleStore(
-    useShallow((state) => ({
-      currentMarkedDates: state.currentMarkedDates,
-      setCurrentMarkedDates: state.setCurrentMarkedDates,
-    }))
-  );
-
   const resetDate = () => {
     setStartDate(null);
     setEndDate(null);

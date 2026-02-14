@@ -7,8 +7,7 @@ import { Pressable } from "react-native";
 import { useShallow } from "zustand/shallow";
 
 export function ScheduleBackButton() {
-    const { currentStep, goToPrevStep, resetAllStates } = useScheduleStore(useShallow(state => ({ currentStep: state.currentStep, goToPrevStep: state.goToPrevStep, resetAllStates: state.resetAllStates })))
-    const isFirst = currentStep === 0;
+    const { resetAllStates } = useScheduleStore(useShallow(state => ({ resetAllStates: state.resetAllStates })))
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     return (

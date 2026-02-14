@@ -18,7 +18,7 @@ export async function fetchSpotTrack(
       }
     );
     return response.data.points;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

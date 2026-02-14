@@ -25,7 +25,7 @@ export async function fetchSpotDetail(
       }
     );
     return response.data;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

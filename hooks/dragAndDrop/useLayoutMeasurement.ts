@@ -128,7 +128,7 @@ export const useLayoutMeasurement = (
               measured++;
               checkComplete();
             });
-          } catch (error) {
+          } catch {
             measured++;
             checkComplete();
           }

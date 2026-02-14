@@ -2,7 +2,7 @@ import RegionPolygon from '@/components/RegionSelectMapView/RegionPolygon';
 import { polygons } from '@/constants/polygons';
 import { customMapStyle, koreaRegion } from '@/constants/regionSelectMap';
 import { convertCoordinatesToPoints } from '@/libs/map';
-import { RegionCode, selectedRegion } from '@/types';
+import { RegionCode, RegionName, selectedRegion } from '@/types';
 import { useIsFocused } from '@react-navigation/native';
 import React, { SetStateAction, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -69,7 +69,7 @@ export default function RegionSelectMapView({ selectedRegion, setSelectedRegion 
                     } else {
                       // 새로운 지역을 클릭하면 해당 지역으로 선택 상태를 업데이트합니다.
                       setSelectedRegion({
-                        name: regionName,
+                        name: regionName as RegionName,
                         key: regionCode,
                         coordinates: coordinates,
                       });

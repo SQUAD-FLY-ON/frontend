@@ -6,7 +6,7 @@ import { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 
 export default function Index() {
-  const { isScheduleLoading, isScheduleError, schedule, refetchSchedule } = useTourSchedule();
+  const { schedule, refetchSchedule } = useTourSchedule();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
 

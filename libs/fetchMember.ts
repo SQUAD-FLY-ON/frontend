@@ -11,7 +11,7 @@ export async function fetchMembers(): Promise<ApiResponse<MemberResponse> | []> 
       `/members?memberId=${memberId}`
     );
     return response;
-  } catch (error) {
+  } catch {
     Alert.alert("회원정보 조회에 실패하였습니다. 다시 시도해주세요.");
     return [];
   }

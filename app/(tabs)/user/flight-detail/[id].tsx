@@ -1,14 +1,12 @@
 import Header from "@/components/Header";
 import { useEffect, useRef, useState } from "react";
-import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
 import Constants from "expo-constants";
 import Close from "@/components/icons/Close";
 import MyReportText from "@/components/(tabs)/user/my-flight-records/MyReportText";
 import { useLocalSearchParams } from "expo-router";
 import { useFlightLog } from "@/hooks/air/useFlightLog";
-
-const { height, width } = Dimensions.get("window");
 
 export default function MyFlightDetails() {
   const { id, data } = useLocalSearchParams();
@@ -57,7 +55,7 @@ export default function MyFlightDetails() {
       if (data.type === "READY") {
         setIsReady(true);
       }
-    } catch (err) {
+    } catch {
     }
   };
 

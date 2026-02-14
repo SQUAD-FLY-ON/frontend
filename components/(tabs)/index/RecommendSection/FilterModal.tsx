@@ -8,11 +8,12 @@ import {
 
 import React, { SetStateAction, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { RecommendSpotCreteria } from "@/types";
 
 interface FilterModalProps {
   ref: React.RefObject<BottomSheetModal | null>;
-  currentKey: string;
-  setCurrentKey: React.Dispatch<SetStateAction<string>>;
+  currentKey: RecommendSpotCreteria;
+  setCurrentKey: React.Dispatch<SetStateAction<RecommendSpotCreteria>>;
   options: { key: string; label: string }[];
 }
 const FilterModal = ({
@@ -21,7 +22,7 @@ const FilterModal = ({
   setCurrentKey,
   options,
 }: FilterModalProps) => {
-  const [selectedKey, setSelectedKey] = useState<string>(currentKey);
+  const [selectedKey, setSelectedKey] = useState<RecommendSpotCreteria>(currentKey);
   return (
     <BottomSheetModal
       ref={ref}
@@ -48,7 +49,7 @@ const FilterModal = ({
                 key={opt.key}
                 label={opt.label}
                 selected={selectedKey === opt.key}
-                onPress={() => setSelectedKey(opt.key)}
+                onPress={() => setSelectedKey(opt.key as RecommendSpotCreteria)}
               />
             ))}
           </View>

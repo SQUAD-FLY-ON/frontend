@@ -9,7 +9,7 @@ import CardContents from "./CardContents";
 const TravelCard = () => {
   const router = useRouter();
 
-  const { isScheduleLoading, isScheduleError, schedule, refetchSchedule } = useTourSchedule();
+  const { isScheduleLoading, schedule, refetchSchedule } = useTourSchedule();
   
   useFocusEffect(
   useCallback(() => {

@@ -162,7 +162,7 @@ const DraggablePlanCard = memo(({
           <Text style={styles.type}>{typeToLabel[item?.type]}</Text>
           <View style={styles.card}>
             {item?.image ? (
-              <Image style={styles.imagePlaceholder} source={{ uri: secureUrl }} />
+              <Image style={styles.imagePlaceholder} source={{ uri: secureUrl ?? undefined }} />
             ) : (
               <View style={styles.imagePlaceholder}>
                 <Text style={styles.imageText}>IMG</Text>
@@ -181,7 +181,7 @@ const DraggablePlanCard = memo(({
               onLongPress={() => setIsPanEnabled(true)}
               onPressOut={() => setIsPanEnabled(false)}
               delayLongPress={100}>
-              <Entypo style={styles.menu} name="menu" size={24} color="black" />
+              <Entypo style={{ padding: 4 }} name="menu" size={24} color="black" />
             </TouchableOpacity>
           </View>
         </View>
@@ -189,6 +189,7 @@ const DraggablePlanCard = memo(({
     </Animated.View>
   );
 });
+DraggablePlanCard.displayName = 'DraggablePlanCard';
 
 export default DraggablePlanCard;
 

@@ -3,7 +3,7 @@ import Dropdown from "@/components/(tabs)/air/Dropdown";
 import FlightRecordButton from "@/components/(tabs)/air/FlightRecordButton";
 import Stopwatch from "@/components/(tabs)/air/Stopwatch";
 import { useTourSchedule } from "@/hooks/schedule/useTourSchedule";
-import { ITrackData, TLocationData } from "@/types";
+import { ITrackData } from "@/types";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
@@ -38,7 +38,7 @@ export default function Index() {
       const { granted } = await Location.requestForegroundPermissionsAsync();
       if (granted === true) setOk(true);
       else setOk(false);
-    } catch (err) {
+    } catch {
     }
   };
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function Index() {
         coords: { latitude, longitude, altitude },
       } = await Location.getCurrentPositionAsync();
       saveLocationData(latitude, longitude, altitude || 0);
-    } catch (error) {
+    } catch {
     }
   };
 

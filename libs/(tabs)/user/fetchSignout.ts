@@ -10,7 +10,7 @@ export async function fetchSignout(): Promise<any> {
       params: { memberId },
     });
     return response;
-  } catch (error) {
+  } catch {
     Alert.alert("회원탈퇴에 실패하였습니다. 다시시도해주세요.");
     return [];
   }

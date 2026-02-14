@@ -1,4 +1,3 @@
-import { calculatePolygonCentroid } from '@/libs/map';
 import useExploreStore from '@/store/exploreStore';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
@@ -14,7 +13,6 @@ export default function ExploreMap() {
   const longitudes = selectedRegion.coordinates.map(coord => coord.longitude);
   const northEast = { latitude: Math.max(...latitudes), longitude: Math.max(...longitudes) };
   const southWest = { latitude: Math.min(...latitudes), longitude: Math.min(...longitudes) };
-  const center = calculatePolygonCentroid(selectedRegion.coordinates);
   const [mapReady, setMapReady] = useState(false);
   useFocusEffect(
     useCallback(() => {

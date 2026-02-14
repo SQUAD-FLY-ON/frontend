@@ -6,7 +6,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/shallow";
 
 export default function ExploreList() {
-  const { selectedRegion, selectedMarkerSpot } = useExploreStore(useShallow(state => ({ selectedRegion: state.selectedRegion, selectedMarkerSpot: state.selectedMarkerSpot })));
+  const { selectedRegion } = useExploreStore(useShallow(state => ({ selectedRegion: state.selectedRegion })));
   const { data: spotMarkers } = useSpots({ sido: selectedRegion.name! });
   return (
     <View>

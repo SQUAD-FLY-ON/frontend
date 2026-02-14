@@ -1,6 +1,6 @@
 import { validateNextStepEnabled } from '@/libs/schedule/validateNextStepEnabled';
 import { ScheduleState } from '@/store/useScheduleStore';
-import { Screens } from '@/constants/screens';
+
 
 // 기본 상태 팩토리
 const createDefaultState = (overrides?: Partial<ScheduleState>): ScheduleState => ({

@@ -44,5 +44,6 @@ const DayContent: React.FC<DayContentProps> = memo(({
     </View>
   );
 });
+DayContent.displayName = 'DayContent';
 
 export default DayContent;

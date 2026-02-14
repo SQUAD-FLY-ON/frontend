@@ -39,7 +39,7 @@ const PlaceCard = ({ id, image, title, address }: PlaceCardProps) => {
         textStyle={{ lineHeight: 14, fontSize: 14 }}
         onPress={() => {
           router.push({
-            pathname: `/explore/detail/${id}`,
+            pathname: `/explore/detail/${id}` as any,
             params: { id: `${id}` },
           });
         }}
