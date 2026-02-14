@@ -16,7 +16,7 @@ export async function fetchSpotMarkers(request: MarkerSpotApiRequest): Promise<M
       params: request,
     });
     return response.data.searchedSpots;
-  } catch (error) {
+  } catch {
     return []; // 실패 시 기본값 반환
   }
 }

@@ -27,7 +27,14 @@ const handleCreateSchedule = () => {
   resetAllStates();
   setCurrentStep(4);
   setSelectedRegion(selectedRegion);
-  setSelectedActivities(selectedMarkerSpot);
+  setSelectedActivities({
+    id: String(selectedMarkerSpot.id),
+    name: selectedMarkerSpot.name,
+    fullAddress: selectedMarkerSpot.fullAddress ?? '',
+    imgUrl: selectedMarkerSpot.imgUrl ?? '',
+    latitude: selectedMarkerSpot.latitude,
+    longitude: selectedMarkerSpot.longitude,
+  });
   setCurrentMarkedDates(dates);
   setDates({});
   setIsModalVisible(false);

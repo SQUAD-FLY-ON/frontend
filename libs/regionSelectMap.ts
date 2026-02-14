@@ -7,7 +7,7 @@ function isMultiPolygon(coords: GeoJSONCoordinates): coords is number[][][][] {
 
 
 // GeoJSON 좌표를 React Native Maps 형식으로 변환
-export const convertCoordinatesToPoints = (coordinates: GeoJSONCoordinates) => {
+export const convertCoordinatesToPoints = (coordinates?: GeoJSONCoordinates) => {
   if (!coordinates || !coordinates[0]) return [];
 
   // MultiPolygon 처리
@@ -26,7 +26,7 @@ export const convertCoordinatesToPoints = (coordinates: GeoJSONCoordinates) => {
   }));
 };
 
-export const getCorners = (coords) => {
+export const getCorners = (coords: LatLng[]) => {
   // 위도와 경도 배열 추출
   const latitudes = coords.map(coord => coord.latitude);
   const longitudes = coords.map(coord => coord.longitude);

@@ -65,7 +65,7 @@ export default function Detail() {
       if (data.type === "READY") {
         setIsReady(true);
       }
-    } catch (err) {
+    } catch {
     }
   };
 

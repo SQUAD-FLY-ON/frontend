@@ -19,13 +19,13 @@ export const mock_flight_logs: myFlightLogs = {
     {
       id: "f001",
       airfieldName: "서울 한강 비행장",
+      airfieldImageUrl: "",
       flightTime: 12.5,
       flightDistance: 8.3,
       averageSpeed: 39.8,
       flightAltitude: 350,
-      videoUrl: "https://example.com/videos/flight1.mp4",
       createdAt: "2025-09-20T10:15:30.000Z",
-      track: [
+      track: { points: [
         {
           latitude: 37.527,
           longitude: 127.028,
@@ -38,18 +38,18 @@ export const mock_flight_logs: myFlightLogs = {
           altitude: 135.2,
           time: "2025-09-20T10:18:00.000Z",
         },
-      ],
+      ] },
     },
     {
       id: "f002",
       airfieldName: "강원 평창 활공장",
+      airfieldImageUrl: "",
       flightTime: 25.7,
       flightDistance: 15.9,
       averageSpeed: 37.1,
       flightAltitude: 780,
-      videoUrl: "https://example.com/videos/flight2.mp4",
       createdAt: "2025-09-21T08:45:10.000Z",
-      track: [
+      track: { points: [
         {
           latitude: 37.37,
           longitude: 128.39,
@@ -62,7 +62,7 @@ export const mock_flight_logs: myFlightLogs = {
           altitude: 620.0,
           time: "2025-09-21T08:50:00.000Z",
         },
-      ],
+      ] },
     },
   ],
   number: 1,

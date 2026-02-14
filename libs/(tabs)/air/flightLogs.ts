@@ -21,7 +21,7 @@ export async function postFlightLog(
       { params: { memberId: Number(memberId) } }
     );
     return response;
-  } catch (error) {
+  } catch {
     Alert.alert("비행 기록에 실패하였습니다.");
     return null;
   }

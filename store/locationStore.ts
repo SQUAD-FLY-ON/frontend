@@ -33,7 +33,7 @@ export const useLocationStore = create<LocationStore>((set, get) => ({
       const { granted } = await Location.requestForegroundPermissionsAsync();
       set({ locationPermission: granted });
       return granted;
-    } catch (err) {
+    } catch {
       set({ error: "위치 권한을 요청할 수 없습니다." });
       return false;
     }
@@ -45,7 +45,6 @@ export const useLocationStore = create<LocationStore>((set, get) => ({
         coords: { latitude, longitude, altitude },
       } = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
-        timeout: 10000,
       });
       
       const locationData = {
@@ -56,7 +55,7 @@ export const useLocationStore = create<LocationStore>((set, get) => ({
       
       set({ location: locationData, error: null });
       return locationData;
-    } catch (err) {
+    } catch {
       set({ error: "현재 위치를 가져올 수 없습니다." });
       return null;
     }

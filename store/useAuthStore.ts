@@ -7,15 +7,9 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 const storage = {
-  getItem: async (name: string): Promise<string | null> => {
-    return await SecureStore.getItemAsync(name);
-  },
-  setItem: async (name: string, value: string): Promise<void> => {
-    await SecureStore.setItemAsync(name, value);
-  },
-  removeItem: async (name: string): Promise<void> => {
-    await SecureStore.deleteItemAsync(name);
-  },
+  getItem: (name: string) => SecureStore.getItemAsync(name),
+  setItem: (name: string, value: string) => SecureStore.setItemAsync(name, value),
+  removeItem: (name: string) => SecureStore.deleteItemAsync(name),
 };
 
 interface AuthState {
@@ -33,7 +27,7 @@ interface AuthActions {
     credentials: LoginRequest
   ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
-  refreshAccessToken: () => Promise<boolean>; // ✅ 메서드 이름 변경
+  refreshAccessToken: () => Promise<boolean>;
   clearAuthState: () => void;
   initializeAuth: () => Promise<void>;
 }
@@ -42,8 +36,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
   persist(
     (set, get) => ({
       isAuthenticated: false,
-      isLoading: false, // 일반 로딩 (로그인, 로그아웃 등)
-      isInitializing: false, // 앱 초기화 로딩
+      isLoading: false,
+      isInitializing: false,
       isInitialized: false,
       memberInfo: null,
       accessToken: null,
@@ -56,19 +50,23 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         }
 
         set({ isInitializing: true });
-        // 액세스 토큰 유효성 검사 (예: 사용자 정보 요청)
-        const userResponse = await apiClient.get("/members");
-        if (userResponse.httpStatusCode === 200) {
-          set({
-            isAuthenticated: true,
-            // memberInfo: userResponse.data || get().memberInfo,
-            isInitialized: true,
-            isInitializing: false,
-          });
-          return;
-        } else {
+        try {
+          const userResponse: ApiResponse<MemberInfo> = await apiClient.get(
+            "/members"
+          );
+          if (userResponse.httpStatusCode === 200 && userResponse.data) {
+            set({
+              isAuthenticated: true,
+              memberInfo: userResponse.data,
+            });
+          } else {
+            // If token is invalid, clear auth state
+            get().clearAuthState();
+          }
+        } catch {
           get().clearAuthState();
-          return;
+        } finally {
+          set({ isInitializing: false, isInitialized: true });
         }
       },
       login: async (credentials) => {
@@ -89,19 +87,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
             return { success: true };
           }
-          // } else {
-          //   console.log(response?.data.serverErrorMessage);
-          //   return {
-          //     success: false,
-          //     error: response.httpStatusMessage || "Login failed",
-          //   };
-          // }
+          return { success: false, error: "Login failed. Please check your credentials." };
         } catch (error: unknown) {
           const axiosError = error as { response?: { data?: { serverErrorMessage?: string } } };
           return {
             success: false,
             error:
-              axiosError.response?.data?.serverErrorMessage || "로그인에 실패했습니다.",
+              axiosError.response?.data?.serverErrorMessage || "An unexpected error occurred during login.",
           };
         } finally {
           set({ isLoading: false });
@@ -115,12 +107,11 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
           if (refreshToken) {
             await apiClient
-              .delete("/tokens", { data: { refreshToken } })
-              .catch(() => {
-              });
+              .delete("/tokens", { data: { refreshToken } });
             queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
           }
         } catch (error) {
+            console.warn("Failed to logout from server:", error);
         } finally {
           get().clearAuthState();
           set({ isLoading: false });
@@ -128,8 +119,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       },
 
       refreshAccessToken: async () => {
-        // const queryClient = useQueryClient();
-
         try {
           const refreshToken = get().refreshToken;
           if (!refreshToken) {
@@ -150,19 +139,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               accessToken,
               refreshToken: refreshToken,
               memberInfo: get().memberInfo,
-            })
+            });
+            queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
             return true;
           } else {
-            get().clearAuthState(); // ✅ 에러 시 상태 초기화
+            get().clearAuthState();
             return false;
           }
-        } catch (error: unknown) {
+        } catch {
           get().clearAuthState();
           return false;
-        }
-        finally {
-          queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
-          set({ isInitializing: false, isInitialized: true });
         }
       },
       clearAuthState: () => {

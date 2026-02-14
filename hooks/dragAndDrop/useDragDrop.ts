@@ -18,7 +18,6 @@ interface UseDragDropOptions {
   remeasureDayLayouts: () => Promise<void>;
   getDropTarget: (pageY: number) => { dayId: string; insertIndex: number } | null;
   stopAutoScroll: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   FloatingPortalContext: React.Context<any>;
 }
 
@@ -116,7 +115,7 @@ export const useDragDrop = ({
 
     if (dropTarget) {
       const { dayId: targetDay, insertIndex } = dropTarget;
-      const { item, sourceDay, sourceIndex } = currentDraggingItem;
+      const { sourceDay, sourceIndex } = currentDraggingItem;
 
       if (targetDay === sourceDay) {
         // 같은 Day 내에서 순서 변경

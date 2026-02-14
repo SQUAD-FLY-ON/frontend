@@ -21,7 +21,7 @@ export async function fetchTourSchedule(): Promise<TourismSchedule[]> {
         schedule.tourName
     );
     return filteredSchedules;
-  } catch (error) {
+  } catch {
     Alert.alert("여행 일정 조회에 실패하였습니다. 다시 시도해주세요.");
     return [];
   }

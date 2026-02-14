@@ -25,7 +25,7 @@ export default function SelectActivityScreen() {
         title="체험장/장소 선택하기(1/2)"
         description="일정에 추가하고 싶은 체험장을 선택해주세요."
         filters={filters}
-        data={data}
+        data={data ?? []}
       />
     </>
   )

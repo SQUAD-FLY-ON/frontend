@@ -2,7 +2,6 @@ import { fetchSignout } from "@/libs/(tabs)/user/fetchSignout";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useModalStore } from "@/store/useModalStore";
 import { useScheduleStore } from "@/store/useScheduleStore";
-import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import {
   Linking,
@@ -18,8 +17,6 @@ type TMenuItem = {
   link: string;
 };
 const MenuList = ({ menuItem }: { menuItem: TMenuItem[] }) => {
-  const queryClient = useQueryClient();
-
   const { logout, clearAuthState } = useAuthStore(
     useShallow((state) => ({
       logout: state.logout,

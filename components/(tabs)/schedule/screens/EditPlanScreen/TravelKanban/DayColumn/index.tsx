@@ -60,4 +60,5 @@ export const DayColumn = memo(({
     </View>
   );
 });
+DayColumn.displayName = 'DayColumn';
 

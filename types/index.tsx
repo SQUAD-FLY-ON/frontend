@@ -48,23 +48,6 @@ export interface AuthResponse {
   refreshToken: string;
 }
 
-interface PlaceData {
-  address: string;
-  day: string;
-  fullAddress: string;
-  id: string | null;
-  image: string;
-  imgUrl: string;
-  key: string;
-  latitude: number;
-  longitude: number;
-  name: string;
-  phoneNumber: string;
-  place: string;
-  tourismType: TourismType;
-  type: TourismType;
-}
-
 // export type Plan = {
 //   key: string;
 //   type: string;
@@ -209,6 +192,13 @@ export interface Spot {
 export interface ScheduleItem {
   id: number;
   tourismType: TourismType;
+  name: string;
+  fullAddress: string;
+  longitude: number;
+  latitude: number;
+  phoneNumber: string;
+  imgUrl: string;
+  clientKey?: string;
 }
 export interface paraglidingSpot {
   id: string;
@@ -296,6 +286,14 @@ export interface Plan {
   image?: string;
   type: string;
   day: string;
+  id: number;
+  tourismType: TourismType;
+  name: string;
+  fullAddress: string;
+  longitude: number;
+  latitude: number;
+  phoneNumber: string;
+  imgUrl: string;
 }
 
 export interface DraggingItem {
@@ -403,6 +401,15 @@ export interface SignupResponse {
   data: {
     memberId: string;
   } | null;
+}
+
+export interface MarkerSpot {
+  id: number | string;
+  latitude: number;
+  longitude: number;
+  name: string;
+  fullAddress?: string;
+  imgUrl?: string;
 }
 
 // Tab Trigger 타입

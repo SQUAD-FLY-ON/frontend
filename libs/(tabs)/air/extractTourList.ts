@@ -32,7 +32,7 @@ export default function extractTourList(schedules: TourismSchedule[]) {
     }
 
     return result;
-  } catch (error) {
+  } catch {
     Alert.alert("여행 일정을 불러오기 중 오류가 발생했습니다!");
     return [];
   }

@@ -1,8 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
-
-const { height } = Dimensions.get("window");
+import { StyleSheet, View } from "react-native";
 
 const HomeLinearBackground = () => {
   return (

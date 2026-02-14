@@ -80,7 +80,7 @@ export default function ButtonSection() {
           isError: true,
         });
       }
-    } catch (error) {
+    } catch {
       // 4. try 블록 안에서 에러가 발생하면 이 코드가 실행됩니다.
       // 사용자에게 에러 상황을 알려줍니다.
       await useModalStore.getState().showAlert({

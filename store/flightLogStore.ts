@@ -21,7 +21,7 @@ export const saveFlightLog = async (
     // 다시 저장
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storage));
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 };
@@ -36,7 +36,7 @@ export const getFlightLog = async (
 
     const storage: Record<string, ITrackData[]> = JSON.parse(existing);
     return storage[id] || null;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -48,7 +48,7 @@ export const getAllFlightLogs = async (): Promise<
   try {
     const existing = await AsyncStorage.getItem(STORAGE_KEY);
     return existing ? JSON.parse(existing) : {};
-  } catch (error) {
+  } catch {
     return {};
   }
 };
@@ -63,7 +63,7 @@ export const removeFlightLog = async (id: string): Promise<void> => {
     delete storage[id];
 
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(storage));
-  } catch (error) {
+  } catch {
   }
 };
 
@@ -71,6 +71,6 @@ export const removeFlightLog = async (id: string): Promise<void> => {
 export const clearAllFlightLogs = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(STORAGE_KEY);
-  } catch (error) {
+  } catch {
   }
 };

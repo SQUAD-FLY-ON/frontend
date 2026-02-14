@@ -2,7 +2,7 @@
 import { polygons } from "@/constants/polygons";
 import { convertCoordinatesToPoints } from "@/libs/regionSelectMap";
 import useExploreStore from "@/store/exploreStore";
-import { RecommendSpots } from "@/types";
+import { RecommendSpots, RegionCode, RegionName } from "@/types";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, Text } from "react-native";
@@ -21,11 +21,11 @@ export default function ActivityAreaCard({ item }: { item: RecommendSpots }) {
   }))
 );
   const foundRegion = findRegionByName(item?.sido);
-  const coordinates = convertCoordinatesToPoints(foundRegion?.geometry.coordinates)
+  const coordinates = convertCoordinatesToPoints(foundRegion?.geometry.coordinates as any)
   return (
     <Pressable style={styles.card} onPress={() => { 
       router.push(`/explore/detail/${item.id}`) ;
-      setSelectedRegion({key: foundRegion?.properties.CTPRVN_CD || '',name: item?.sido, coordinates});
+      setSelectedRegion({key: (foundRegion?.properties.CTPRVN_CD || '') as "" | RegionCode, name: (item?.sido || '') as "" | RegionName, coordinates});
       setSelectedMarkerSpot({latitude: item?.latitude, longitude: item?.longitude, id: item?.id, name: item?.spotName});
     }}>
       <Image source={

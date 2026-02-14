@@ -14,7 +14,7 @@ export async function fetchSignup(request: SignupRequest): Promise<ApiResponse<S
       { headers: { "Content-Type": "application/json" } }
     );
     return response;
-  } catch (error) {
+  } catch {
     return []; // 실패 시 기본값 반환
   }
 }

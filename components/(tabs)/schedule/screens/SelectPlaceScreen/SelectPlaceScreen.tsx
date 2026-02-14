@@ -1,5 +1,4 @@
 // SelectPlaceScreen.tsx
-import { StyleSheet } from "react-native";
 import PlaceList from "./PlaceList";
 
 export default function SelectPlaceScreen() {
@@ -12,7 +11,3 @@ export default function SelectPlaceScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  
-});

@@ -44,5 +44,6 @@ const PlanList: React.FC<PlanListProps> = memo(({
     </>
   );
 });
+PlanList.displayName = 'PlanList';
 
 export default PlanList;

@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
-import z from "zod";
+import { z } from "zod";
 import CustomButton from "../CustomButton";
 import FormInput from "../FormInput";
 
@@ -21,15 +21,16 @@ export default function SignupForm() {
   async function onSubmit(data: z.infer<typeof signUpSchema>) {
     const { passwordConfirm, ...apiData } = data;
     try {
-    const response = await fetchSignup(apiData);
+    await fetchSignup(apiData);
       Alert.alert('회원가입이 완료되었습니다!');
       router.push("/login");
-    } catch (error) {
+    } catch (error: unknown) {
   // 에러 타입 체크 후 메시지 추출
-  const errorMessage = 
-    error?.response?.data?.message || 
-    error?.response?.serverErrorMessage || 
-    error?.message || 
+  const err = error as { response?: { data?: { message?: string }; serverErrorMessage?: string }; message?: string };
+  const errorMessage =
+    err?.response?.data?.message ||
+    err?.response?.serverErrorMessage ||
+    err?.message ||
     '회원가입 중 오류가 발생했습니다.';
       Alert.alert(errorMessage);
       // Alert.alert(`${error.}`);
