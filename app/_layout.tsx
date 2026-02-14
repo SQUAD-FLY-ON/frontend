@@ -1,3 +1,4 @@
+import ErrorFallback from "@/components/ErrorFallback";
 import { GlobalModals } from "@/components/GlobalModals";
 import Header from "@/components/Header";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -7,6 +8,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { ErrorBoundary } from "react-error-boundary";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -46,35 +48,40 @@ export default function RootLayout() {
   );
 }
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1 }}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <BottomSheetModalProvider>
-              <Stack>
-                <Stack.Protected guard={isAuthenticated}>
-                  <Stack.Screen
-                    name="(tabs)"
-                    options={{ headerShown: false }}
-                  />
-                </Stack.Protected>
-                <Stack.Protected guard={!isAuthenticated}>
-                  <Stack.Screen name="intro" options={{ headerShown: false }} />
-                  <Stack.Screen
-                    name="login"
-                    options={{ header: () => <Header title="로그인" /> }}
-                  />
-                  <Stack.Screen
-                    name="signup"
-                    options={{ header: () => <Header title="회원가입" /> }}
-                  />
-                </Stack.Protected>
-              </Stack>
-              <GlobalModals />
-            </BottomSheetModalProvider>
-          </GestureHandlerRootView>
-        </SafeAreaView>
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onReset={() => queryClient.clear()}
+    >
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <SafeAreaView style={{ flex: 1 }}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <BottomSheetModalProvider>
+                <Stack>
+                  <Stack.Protected guard={isAuthenticated}>
+                    <Stack.Screen
+                      name="(tabs)"
+                      options={{ headerShown: false }}
+                    />
+                  </Stack.Protected>
+                  <Stack.Protected guard={!isAuthenticated}>
+                    <Stack.Screen name="intro" options={{ headerShown: false }} />
+                    <Stack.Screen
+                      name="login"
+                      options={{ header: () => <Header title="로그인" /> }}
+                    />
+                    <Stack.Screen
+                      name="signup"
+                      options={{ header: () => <Header title="회원가입" /> }}
+                    />
+                  </Stack.Protected>
+                </Stack>
+                <GlobalModals />
+              </BottomSheetModalProvider>
+            </GestureHandlerRootView>
+          </SafeAreaView>
+        </SafeAreaProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
