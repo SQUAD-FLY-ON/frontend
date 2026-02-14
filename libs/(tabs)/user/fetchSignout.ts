@@ -1,7 +1,7 @@
 import { apiClient } from "@/api/apiClient";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ApiResponse } from "@/types/api";
-import { Alert } from "react-native";
+import { useModalStore } from "@/store/useModalStore";
 
 export async function fetchSignout(): Promise<any> {
   const memberId = useAuthStore.getState().memberInfo?.memberId;
@@ -11,7 +11,7 @@ export async function fetchSignout(): Promise<any> {
     });
     return response;
   } catch {
-    Alert.alert("회원탈퇴에 실패하였습니다. 다시시도해주세요.");
+    useModalStore.getState().showError({ title: "회원탈퇴에 실패하였습니다.", description: "다시 시도해주세요." });
     return [];
   }
 }

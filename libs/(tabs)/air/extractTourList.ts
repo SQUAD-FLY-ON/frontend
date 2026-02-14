@@ -1,5 +1,5 @@
 import { TourismSchedule } from "@/types";
-import { Alert } from "react-native";
+import { useModalStore } from "@/store/useModalStore";
 
 export default function extractTourList(schedules: TourismSchedule[]) {
   try {
@@ -33,7 +33,7 @@ export default function extractTourList(schedules: TourismSchedule[]) {
 
     return result;
   } catch {
-    Alert.alert("여행 일정을 불러오기 중 오류가 발생했습니다!");
+    useModalStore.getState().showError({ title: "여행 일정을 불러오는 중 오류가 발생했습니다." });
     return [];
   }
 }

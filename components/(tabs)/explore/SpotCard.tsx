@@ -3,7 +3,6 @@ import useExploreStore from "@/store/exploreStore";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Alert,
   BackHandler,
   Linking,
   StyleSheet,
@@ -11,6 +10,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { useModalStore } from "@/store/useModalStore";
 import { useShallow } from "zustand/shallow";
 import CalendarModal from "./CalendarModal";
 import LinkIcon from "./icons/LinkIcon";
@@ -29,13 +29,14 @@ const SpotCard = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const router = useRouter();
   const { selectedMarkerSpot, selectedRegion } = useExploreStore(useShallow(state => ({ selectedMarkerSpot: state.selectedMarkerSpot, selectedRegion: state.selectedRegion })))
+  const showError = useModalStore((state) => state.showError);
   const openSite = async () => {
     const supported = await Linking.canOpenURL(webURL);
 
     if (supported) {
       await Linking.openURL(webURL);
     } else {
-      Alert.alert(`이 URL을 열 수 없습니다: ${webURL}`);
+      showError({ title: `이 URL을 열 수 없습니다`, description: webURL });
     }
   };
   useEffect(() => {

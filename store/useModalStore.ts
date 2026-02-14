@@ -26,10 +26,13 @@ type ConfirmState = ConfirmConfig & {
   resolve?: (value: boolean) => void;
 };
 
+type ErrorConfig = Omit<AlertConfig, 'isError'>;
+
 type ModalStore = {
   alert: AlertState;
   confirm: ConfirmState;
   showAlert: (config: AlertConfig) => Promise<void>;
+  showError: (config: ErrorConfig) => Promise<void>;
   hideAlert: () => void;
   showConfirm: (config: ConfirmConfig) => Promise<boolean>;
   hideConfirm: (result: boolean) => void;
@@ -56,6 +59,10 @@ export const useModalStore = create<ModalStore>((set, get) => ({
         },
       });
     });
+  },
+
+  showError: (config: ErrorConfig) => {
+    return get().showAlert({ ...config, isError: true });
   },
 
   hideAlert: () => {

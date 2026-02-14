@@ -2,7 +2,7 @@ import { apiClient } from "@/api/apiClient";
 import { useAuthStore } from "@/store/useAuthStore";
 import { TourismSchedule, TourismScheduleData } from "@/types";
 import { ApiResponse } from "@/types/api";
-import { Alert } from "react-native";
+import { useModalStore } from "@/store/useModalStore";
 
 export async function fetchTourSchedule(): Promise<TourismSchedule[]> {
   const memberId = useAuthStore.getState().memberInfo?.memberId;
@@ -22,7 +22,7 @@ export async function fetchTourSchedule(): Promise<TourismSchedule[]> {
     );
     return filteredSchedules;
   } catch {
-    Alert.alert("여행 일정 조회에 실패하였습니다. 다시 시도해주세요.");
+    useModalStore.getState().showError({ title: "여행 일정 조회에 실패하였습니다.", description: "다시 시도해주세요." });
     return [];
   }
 }
