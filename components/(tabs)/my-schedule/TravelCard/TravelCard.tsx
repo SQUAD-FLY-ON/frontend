@@ -1,11 +1,12 @@
 import CustomButton from "@/components/CustomButton";
 import Colors from "@/constants/colors";
 import { TourismSchedule } from "@/types";
+import React, { memo } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 import CardContents from "./CardContents";
 import UserGroup from "./icons/UserGroup";
 
-const TravelCard = ({ 
+const TravelCard = memo(function TravelCard({
   containerStyle, 
   onPress,
   schedule,
@@ -15,7 +16,7 @@ const TravelCard = ({
   onPress?: () => void,
   schedule: TourismSchedule | null,
   loading?: boolean
-}) => {
+}) {
   return (
     <View style={[styles.travelCard, containerStyle]}>
       <CardContents loading={loading} schedule={schedule} />
@@ -37,7 +38,7 @@ const TravelCard = ({
       </View>
     </View>
   );
-};
+});
 
 export default TravelCard;
 

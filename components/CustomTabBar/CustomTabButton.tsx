@@ -41,6 +41,9 @@ export default function CustomTabButton({
       style={[
         styles.button,
       ]}
+      accessibilityRole="tab"
+      accessibilityLabel={getRouteLabel(routeName)}
+      accessibilityState={{ selected: isActive }}
     >
       {routeName === "home" && <HomeIcon isFocused={isActive} />}
       {routeName === "explore" && <ExploreIcon isFocused={isActive} />}

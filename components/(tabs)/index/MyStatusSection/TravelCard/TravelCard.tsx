@@ -2,11 +2,11 @@ import CustomButton from "@/components/CustomButton";
 import Colors from "@/constants/colors";
 import { useTourSchedule } from "@/hooks/schedule/useTourSchedule";
 import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import CardContents from "./CardContents";
 
-const TravelCard = () => {
+const TravelCard = memo(function TravelCard() {
   const router = useRouter();
 
   const { isScheduleLoading, schedule, refetchSchedule } = useTourSchedule();
@@ -40,7 +40,7 @@ const TravelCard = () => {
       </View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   travelCard: {
