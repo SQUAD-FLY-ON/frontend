@@ -1,9 +1,10 @@
 import { fetchSignup } from "@/libs/(tabs)/signup/fetchSignup";
 import { signUpSchema } from "@/schema/signupSchema";
+import { useModalStore } from "@/store/useModalStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { z } from "zod";
 import CustomButton from "../CustomButton";
 import FormInput from "../FormInput";
@@ -18,22 +19,22 @@ export default function SignupForm() {
     mode: "onChange",
   });
   const router = useRouter();
+  const showAlert = useModalStore((state) => state.showAlert);
+  const showError = useModalStore((state) => state.showError);
   async function onSubmit(data: z.infer<typeof signUpSchema>) {
     const { passwordConfirm, ...apiData } = data;
     try {
-    await fetchSignup(apiData);
-      Alert.alert('회원가입이 완료되었습니다!');
+      await fetchSignup(apiData);
+      await showAlert({ title: '회원가입이 완료되었습니다!' });
       router.push("/login");
     } catch (error: unknown) {
-  // 에러 타입 체크 후 메시지 추출
-  const err = error as { response?: { data?: { message?: string }; serverErrorMessage?: string }; message?: string };
-  const errorMessage =
-    err?.response?.data?.message ||
-    err?.response?.serverErrorMessage ||
-    err?.message ||
-    '회원가입 중 오류가 발생했습니다.';
-      Alert.alert(errorMessage);
-      // Alert.alert(`${error.}`);
+      const err = error as { response?: { data?: { message?: string }; serverErrorMessage?: string }; message?: string };
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.response?.serverErrorMessage ||
+        err?.message ||
+        '회원가입 중 오류가 발생했습니다.';
+      showError({ title: errorMessage });
     }
   }
   return (

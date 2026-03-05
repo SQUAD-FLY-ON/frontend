@@ -31,6 +31,7 @@ const FormInput = ({ label, placeholder, isPassword = false, inputStyle, contain
               value={value}
               placeholder={placeholder}
               placeholderTextColor="#8E9297"
+              accessibilityLabel={label}
             />
 
 

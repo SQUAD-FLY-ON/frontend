@@ -3,10 +3,11 @@ import { getSecureImageUrl } from "@/libs/getSecureUrl";
 import { useModalStore } from "@/store/useModalStore";
 import { useScheduleStore } from "@/store/useScheduleStore";
 import { TourismItem } from "@/types";
+import React, { memo, useCallback } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/react/shallow";
 
-export default function PlaceCard({ data }: { data: TourismItem }) {
+const PlaceCard = memo(function PlaceCard({ data }: { data: TourismItem }) {
   const { selectedPlaces, setSelectedPlaces } = useScheduleStore(
     useShallow(state => ({
       selectedPlaces: state.selectedPlaces,
@@ -14,7 +15,11 @@ export default function PlaceCard({ data }: { data: TourismItem }) {
     }))
   );
   const showAlert = useModalStore(state => state.showAlert);
-  const onPress = () => {
+
+  const selected = Array.isArray(selectedPlaces) &&
+    selectedPlaces.some(place => (place.fullAddress === data.fullAddress && place.name === data.name))
+
+  const onPress = useCallback(() => {
     if (selectedPlaces.length >= 10 && !selected) {
       showAlert({
         title: "경고",
@@ -24,16 +29,14 @@ export default function PlaceCard({ data }: { data: TourismItem }) {
       })
     }
     setSelectedPlaces(data);
-  };
+  }, [selectedPlaces, selected, data, showAlert, setSelectedPlaces]);
 
-  const selected = Array.isArray(selectedPlaces) &&
-    selectedPlaces.some(place => (place.fullAddress === data.fullAddress && place.name === data.name))
-  const secureUrl = getSecureImageUrl(data?.imgUrl) 
+  const secureUrl = getSecureImageUrl(data?.imgUrl)
 
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.container, selected ? styles.activated : null, { backgroundColor: selected ? '#ECF4FE' : '#ffffff' }]}
+      style={[styles.container, selected ? styles.activatedBg : null, selected ? styles.activated : null]}
     >
       <Image
         style={styles.image}
@@ -67,7 +70,10 @@ export default function PlaceCard({ data }: { data: TourismItem }) {
       /> */}
     </Pressable>
   );
-}
+});
+
+export default PlaceCard;
+
 const styles = StyleSheet.create({
   container: {
     padding: 8,
@@ -81,6 +87,9 @@ const styles = StyleSheet.create({
   activated: {
     borderColor: '#93BEF9',
     borderWidth: 1,
+  },
+  activatedBg: {
+    backgroundColor: '#ECF4FE',
   },
   image: {
     width: 88,

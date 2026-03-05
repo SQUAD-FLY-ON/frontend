@@ -20,7 +20,13 @@ interface ButtonProps {
 export default function CustomButton({ onPress, buttonType = 'default', backgroundColor = 'main', containerStyle, style, textStyle, rightArrow = false, bottomArrow = false, undo = false, text, disabled }: ButtonProps) {
     const Wrapper = backgroundColor !== 'main' || disabled ? View : MainGradient;
     return (
-        <Pressable onPress={onPress} style={containerStyle}>
+        <Pressable
+            onPress={onPress}
+            style={containerStyle}
+            accessibilityRole="button"
+            accessibilityLabel={text}
+            accessibilityState={{ disabled: !!disabled }}
+        >
             <Wrapper style={[
                 buttonType === 'small' && styles.small,
                 buttonType === 'default' && styles.default,

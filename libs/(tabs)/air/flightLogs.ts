@@ -4,7 +4,7 @@ import {
   myFlightLogsContents,
   postFlightLogRequest,
 } from "@/types/api";
-import { Alert } from "react-native";
+import { useModalStore } from "@/store/useModalStore";
 
 /**
  * 비행 기록 생성 API
@@ -22,7 +22,7 @@ export async function postFlightLog(
     );
     return response;
   } catch {
-    Alert.alert("비행 기록에 실패하였습니다.");
+    useModalStore.getState().showError({ title: "비행 기록에 실패하였습니다." });
     return null;
   }
 }

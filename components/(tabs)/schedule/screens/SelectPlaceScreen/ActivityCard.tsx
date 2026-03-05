@@ -2,10 +2,11 @@ import CustomButton from "@/components/CustomButton";
 import { useScheduleStore } from "@/store/useScheduleStore";
 import { Spot } from "@/types";
 import { useRouter } from "expo-router";
+import React, { memo, useCallback } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/react/shallow";
 
-export default function ActivityCard({ data }: { data: Spot }) {
+const ActivityCard = memo(function ActivityCard({ data }: { data: Spot }) {
   const { selectedActivities, setSelectedActivities } = useScheduleStore(
     useShallow(state => ({
       selectedActivities: state.selectedActivities,
@@ -13,9 +14,9 @@ export default function ActivityCard({ data }: { data: Spot }) {
     }))
   );
   const router = useRouter();
-  const onPress = () => {
+  const onPress = useCallback(() => {
     setSelectedActivities(data);
-  };
+  }, [data, setSelectedActivities]);
 
   // selectedActivities가  단일 객체인 경우를 가정
   const selected =
@@ -24,7 +25,7 @@ export default function ActivityCard({ data }: { data: Spot }) {
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.container, selected ? styles.activated : null, { backgroundColor: selected ? '#ECF4FE' : '#ffffff' }]}
+      style={[styles.container, selected ? styles.activatedBg : null, selected ? styles.activated : null]}
     >
       <Image
         style={styles.image}
@@ -41,12 +42,14 @@ export default function ActivityCard({ data }: { data: Spot }) {
         containerStyle={styles.buttonPosition}
         buttonType="small"
         text="자세히보기"
-        textStyle={{ lineHeight: 14, fontSize: 14 }}
+        textStyle={styles.detailButtonText}
         onPress={() => { router.push(`/explore/detail/${data.id}`) }}
       />
     </Pressable>
   );
-}
+});
+
+export default ActivityCard;
 
 const styles = StyleSheet.create({
   container: {
@@ -59,6 +62,9 @@ const styles = StyleSheet.create({
   },
   activated: {
     borderColor: '#93BEF9',
+  },
+  activatedBg: {
+    backgroundColor: '#ECF4FE',
   },
   image: {
     width: 88,
@@ -105,5 +111,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 8,
     right: 8,
-  }
+  },
+  detailButtonText: {
+    lineHeight: 14,
+    fontSize: 14,
+  },
 })

@@ -1,7 +1,8 @@
 // /components/schedule/PlaceList.tsx
 import { usePlaceList } from "@/hooks/schedule/usePlaceList";
 import { useScheduleStore } from "@/store/useScheduleStore";
-import { useEffect, useRef, useState } from "react";
+import { TourismItem } from "@/types";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/shallow";
 import Filter from "../../Filter";
@@ -40,6 +41,21 @@ export default function PlaceList({
     error
   } = usePlaceList(currentFilter, selectedActivities.latitude, selectedActivities.longitude);
 
+  const renderItem = useCallback(({ item }: { item: TourismItem }) => (
+    <PlaceCard data={item} />
+  ), []);
+
+  const renderFooter = useCallback(() => {
+    if (!isFetchingNextPage) return null;
+
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color="#666" />
+        <Text style={styles.footerText}>더 많은 장소를 불러오는 중...</Text>
+      </View>
+    );
+  }, [isFetchingNextPage]);
+
   if (error) {
     return (
       <View style={styles.centerContainer}>
@@ -50,38 +66,22 @@ export default function PlaceList({
     );
   }
 
-  const renderFooter = () => {
-    if (!isFetchingNextPage) return null;
-
-    return (
-      <View style={styles.footerLoader}>
-        <ActivityIndicator size="small" color="#666" />
-        <Text style={styles.footerText}>더 많은 장소를 불러오는 중...</Text>
-      </View>
-    );
-  };
-
   return (
-    <View style={{ flex: 1 }}>
-      <TitleHeader title={title} description={description} style={{ marginBottom: 17 }} />
+    <View style={styles.flex1}>
+      <TitleHeader title={title} description={description} style={styles.titleHeader} />
       <Filter currentFilter={currentFilter} setCurrentFilter={setCurrentFilter} filters={filters} />
       <FlatList
         ref={flatListRef}
-        style={{ marginVertical: 14 }}
+        style={styles.flatList}
         contentContainerStyle={styles.placeContainer}
-        data={flatData}
-        renderItem={({ item, index }) => (
-          <PlaceCard
-            key={`${item?.id || index}`}
-            data={item}
-          />
-        )}
+        data={flatData.filter((item): item is TourismItem => item !== undefined)}
+        renderItem={renderItem}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>장소가 없습니다</Text>
           </View>
         }
-        keyExtractor={(item, index) => `${item?.id || index}`}
+        keyExtractor={(item) => `${item.name}-${item.fullAddress}`}
         onEndReached={hasNextPage ? () => { fetchNextPage() } : undefined}
         onEndReachedThreshold={0.5}
         ListFooterComponent={renderFooter}
@@ -92,6 +92,15 @@ export default function PlaceList({
 }
 
 const styles = StyleSheet.create({
+  flex1: {
+    flex: 1,
+  },
+  titleHeader: {
+    marginBottom: 17,
+  },
+  flatList: {
+    marginVertical: 14,
+  },
   placeContainer: {
     gap: 8,
     zIndex: 1,

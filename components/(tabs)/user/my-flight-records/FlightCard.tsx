@@ -1,9 +1,10 @@
 import CustomButton from "@/components/CustomButton";
 import { FlightLogData } from "@/types";
 import { useRouter } from "expo-router";
+import React, { memo, useCallback } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
-const FlightCard = ({
+const FlightCard = memo(function FlightCard({
   id,
   name,
   date,
@@ -13,16 +14,16 @@ const FlightCard = ({
   name: string;
   date: string;
   data: FlightLogData;
-}) => {
+}) {
   const router = useRouter();
 
-  const onPress = () => {
+  const onPress = useCallback(() => {
     // 체험장 상세 페이지로 이동
     router.push({
       pathname: `/user/flight-detail/[id]`,
       params: { id, data: JSON.stringify(data) },
     });
-  };
+  }, [router, id, data]);
 
   return (
     <View style={styles.container}>
@@ -39,7 +40,7 @@ const FlightCard = ({
       </View>
     </View>
   );
-};
+});
 
 export default FlightCard;
 
