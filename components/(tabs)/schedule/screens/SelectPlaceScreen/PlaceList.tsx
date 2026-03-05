@@ -41,16 +41,6 @@ export default function PlaceList({
     error
   } = usePlaceList(currentFilter, selectedActivities.latitude, selectedActivities.longitude);
 
-  if (error) {
-    return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>
-          데이터를 불러오는 중 오류가 발생했습니다.
-        </Text>
-      </View>
-    );
-  }
-
   const renderItem = useCallback(({ item }: { item: TourismItem }) => (
     <PlaceCard data={item} />
   ), []);
@@ -65,6 +55,16 @@ export default function PlaceList({
       </View>
     );
   }, [isFetchingNextPage]);
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>
+          데이터를 불러오는 중 오류가 발생했습니다.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.flex1}>
