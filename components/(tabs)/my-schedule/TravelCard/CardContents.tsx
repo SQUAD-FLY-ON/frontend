@@ -1,8 +1,9 @@
 import Colors from "@/constants/colors";
 import { TourismSchedule } from "@/types";
+import React, { memo, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const CardContents = ({
+const CardContents = memo(({
   loading,
   schedule,
 }: {
@@ -23,13 +24,16 @@ const CardContents = ({
     day: 0,
   };
 
-  const formatDate = (dateStr: string) => {
-    const [, month, day] = dateStr.split("-");
-    return `${month}.${day}`;
-  };
-
-  const startDate = formatDate(schedule.scheduleStart);
-  const endDate = formatDate(schedule.scheduleEnd);
+  const { startDate, endDate } = useMemo(() => {
+    const formatDate = (dateStr: string) => {
+      const [, month, day] = dateStr.split("-");
+      return `${month}.${day}`;
+    };
+    return {
+      startDate: formatDate(schedule.scheduleStart),
+      endDate: formatDate(schedule.scheduleEnd),
+    };
+  }, [schedule.scheduleStart, schedule.scheduleEnd]);
 
   return (
     <>
@@ -45,7 +49,7 @@ const CardContents = ({
       </View>
       <View style={styles.cardContents}>
         {schedule.dailyTourismSpots?.map((v, i) => (
-          <View key={i} style={styles.schedule}>
+          <View key={`day-${i + 1}-${v[0]?.name ?? 'empty'}`} style={styles.schedule}>
             <View style={styles.circle} />
             <Text style={styles.scheduleDay}>{i + 1}일차</Text>
             <Text style={styles.scheduleLocation}>
@@ -56,7 +60,7 @@ const CardContents = ({
       </View>
     </>
   );
-};
+});
 
 export default CardContents;
 

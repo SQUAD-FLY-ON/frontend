@@ -1,5 +1,6 @@
 import CustomButton from "@/components/CustomButton";
 import { useRouter } from "expo-router";
+import React, { memo } from "react";
 import {
   Image,
   ImageSourcePropType,
@@ -15,7 +16,7 @@ interface PlaceCardProps {
   address: string;
 }
 
-const PlaceCard = ({ id, image, title, address }: PlaceCardProps) => {
+const PlaceCard = memo(({ id, image, title, address }: PlaceCardProps) => {
   const router = useRouter();
   return (
     <View style={[styles.container]}>
@@ -36,7 +37,7 @@ const PlaceCard = ({ id, image, title, address }: PlaceCardProps) => {
         containerStyle={styles.buttonPosition}
         buttonType="small"
         text="자세히보기"
-        textStyle={{ lineHeight: 14, fontSize: 14 }}
+        textStyle={styles.detailButtonText}
         onPress={() => {
           router.push({
             pathname: `/explore/detail/${id}` as any,
@@ -46,7 +47,7 @@ const PlaceCard = ({ id, image, title, address }: PlaceCardProps) => {
       />
     </View>
   );
-};
+});
 
 export default PlaceCard;
 
@@ -99,5 +100,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 8,
     right: 8,
+  },
+  detailButtonText: {
+    lineHeight: 14,
+    fontSize: 14,
   },
 });

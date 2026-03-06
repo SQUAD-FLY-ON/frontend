@@ -1,8 +1,9 @@
 import FloatingButtonIcon from "@/components/icons/FloatingButtonIcon";
 import { MainGradient } from "@/components/LinearGradients/MainGradient";
+import React, { memo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-const FlightRecordButton = ({
+const FlightRecordButton = memo(({
   isFlying,
   onPress,
 }: {
@@ -27,7 +28,7 @@ const FlightRecordButton = ({
       </MainGradient>
     </Pressable>
   );
-};
+});
 
 export default FlightRecordButton;
 
