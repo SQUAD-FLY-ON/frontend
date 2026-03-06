@@ -3,20 +3,20 @@ import MyStatusSection from "@/components/(tabs)/index/MyStatusSection";
 import HomeLinearBackground from "@/components/(tabs)/index/MyStatusSection/LinearBackground/HomeLinearBackground";
 import RecommendSection from "@/components/(tabs)/index/RecommendSection";
 import { useTourSchedule } from "@/hooks/schedule/useTourSchedule";
-import { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Dimensions, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 
 export default function Index() {
    const [refreshing, setRefreshing] = useState(false);
   const {refetchSchedule} = useTourSchedule();
-   const onRefresh = async () => {
+   const onRefresh = useCallback(async () => {
     try {
       setRefreshing(true);
       await refetchSchedule();
     } finally {
       setRefreshing(false);
     }
-  };
+  }, [refetchSchedule]);
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}
       refreshControl={

@@ -3,7 +3,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { useGptSchedule } from "@/hooks/schedule/useGptSchedule";
 import { useModalStore } from "@/store/useModalStore";
 import { useScheduleStore } from "@/store/useScheduleStore";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/shallow";
 import BottomAnimationSection from "./BottomAnimation";
@@ -37,7 +37,7 @@ export default function GenerateScheduleScreen() {
     showAlert: state.showAlert,
     showConfirm: state.showConfirm,
   })));
-  const dates = Object.keys(currentMarkedDates);
+  const dates = useMemo(() => Object.keys(currentMarkedDates), [currentMarkedDates]);
   const scheduleStart = dates[0];
   const scheduleEnd = dates[dates.length - 1];
   const { data, isLoading, isError } = useGptSchedule(
@@ -72,7 +72,7 @@ export default function GenerateScheduleScreen() {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [currentStep, setCurrentStep, showAlert]);
+  }, [currentStep, setCurrentStep, showConfirm]);
   // 데이터 로딩 완료 시
   useEffect(() => {
     if (data) {
@@ -83,7 +83,7 @@ export default function GenerateScheduleScreen() {
       setSchedule(data);
       gotoNextStep();
     }
-  }, [data, isLoading, setSchedule, gotoNextStep]);
+  }, [data, setSchedule, gotoNextStep]);
 
   // 에러 처리
   useEffect(() => {
@@ -103,6 +103,10 @@ export default function GenerateScheduleScreen() {
     }
   }, [isError, currentStep, setCurrentStep, showAlert]);
 
+  const handleGoBack = useCallback(() => {
+    setCurrentStep(currentStep - 1);
+  }, [currentStep, setCurrentStep]);
+
   return (<View style={styles.container}>
     <View style={styles.textContainer}>
       <Text style={[styles.text, { marginTop: 72 }]}>선택한 장소를 기반으로</Text>
@@ -113,9 +117,7 @@ export default function GenerateScheduleScreen() {
     </View>
     <BottomAnimationSection />
     <GreenWaveSvg style={styles.topEllipse} />
-    <CustomButton onPress={() => {
-      setCurrentStep(currentStep - 1)
-    }} containerStyle={styles.prevButtonPosition} textStyle={styles.prevText} backgroundColor={prevButtonBackgroundColor} text="이전 단계로" />
+    <CustomButton onPress={handleGoBack} containerStyle={styles.prevButtonPosition} textStyle={styles.prevText} backgroundColor={prevButtonBackgroundColor} text="이전 단계로" />
   </View>)
 }
 const styles = StyleSheet.create({

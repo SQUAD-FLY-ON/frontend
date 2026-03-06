@@ -1,11 +1,22 @@
 import { useSpots } from "@/hooks/explore/useSpots";
 import useExploreStore from "@/store/exploreStore";
+import { MarkerSpot } from "@/types";
+import { useCallback } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Callout, Marker } from "react-native-maps";
 import { useShallow } from 'zustand/shallow';
 export default function ExploreSpotMarkers() {
   const { selectedRegion, selectedMarkerSpot, setSelectedMarkerSpot, resetSelectedMarkerSpot } = useExploreStore(useShallow((state) => ({ selectedRegion: state.selectedRegion, selectedMarkerSpot: state.selectedMarkerSpot, setSelectedMarkerSpot: state.setSelectedMarkerSpot, resetSelectedMarkerSpot: state.resetSelectedMarkerSpot })));
   const { data: spots } = useSpots({ sido: selectedRegion.name! });
+
+  const handleMarkerPress = useCallback((marker: MarkerSpot) => {
+    if (marker.id === selectedMarkerSpot.id) {
+      resetSelectedMarkerSpot();
+    } else {
+      setSelectedMarkerSpot(marker);
+    }
+  }, [selectedMarkerSpot.id, setSelectedMarkerSpot, resetSelectedMarkerSpot]);
+
   return (<>
     {spots?.map((marker) => (
       <Marker
@@ -15,14 +26,7 @@ export default function ExploreSpotMarkers() {
           latitude: marker.latitude,
           longitude: marker.longitude,
         }}
-        onPress={() => {
-          if (marker.id === selectedMarkerSpot.id) {
-            resetSelectedMarkerSpot();
-          }
-          else {
-            setSelectedMarkerSpot(marker)
-          }
-        }}
+        onPress={() => handleMarkerPress(marker)}
       >
         <Callout tooltip>
           <View style={styles.callout}>
