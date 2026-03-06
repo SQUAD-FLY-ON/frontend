@@ -8,22 +8,25 @@ import { useScheduleStore } from "@/store/useScheduleStore";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { useShallow } from "zustand/react/shallow";
 
 export default function ButtonSection() {
   const { queryClient, ...mutation } = useAddSchedule();
 
-  const currentStep = useScheduleStore((state) => state.currentStep);
+  const { currentStep, currentMarkedDates, dayData } = useScheduleStore(
+    useShallow((state) => ({
+      currentStep: state.currentStep,
+      currentMarkedDates: state.currentMarkedDates,
+      dayData: state.dayData,
+    }))
+  );
   const nextEnabled = useScheduleStore(validateNextStepEnabled);
   const goToPrevStep = useScheduleStore((state) => state.goToPrevStep);
   const goToNextStep = useScheduleStore((state) => state.goToNextStep);
-  const currentMarkedDates = useScheduleStore(
-    (state) => state.currentMarkedDates
-  );
   const setCurrentMarkedDates = useScheduleStore(
     (state) => state.setCurrentMarkedDates
   );
   const resetAllStates = useScheduleStore((state) => state.resetAllStates);
-  const dayData = useScheduleStore((state) => state.dayData);
   const currentStepKey = Screens[currentStep].key;
   const isAddingSchedule = currentStepKey === "EditPlan";
   const isComplete = currentStepKey === "Complete";
@@ -44,6 +47,7 @@ export default function ButtonSection() {
   };
 
   const addSchedule = async () => {
+    if (mutation.isPending) return;
     const confirmed = await useModalStore.getState().showConfirm({
       title: "일정 추가",
       description: "수정한 일정을 추가하시겠습니까?",
@@ -115,9 +119,9 @@ export default function ButtonSection() {
     <CustomButton
       text={isAddingSchedule ? "일정 추가하기" : "다음 단계"}
       onPress={isAddingSchedule ? addSchedule : handleNextButtonPress}
-      containerStyle={{ flex: 1 }}
+      containerStyle={styles.rightButtonContainer}
       textStyle={styles.rightButtonText}
-      disabled={!nextEnabled}
+      disabled={!nextEnabled || (isAddingSchedule && mutation.isPending)}
     />
   );
 
@@ -125,7 +129,7 @@ export default function ButtonSection() {
     <View
       style={[
         styles.container,
-        currentStepKey.includes("Loading") && { display: "none" },
+        currentStepKey.includes("Loading") && styles.hidden,
       ]}
     >
       {isComplete ? (
@@ -136,7 +140,7 @@ export default function ButtonSection() {
             router.push("/");
             queryClient.invalidateQueries({ queryKey: ["mySchedule"] });
           }}
-          containerStyle={{ flex: 1, maxWidth: 354 }}
+          containerStyle={styles.completeButtonContainer}
         />
       ) : (
         <>
@@ -176,5 +180,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 500,
     lineHeight: 20,
+  },
+  rightButtonContainer: {
+    flex: 1,
+  },
+  completeButtonContainer: {
+    flex: 1,
+    maxWidth: 354,
+  },
+  hidden: {
+    display: "none",
   },
 });
