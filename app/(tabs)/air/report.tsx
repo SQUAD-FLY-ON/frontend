@@ -52,7 +52,7 @@ export default function Report() {
   // 평균 비행 속도
   const averageSpeed = flightDistance / seconds;
 
-  const { mutate } = usePostFlightLog({
+  const { mutate, isPending } = usePostFlightLog({
     memberId: memberId as string,
     onSuccess: async (response) => {
       if (!response) return;
@@ -65,6 +65,7 @@ export default function Report() {
   });
 
   const onPressSave = () => {
+    if (isPending) return;
     mutate({
       airfieldName,
       flightTime,
@@ -111,7 +112,7 @@ export default function Report() {
           />
         </View>
 
-        <Pressable onPress={onPressSave}>
+        <Pressable onPress={onPressSave} disabled={isPending}>
           <MainGradient style={styles.flightSaveButton}>
             <Text style={styles.flightSaveButtonText}>비행기록 저장하기</Text>
           </MainGradient>
