@@ -1,9 +1,9 @@
 import LevelBadge from "@/components/LevelBadge";
 import { useAuthStore } from "@/store/useAuthStore";
-import React, { memo } from "react";
+import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
-const Profile = memo(({ level, nickname }: { level: string; nickname: string }) => {
+const Profile = ({ level, nickname }: { level: string; nickname: string }) => {
   const profileImage = useAuthStore((state) => state.memberInfo?.imgUrl);
 
   return (
@@ -17,7 +17,7 @@ const Profile = memo(({ level, nickname }: { level: string; nickname: string }) 
       <Text style={styles.profileName}>{nickname}님</Text>
     </View>
   );
-});
+};
 
 export default Profile;
 

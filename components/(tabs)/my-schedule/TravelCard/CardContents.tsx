@@ -1,6 +1,6 @@
 import Colors from "@/constants/colors";
 import { TourismSchedule } from "@/types";
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const CardContents = memo(({
@@ -24,16 +24,12 @@ const CardContents = memo(({
     day: 0,
   };
 
-  const { startDate, endDate } = useMemo(() => {
-    const formatDate = (dateStr: string) => {
-      const [, month, day] = dateStr.split("-");
-      return `${month}.${day}`;
-    };
-    return {
-      startDate: formatDate(schedule.scheduleStart),
-      endDate: formatDate(schedule.scheduleEnd),
-    };
-  }, [schedule.scheduleStart, schedule.scheduleEnd]);
+  const formatDate = (dateStr: string) => {
+    const [, month, day] = dateStr.split("-");
+    return `${month}.${day}`;
+  };
+  const startDate = formatDate(schedule.scheduleStart);
+  const endDate = formatDate(schedule.scheduleEnd);
 
   return (
     <>

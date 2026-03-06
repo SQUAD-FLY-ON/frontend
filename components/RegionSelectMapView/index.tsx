@@ -8,6 +8,8 @@ import React, { SetStateAction, useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
+const EMPTY_REGION: selectedRegion = { name: '' as RegionName, key: '' as RegionCode, coordinates: [] };
+
 
 /**
  * RegionSelectMapView 컴포넌트의 props를 정의하는 인터페이스.
@@ -39,15 +41,9 @@ export default function RegionSelectMapView({ selectedRegion, setSelectedRegion 
     []
   );
 
-  const emptyRegion = useMemo(() => ({
-    name: '' as RegionName,
-    key: '' as RegionCode,
-    coordinates: [],
-  }), []);
-
   const handleRegionPress = useCallback((regionCode: RegionCode, regionName: string, coordinates: any[], isSelected: boolean) => {
     if (isSelected) {
-      setSelectedRegion(emptyRegion);
+      setSelectedRegion(EMPTY_REGION);
     } else {
       setSelectedRegion({
         name: regionName as RegionName,
@@ -55,7 +51,7 @@ export default function RegionSelectMapView({ selectedRegion, setSelectedRegion 
         coordinates: coordinates,
       });
     }
-  }, [setSelectedRegion, emptyRegion]);
+  }, [setSelectedRegion]);
 
   return (
     <View style={styles.container}>

@@ -1,7 +1,7 @@
 import { MainGradient } from "@/components/LinearGradients/MainGradient";
 import useExploreStore from "@/store/exploreStore";
 import { useRouter } from "expo-router";
-import React, { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   Animated,
   Image,
@@ -11,17 +11,12 @@ import {
   View,
 } from "react-native";
 
-const ExploreModal = memo(function ExploreModal() {
+function ExploreModal() {
   const slideAnim = useRef(new Animated.Value(100)).current;
   const selectedMarkerSpot = useExploreStore(
     (state) => state.selectedMarkerSpot
   );
   const router = useRouter();
-
-  const imageSource = useMemo(
-    () => ({ uri: selectedMarkerSpot.imgUrl }),
-    [selectedMarkerSpot.imgUrl]
-  );
 
   const handleDetailPress = useCallback(() => {
     router.push(`/(tabs)/explore/detail/${selectedMarkerSpot.id}`);
@@ -51,7 +46,7 @@ const ExploreModal = memo(function ExploreModal() {
           />
         ) : (
           <Image
-            source={imageSource}
+            source={{ uri: selectedMarkerSpot.imgUrl }}
             style={styles.image}
           />
         )}
@@ -75,7 +70,7 @@ const ExploreModal = memo(function ExploreModal() {
       </View>
     </Animated.View>
   );
-});
+}
 
 export default ExploreModal;
 
