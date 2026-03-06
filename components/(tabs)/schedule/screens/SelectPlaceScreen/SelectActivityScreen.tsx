@@ -18,7 +18,7 @@ export default function SelectActivityScreen() {
     if (data) {
       refreshSelectedPlaces();
     }
-  }, [data]);
+  }, [data, refreshSelectedPlaces]);
   return (
     <>
       <ActivityList

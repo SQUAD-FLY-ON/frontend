@@ -24,7 +24,7 @@ export default function RecommendSection() {
   useEffect(() => {
     // 앱 시작 시 위치 정보 초기화
     initializeLocation();
-  }, []);
+  }, [initializeLocation]);
 
   const handlePresentModalPress = useCallback(() => {
     filterModalRef.current?.present();
