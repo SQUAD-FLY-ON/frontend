@@ -31,7 +31,7 @@ const FlightCard = memo(function FlightCard({
         source={require("@/assets/images/dummy_image_activity_area.png")}
         style={styles.image}
       />
-      <View style={{ justifyContent: "center" }}>
+      <View style={styles.textContainer}>
         <Text style={[styles.text]}>{name}</Text>
         <Text style={[styles.subText]}>{date.slice(0, 10)}</Text>
       </View>
@@ -75,5 +75,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 8,
     bottom: 8,
+  },
+  textContainer: {
+    justifyContent: "center",
   },
 });

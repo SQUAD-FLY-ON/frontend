@@ -11,7 +11,7 @@ export default function EditPlanScreen() {
   const description = Screens[currentStep].description!
   return (
     <View style={styles.container}>
-      <View style={{ marginTop: 5 }}>
+      <View style={styles.titleWrapper}>
         <TitleHeader title={label} description={description} />
       </View>
       <TravelPlanKanban />
@@ -23,6 +23,9 @@ const styles = StyleSheet.create({
     paddingLeft: 3,
     paddingRight: 14,
     flex: 1,
+  },
+  titleWrapper: {
+    marginTop: 5,
   },
   planContainer: {
     width: '100%',

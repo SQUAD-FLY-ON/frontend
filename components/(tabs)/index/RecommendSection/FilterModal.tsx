@@ -39,9 +39,9 @@ const FilterModal = ({
       )}
     >
       <BottomSheetView
-        style={{ padding: 18, backgroundColor: "white"}}
+        style={styles.bottomSheetView}
       >
-        <View style={{ gap: 12 }} >
+        <View style={styles.optionsContainer} >
           <Text style={styles.modalTitle}>체험장 추천 기준을 선택해주세요</Text>
           <View style={styles.modalRadios}>
             {options.map((opt) => (
@@ -78,5 +78,12 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     marginTop: 27,
+  },
+  bottomSheetView: {
+    padding: 18,
+    backgroundColor: "white",
+  },
+  optionsContainer: {
+    gap: 12,
   },
 });

@@ -33,7 +33,7 @@ export default function Community() {
         <LikeButton likeNumber={likeNumber} />
       </View>
       <Image source={dummyPost.thumbnail} style={styles.communityImage} />
-      <View style={{ width: "100%", gap: 8, marginBottom: 32 }}>
+      <View style={styles.postContentContainer}>
         <Text style={styles.postTitle}>{dummyPost.title}</Text>
         <Text
           style={styles.postDescription}
@@ -43,7 +43,7 @@ export default function Community() {
           {dummyPost.description}
         </Text>
       </View>
-      <View style={{ position: "relative", alignItems: "center" }}>
+      <View style={styles.buttonWrapper}>
         <CustomButton
           onPress={() => {
             router.push("/community");
@@ -116,5 +116,14 @@ const styles = StyleSheet.create({
   buttonPosition: {
     position: "absolute",
     zIndex: 2,
+  },
+  postContentContainer: {
+    width: "100%",
+    gap: 8,
+    marginBottom: 32,
+  },
+  buttonWrapper: {
+    position: "relative",
+    alignItems: "center",
   },
 });
