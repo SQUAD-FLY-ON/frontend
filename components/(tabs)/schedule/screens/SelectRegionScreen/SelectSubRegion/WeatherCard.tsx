@@ -3,18 +3,19 @@ import { WeatherInfo, WeatherStatus } from "@/types";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useShallow } from "zustand/shallow";
 
+const IMAGE_MAP: Record<WeatherStatus, any> = {
+  '맑음': require('@/assets/images/sunny.png'),
+  '구름조금': require('@/assets/images/partlyCloudy.png'),
+  '구름많음': require('@/assets/images/cloudy.png'),
+  '흐림': require('@/assets/images/overcast.png'),
+  '비': require('@/assets/images/rainy.png'),
+  '흐리고 비': require('@/assets/images/rainy.png'),
+  '비/눈': require('@/assets/images/sleet.png'),
+  '눈': require('@/assets/images/snowy.png'),
+};
+
 export default function WeatherCard({ weatherData }: { weatherData: WeatherInfo }) {
   const {settingSigungu, goToNextStep} = useScheduleStore(useShallow(state => ({settingSigungu: state.settingSigungu, goToNextStep: state.goToNextStep})));
-  const imageMap: Record<WeatherStatus, any> = {
-    '맑음': require('@/assets/images/sunny.png'),
-    '구름조금': require('@/assets/images/partlyCloudy.png'),
-    '구름많음': require('@/assets/images/cloudy.png'),
-    '흐림': require('@/assets/images/overcast.png'),
-    '비': require('@/assets/images/rainy.png'),
-    '흐리고 비': require('@/assets/images/rainy.png'),
-    '비/눈': require('@/assets/images/sleet.png'),
-    '눈': require('@/assets/images/snowy.png'),
-  };
   return (<TouchableOpacity onPress = {() => {
     settingSigungu(weatherData.sigungu);
     goToNextStep();
@@ -41,8 +42,8 @@ export default function WeatherCard({ weatherData }: { weatherData: WeatherInfo 
           <View style={styles.weather}>
             <Text style={styles.date}>{month}/{date}</Text>
             <Image
-              style={{ width: 36, height: 33 }}
-              source={imageMap[weather.sky]}
+              style={styles.weatherIcon}
+              source={IMAGE_MAP[weather.sky]}
               resizeMode="contain"
             />
             <Text style={styles.temp}>{minTemp}° / {maxTemp}°</Text>
@@ -94,6 +95,10 @@ const styles = StyleSheet.create({
     alignItems: 'center', // 이제 contentContainerStyle에 위치
   },
   weather: {
+  },
+  weatherIcon: {
+    width: 36,
+    height: 33,
   },
   date: {
     color: '#3A88F4',

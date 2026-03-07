@@ -15,25 +15,27 @@ interface ActivityListProps {
 
 export default function ActivityList({ title, description, data }: ActivityListProps) {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <TitleHeader title={title} description={description} />
       <FlatList
-        style={{ marginVertical: 14 }}
+        style={styles.list}
         contentContainerStyle={styles.placeContainer}
         data={data}
-        renderItem={({ item, index }) =>
-          <ActivityCard
-            key={item.id}
-            data = {item}
-          />
-        }
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <ActivityCard data={item} />}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  list: {
+    marginVertical: 14,
+  },
   placeContainer: {
     gap: 8,
-  }
+  },
 })

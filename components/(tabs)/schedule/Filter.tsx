@@ -29,9 +29,7 @@ export default function Filter({
         <CustomButton
           backgroundColor={currentFilter === item.key ? 'main' : '#EFEFEF'}
           key={item.key}
-          textStyle={{ 
-            color: currentFilter === item.key ? '#FFFFFF' : '#333333' 
-          }}
+          textStyle={currentFilter === item.key ? filterStyles.activeText : filterStyles.inactiveText}
           text={item.text}
           buttonType="small"
           onPress={() => setCurrentFilter(item.key)}
@@ -40,6 +38,15 @@ export default function Filter({
     </ScrollView>
   );
 }
+
+const filterStyles = StyleSheet.create({
+  activeText: {
+    color: '#FFFFFF',
+  },
+  inactiveText: {
+    color: '#333333',
+  },
+});
 
 const styles = StyleSheet.create({
   scrollView: {

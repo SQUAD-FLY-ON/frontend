@@ -10,7 +10,7 @@ export default function RegionSelectScreen() {
   const currentKey = Screens[currentStep].key;
     useEffect(() => {
     refreshSelectedActivities();
-  }, [selectedRegion])
+  }, [selectedRegion, refreshSelectedActivities])
   return (
     <>
       {currentKey === 'SelectAreaRegion' && <SelectAreaRegion />}

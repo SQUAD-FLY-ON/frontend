@@ -1,15 +1,16 @@
 import { TourismSchedule } from "@/types";
+import React, { memo } from "react";
 import { Pressable, StyleSheet, ViewStyle } from "react-native";
 import CardContents from "./CardContents";
 
 
-const DetailTravelCard = ({ 
-  containerStyle, 
+const DetailTravelCard = memo(({
+  containerStyle,
   onPress,
   schedule,
   loading = false
-}: { 
-  containerStyle?: ViewStyle, 
+}: {
+  containerStyle?: ViewStyle,
   onPress?: () => void,
   schedule: TourismSchedule | undefined,
   loading?: boolean
@@ -20,7 +21,7 @@ const DetailTravelCard = ({
       {schedule && <CardContents loading={loading} schedule={schedule} />}
     </Pressable>
   );
-};
+});
 
 export default DetailTravelCard;
 

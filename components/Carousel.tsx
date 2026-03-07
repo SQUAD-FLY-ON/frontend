@@ -22,7 +22,7 @@ export default function Carousel({
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={[{ gap }, style]}
-            keyExtractor={(_, index) => index.toString()}
+            keyExtractor={(item) => String(item.id)}
             renderItem={({ item, index }) => renderItem(item, index)}
         />
     );

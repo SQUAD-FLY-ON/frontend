@@ -56,7 +56,7 @@ const CardContents = ({
       </View>
       <View style={styles.cardContents}>
         {schedule[0].dailyTourismSpots.map((v, i) => (
-          <View key={i} style={styles.schedule}>
+          <View key={`day-${i + 1}-${v[0]?.name ?? 'empty'}`} style={styles.schedule}>
             <View style={styles.circle} />
             <Text style={styles.scheduleDay}>{i + 1}일차</Text>
             <Text style={styles.scheduleLocation}>

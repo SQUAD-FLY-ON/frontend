@@ -1,7 +1,7 @@
 import StepCircle from "@/components/(tabs)/schedule/StepCircle";
 import { Screens } from "@/constants/screens";
 import { useScheduleStore } from "@/store/useScheduleStore";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   Easing,
@@ -37,7 +37,7 @@ export default function Stepper() {
   }, [currentStepperIndex]);
 
   return (
-    <View style={[styles.stepper, currentStepKey.includes('Loading')  && {display:'none'}]}>
+    <View style={[styles.stepper, currentStepKey.includes('Loading') && styles.hidden]}>
       {stepLabels.map((label, index) => {
         const animatedScale = animatedValues[index].interpolate({
           inputRange: [0, 1],
@@ -76,10 +76,8 @@ export default function Stepper() {
                 <Animated.View
                   style={[
                     StyleSheet.absoluteFill,
-                    {
-                      backgroundColor: '#007AFF',
-                      width: lineAnimatedWidth,
-                    },
+                    styles.lineAnimated,
+                    { width: lineAnimatedWidth },
                   ]}
                 />
               </View>
@@ -148,5 +146,11 @@ const styles = StyleSheet.create({
 	activeLabel: {
 		color: '#007AFF',
 		fontWeight: 'bold',
+	},
+	hidden: {
+		display: 'none',
+	},
+	lineAnimated: {
+		backgroundColor: '#007AFF',
 	},
 });

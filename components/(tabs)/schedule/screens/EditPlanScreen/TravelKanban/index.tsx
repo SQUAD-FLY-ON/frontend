@@ -6,14 +6,19 @@ import { useScheduleStore } from '@/store/useScheduleStore';
 import { GestureState } from '@/types';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { GestureResponderEvent, ScrollView, StyleSheet, View } from 'react-native';
+import { useShallow } from 'zustand/react/shallow';
 import { DayColumn } from './DayColumn';
 import { FloatingPortalContext } from './FloatingPortal';
 
 export const TravelPlanKanban = () => {
   // ===== 1. 상태 관리 =====
-  const dayData = useScheduleStore(state => state.dayData);
+  const { dayData, schedule } = useScheduleStore(
+    useShallow((state) => ({
+      dayData: state.dayData,
+      schedule: state.schedule,
+    }))
+  );
   const setDayData = useScheduleStore(state => state.setDayData);
-  const schedule = useScheduleStore(state => state.schedule);
   // ===== 2. 자동 스크롤 훅 =====
   const {
     scrollViewRef,
@@ -58,7 +63,7 @@ export const TravelPlanKanban = () => {
     // 스케줄 데이터를 Day 형식으로 변환
     const transformedData = transformSchedulesToDayData(schedule);
     setDayData(transformedData);
-  }, [schedule]);  // ✅ schedule 변경 시 dayData 업데이트
+  }, [schedule, setDayData]);  // ✅ schedule 변경 시 dayData 업데이트
 
   // ===== 6. Day ref 관리 =====
   // ✅ useCallback으로 안정화

@@ -22,11 +22,11 @@ export default function RegionSelect() {
       const timeout = setTimeout(() => setIsHintVisible(false), 5000);
       return () => clearTimeout(timeout);
     }
-  }, [selectedLocalRegion]);
+  }, [selectedLocalRegion, setSelectedRegion]);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>체험장 탐색하기</Text>
-      <View style={{ gap: 5, alignItems: 'center', marginTop: 16 }}>
+      <View style={styles.guideContainer}>
         <Text style={styles.guideText}>이번주 날씨 기준 적합한 지역을 알려드려요</Text>
         <View style={styles.iconsRowContainer}>
           <View style={styles.iconRow}>
@@ -39,7 +39,7 @@ export default function RegionSelect() {
           </View>
         </View>
       </View>
-      <View style={{ flex: 1, marginTop: 17, width: '100%' }}>
+      <View style={styles.mapWrapper}>
         <RegionSelectHint visible={isHintVisible} />
         <RegionSelectMapView selectedRegion={selectedLocalRegion} setSelectedRegion={setSelectedLocalRegion} />
       </View>
@@ -84,5 +84,15 @@ const styles = StyleSheet.create({
     color: '#000000',
     height: 17,
     lineHeight: 17,
+  },
+  guideContainer: {
+    gap: 5,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  mapWrapper: {
+    flex: 1,
+    marginTop: 17,
+    width: '100%',
   },
 });

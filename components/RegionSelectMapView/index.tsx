@@ -4,9 +4,11 @@ import { customMapStyle, koreaRegion } from '@/constants/regionSelectMap';
 import { convertCoordinatesToPoints } from '@/libs/map';
 import { RegionCode, RegionName, selectedRegion } from '@/types';
 import { useIsFocused } from '@react-navigation/native';
-import React, { SetStateAction, useRef } from 'react';
+import React, { SetStateAction, useCallback, useMemo, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import MapView, { LatLng, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+
+const EMPTY_REGION: selectedRegion = { name: '' as RegionName, key: '' as RegionCode, coordinates: [] };
 
 
 /**
@@ -28,53 +30,55 @@ export default function RegionSelectMapView({ selectedRegion, setSelectedRegion 
   // `MapView` 컴포넌트 인스턴스에 접근하기 위한 ref를 생성합니다.
   const mapRef = useRef<MapView>(null);
   const isFocused = useIsFocused();
+
+  // 좌표 변환을 캐싱하여 매 렌더마다 재계산 방지
+  const polygonData = useMemo(() =>
+    polygons.map((region) => ({
+      regionCode: region.properties.CTPRVN_CD as RegionCode,
+      regionName: region.properties.CTP_KOR_NM,
+      coordinates: convertCoordinatesToPoints(region.geometry.coordinates),
+    })),
+    []
+  );
+
+  const handleRegionPress = useCallback((regionCode: RegionCode, regionName: string, coordinates: any[], isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedRegion(EMPTY_REGION);
+    } else {
+      setSelectedRegion({
+        name: regionName as RegionName,
+        key: regionCode,
+        coordinates: coordinates,
+      });
+    }
+  }, [setSelectedRegion]);
+
   return (
     <View style={styles.container}>
       {isFocused &&
         (
           <MapView
-            ref={mapRef} // MapView 인스턴스에 접근하기 위해 ref를 연결.
-            provider={PROVIDER_GOOGLE} // Google Maps 제공자를 사용하도록 지정.
-            style={styles.map} // 스타일을 적용합니다.
-            region={koreaRegion} // 초기 지도 표시 영역을 한국 전체로 설정합니다.
-            customMapStyle={customMapStyle} // 미리 정의된 JSON 스타일을 적용하여 지도의 모습을 커스텀합니다..
-            scrollEnabled={true} // 스크롤(지도 이동) 활성화 (작은 지역 누르기 힘듬)
-            zoomEnabled={true} // 줌(확대/축소) 활성화 (작은 지역 누르기 힘듬)
-            pitchEnabled={false} // 기울기 비활성화
-            rotateEnabled={false} // 회전 비활성화
-            moveOnMarkerPress={false} // 마커 클릭 시 자동으로 이동하는 기능 비활성화
+            ref={mapRef}
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            region={koreaRegion}
+            customMapStyle={customMapStyle}
+            scrollEnabled={true}
+            zoomEnabled={true}
+            pitchEnabled={false}
+            rotateEnabled={false}
+            moveOnMarkerPress={false}
           >
-            {polygons.map((region) => {
-              const regionCode = region.properties.CTPRVN_CD as RegionCode;
-              const selectedRegionCode = selectedRegion?.key;
-              const regionName = region.properties.CTP_KOR_NM;
-              const isSelected = regionCode === selectedRegionCode;
-
-              // GeoJSON의 좌표 형식을 `react-native-maps`에서 사용하는 `LatLng` 배열로 변환.
-              const coordinates: LatLng[] = convertCoordinatesToPoints(region.geometry.coordinates);
+            {polygonData.map(({ regionCode, regionName, coordinates }) => {
+              const isSelected = regionCode === selectedRegion?.key;
 
               return (
                 <RegionPolygon
-                  key={regionCode} // 고유한 `key` prop을 제공하여 렌더링 성능을 최적화합니다.
+                  key={regionCode}
                   coordinates={coordinates}
                   regionName={regionName}
                   isSelected={isSelected}
-                  onPress={() => {
-                    if (isSelected) {
-                      setSelectedRegion({
-                        name: '',
-                        key: '',
-                        coordinates: [],
-                      });
-                    } else {
-                      // 새로운 지역을 클릭하면 해당 지역으로 선택 상태를 업데이트합니다.
-                      setSelectedRegion({
-                        name: regionName as RegionName,
-                        key: regionCode,
-                        coordinates: coordinates,
-                      });
-                    }
-                  }}
+                  onPress={() => handleRegionPress(regionCode, regionName, coordinates, isSelected)}
                 />
               );
             })}

@@ -1,5 +1,6 @@
 import LevelBadge from "@/components/LevelBadge";
 import { useAuthStore } from "@/store/useAuthStore";
+import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 const Profile = ({ level, nickname }: { level: string; nickname: string }) => {

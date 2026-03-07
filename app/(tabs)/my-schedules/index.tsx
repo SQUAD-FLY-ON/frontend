@@ -26,10 +26,10 @@ export default function Index() {
       <Header title="나의 여행" backButton={false} />
       <FlatList
         data={schedule}
-        style={{ flex: 1, width: '100%', marginTop: 24 }}
-        contentContainerStyle={{ paddingHorizontal: 16, gap: 24, paddingBottom: 120 }}
-        renderItem={({ item }) => <TravelCard onPress={() => { router.push(`/(tabs)/my-schedules/detail/${item.id}`) }} key={item.id} schedule={item}
-        />}
+        style={styles.list}
+        contentContainerStyle={styles.listContent}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => <TravelCard onPress={() => { router.push(`/(tabs)/my-schedules/detail/${item.id}`) }} schedule={item} />}
         refreshing={refreshing}
         onRefresh={onRefresh}
       />
@@ -43,5 +43,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: '#f7f7f7',
+  },
+  list: {
+    flex: 1,
+    width: '100%',
+    marginTop: 24,
+  },
+  listContent: {
+    paddingHorizontal: 16,
+    gap: 24,
+    paddingBottom: 120,
   },
 });

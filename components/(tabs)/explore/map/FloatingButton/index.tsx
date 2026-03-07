@@ -10,16 +10,16 @@ interface MapFloatingButtonProps {
 }
 export default function MapFloatingButton({ style, onPress }: MapFloatingButtonProps) {
   const translateY = useRef(new Animated.Value(0)).current;
-  const selectedMarkerSpot = useExploreStore(state => state.selectedMarkerSpot);
-  const modalVisible = selectedMarkerSpot.id === '' ? false : true;
+  const selectedMarkerSpotId = useExploreStore(state => state.selectedMarkerSpot.id);
+  const modalVisible = selectedMarkerSpotId !== '';
   useEffect(() => {
     const translateValue = modalVisible ? -164 : 0;
     Animated.timing(translateY, {
-      toValue: translateValue, // 음수값으로 위로 이동
-      duration: 300, // 애니메이션 지속시간 (밀리초)
+      toValue: translateValue,
+      duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [selectedMarkerSpot])
+  }, [modalVisible])
   return (<TouchableOpacity
     style={[style, {
       transform: [{ translateY: translateY }],

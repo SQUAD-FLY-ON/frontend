@@ -1,3 +1,4 @@
+import React, { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 type TData = {
@@ -5,19 +6,22 @@ type TData = {
   value: string;
 };
 
-const MyReportText = ({ data }: { data: TData }) => {
+const MyReportText = memo(({ data }: { data: TData }) => {
   return (
-    <View style={{ flexDirection: "row" }}>
+    <View style={styles.row}>
       <Text style={styles.label}>{data.label}</Text>
       <Text style={styles.colon}>:</Text>
       <Text style={styles.value}>{data.value}</Text>
     </View>
   );
-};
+});
 
 export default MyReportText;
 
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+  },
   label: {
     color: "#FFF",
     fontFamily: "Pretendard-SemiBold",

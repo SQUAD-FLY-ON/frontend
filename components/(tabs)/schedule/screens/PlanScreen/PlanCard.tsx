@@ -1,17 +1,17 @@
 import { typeToLabel } from "@/constants/screens";
 import { getSecureImageUrl } from "@/libs/getSecureUrl";
 import { TourismSpot } from "@/types";
-import { useState } from "react";
+import React, { memo, useState } from "react";
 import { Image, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 
-export default function PlanCard({ 
-  index, 
-  item, 
-  isLast = false 
-}: { 
-  index: number; 
-  item: TourismSpot; 
+const PlanCard = memo(function PlanCard({
+  index,
+  item,
+  isLast = false
+}: {
+  index: number;
+  item: TourismSpot;
   isLast?: boolean;
 }) {
 
@@ -55,7 +55,10 @@ export default function PlanCard({
       </View>
     </TouchableOpacity>
   );
-}
+});
+
+export default PlanCard;
+
 const styles = StyleSheet.create({
   container: {
     gap: 10,

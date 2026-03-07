@@ -72,7 +72,7 @@ export default function GenerateScheduleScreen() {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [currentStep, setCurrentStep, showAlert]);
+  }, [currentStep, setCurrentStep, showConfirm]);
   // 데이터 로딩 완료 시
   useEffect(() => {
     if (data) {
@@ -83,7 +83,7 @@ export default function GenerateScheduleScreen() {
       setSchedule(data);
       gotoNextStep();
     }
-  }, [data, isLoading, setSchedule, gotoNextStep]);
+  }, [data, setSchedule, gotoNextStep]);
 
   // 에러 처리
   useEffect(() => {
@@ -113,9 +113,7 @@ export default function GenerateScheduleScreen() {
     </View>
     <BottomAnimationSection />
     <GreenWaveSvg style={styles.topEllipse} />
-    <CustomButton onPress={() => {
-      setCurrentStep(currentStep - 1)
-    }} containerStyle={styles.prevButtonPosition} textStyle={styles.prevText} backgroundColor={prevButtonBackgroundColor} text="이전 단계로" />
+    <CustomButton onPress={() => setCurrentStep(currentStep - 1)} containerStyle={styles.prevButtonPosition} textStyle={styles.prevText} backgroundColor={prevButtonBackgroundColor} text="이전 단계로" />
   </View>)
 }
 const styles = StyleSheet.create({

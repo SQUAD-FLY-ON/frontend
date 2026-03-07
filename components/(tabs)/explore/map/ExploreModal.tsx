@@ -1,7 +1,7 @@
 import { MainGradient } from "@/components/LinearGradients/MainGradient";
 import useExploreStore from "@/store/exploreStore";
 import { useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   Animated,
   Image,
@@ -11,16 +11,20 @@ import {
   View,
 } from "react-native";
 
-export default function ExploreModal() {
-  const slideAnim = useRef(new Animated.Value(100)).current; // 초기값 100 (아래쪽)
+function ExploreModal() {
+  const slideAnim = useRef(new Animated.Value(100)).current;
   const selectedMarkerSpot = useExploreStore(
     (state) => state.selectedMarkerSpot
   );
   const router = useRouter();
+
+  const handleDetailPress = useCallback(() => {
+    router.push(`/(tabs)/explore/detail/${selectedMarkerSpot.id}`);
+  }, [selectedMarkerSpot.id, router]);
+
   useEffect(() => {
-    // 컴포넌트가 마운트되면 슬라이드 업 애니메이션 실행
     Animated.timing(slideAnim, {
-      toValue: 0, // 원래 위치로
+      toValue: 0,
       duration: 300,
       useNativeDriver: true,
     }).start();
@@ -56,9 +60,7 @@ export default function ExploreModal() {
           </View> */}
         </View>
         <TouchableOpacity
-          onPress={() => {
-            router.push(`/(tabs)/explore/detail/${selectedMarkerSpot.id}`);
-          }}
+          onPress={handleDetailPress}
           style={styles.buttonPosition}
         >
           <MainGradient style={styles.button}>
@@ -69,6 +71,8 @@ export default function ExploreModal() {
     </Animated.View>
   );
 }
+
+export default ExploreModal;
 
 const styles = StyleSheet.create({
   overlay: {
